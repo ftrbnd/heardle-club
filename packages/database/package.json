@@ -1,0 +1,31 @@
+{
+	"name": "@repo/database",
+	"type": "module",
+	"scripts": {
+		"build": "tsc",
+		"db:push": "drizzle-kit push",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
+	},
+	"exports": {
+		".": {
+			"types": "./src/index.ts",
+			"default": "./dist/index.js"
+		},
+		"./schema": {
+			"types": "./src/schema.ts",
+			"default": "./dist/schema.js"
+		}
+	},
+	"devDependencies": {
+		"@repo/typescript-config": "workspace:*",
+		"drizzle-kit": "^0.31.1",
+		"tsx": "^4.19.4",
+		"typescript": "latest"
+	},
+	"dependencies": {
+		"@neondatabase/serverless": "^1.0.0",
+		"dotenv": "^16.5.0",
+		"drizzle-orm": "^0.44.0"
+	}
+}
