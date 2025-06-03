@@ -1,8 +1,10 @@
 import { db } from '@repo/database';
-import { usersTable } from '@repo/database/schema';
+import { clubsTable, usersTable } from '@repo/database/schema';
 
 export default async function Home() {
 	const allUsers = await db.select().from(usersTable);
+	const allClubs = await db.select().from(clubsTable);
+
 	return (
 		<div>
 			<h1>Hello</h1>
@@ -12,6 +14,14 @@ export default async function Home() {
 					allUsers.map((user) => <li key={user.id}>{JSON.stringify(user)}</li>)
 				) : (
 					<p>No users found.</p>
+				)}
+			</ul>
+			<ul>
+				<h2>Clubs</h2>
+				{allClubs.length > 0 ? (
+					allClubs.map((club) => <li key={club.id}>{JSON.stringify(club)}</li>)
+				) : (
+					<p>No clubs found.</p>
 				)}
 			</ul>
 		</div>
