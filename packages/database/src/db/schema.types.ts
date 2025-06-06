@@ -1,7 +1,7 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod/v4';
-import { baseSongs, clubs, statistics } from './schema/tables.js';
-import { oauthAccounts, sessions, users } from './schema/auth.js';
+import { baseSongs, clubs, statistics } from './schema/tables';
+import { oauthAccounts, sessions, users } from './schema/auth';
 
 export const clubSelectSchema = createSelectSchema(clubs);
 export type SelectClub = z.infer<typeof clubSelectSchema>;

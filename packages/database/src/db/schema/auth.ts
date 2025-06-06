@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm';
 import { pgTable, integer, timestamp, varchar } from 'drizzle-orm/pg-core';
-import { timestamps } from '../schema.helpers.js';
-import { usersToClubs } from './tables.js';
+import { timestamps } from '../schema.helpers';
+import { usersToClubs } from './tables';
 
 export const users = pgTable('users', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),

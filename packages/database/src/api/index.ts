@@ -1,13 +1,13 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../db/index.js';
-import { users } from '../db/schema/auth.js';
-import { baseSongs, clubs, usersToClubs } from '../db/schema/tables.js';
-import { redis } from '../redis/index.js';
+import { db } from '../db';
+import { users } from '../db/schema/auth';
+import { baseSongs, clubs, usersToClubs } from '../db/schema/tables';
+import { redis } from '../redis';
 import {
 	customSongSchema,
 	dailySongSchema,
 	heardleSongSchema,
-} from '../redis/schema.js';
+} from '../redis/schema';
 
 export const getClubs = async () => {
 	const allClubs = await db.select().from(clubs);

@@ -12,13 +12,16 @@
 			"types": "./src/db/index.ts",
 			"default": "./dist/db/index.js"
 		},
+		"./redis": {
+			"types": "./src/redis/index.ts",
+			"default": "./dist/redis/index.js"
+		},
 		"./api": {
 			"types": "./src/api/index.ts",
-			"default": "./dist/api/index.ts"
+			"default": "./dist/api/index.js"
 		}
 	},
 	"devDependencies": {
-		"@repo/typescript-config": "workspace:*",
 		"drizzle-kit": "^0.31.1",
 		"tsx": "^4.19.4",
 		"typescript": "latest"

@@ -5,9 +5,9 @@ import {
 	text,
 	varchar,
 } from 'drizzle-orm/pg-core';
-import { timestamps } from '../schema.helpers.js';
+import { timestamps } from '../schema.helpers';
 import { relations } from 'drizzle-orm';
-import { users } from './auth.js';
+import { users } from './auth';
 
 export const clubs = pgTable('clubs', {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),

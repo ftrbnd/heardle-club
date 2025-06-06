@@ -15,6 +15,20 @@
       "when": 1748987378149,
       "tag": "0001_empty_shiver_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749246479723,
+      "tag": "0002_elite_dragon_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1749246908511,
+      "tag": "0003_deep_alex_wilder",
+      "breakpoints": true
     }
   ]
 }
