@@ -8,9 +8,9 @@
 		"db:migrate": "drizzle-kit migrate"
 	},
 	"exports": {
-		".": {
-			"types": "./src/db/index.ts",
-			"default": "./dist/db/index.js"
+		"./postgres": {
+			"types": "./src/postgres/index.ts",
+			"default": "./dist/postgres/index.js"
 		},
 		"./redis": {
 			"types": "./src/redis/index.ts",

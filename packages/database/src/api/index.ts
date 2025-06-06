@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../db';
-import { users } from '../db/schema/auth';
-import { baseSongs, clubs, usersToClubs } from '../db/schema/tables';
+import { db } from '../postgres';
+import { users } from '../postgres/schema/auth';
+import { baseSongs, clubs, usersToClubs } from '../postgres/schema/tables';
 import { redis } from '../redis';
 import {
 	customSongSchema,
