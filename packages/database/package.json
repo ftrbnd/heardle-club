@@ -9,12 +9,12 @@
 	},
 	"exports": {
 		".": {
-			"types": "./src/index.ts",
-			"default": "./dist/index.js"
+			"types": "./src/db/index.ts",
+			"default": "./dist/db/index.js"
 		},
-		"./schema": {
-			"types": "./src/schema.ts",
-			"default": "./dist/schema.js"
+		"./api": {
+			"types": "./src/api/index.ts",
+			"default": "./dist/api/index.ts"
 		}
 	},
 	"devDependencies": {
@@ -25,7 +25,11 @@
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.0",
+		"@upstash/redis": "^1.35.0",
+		"better-auth": "^1.2.8",
 		"dotenv": "^16.5.0",
-		"drizzle-orm": "^0.44.0"
+		"drizzle-orm": "^0.44.0",
+		"drizzle-zod": "^0.8.2",
+		"zod": "^3.25.51"
 	}
 }
