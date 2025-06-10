@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
-import { db } from '../postgres';
-import { users } from '../postgres/schema/auth';
+import { db, InsertSession, InsertUser } from '../postgres';
+import { oauthAccounts, sessions, users } from '../postgres/schema/auth';
 import { baseSongs, clubs, usersToClubs } from '../postgres/schema/tables';
 import { redis } from '../redis';
 import {
@@ -67,4 +67,46 @@ export const getUsersFromClub = async (clubId: string) => {
 		.where(eq(usersToClubs.clubId, clubId));
 
 	return clubUsers;
+};
+
+export const insertSession = async (newSession: InsertSession) => {
+	const result = await db.insert(sessions).values(newSession).returning();
+
+	return result[0];
+};
+
+export const selectSession = async (sessionId: string) => {
+	const session = await db
+		.select()
+		.from(sessions)
+		.where(eq(sessions.id, sessionId))
+		.limit(1);
+
+	return session[0];
+};
+
+export const deleteSession = async (sessionId: string) => {
+	await db.delete(sessions).where(eq(sessions.id, sessionId));
+};
+
+export const getUserFromSpotifyId = async (spotifyId: string) => {
+	const account = await db
+		.select()
+		.from(oauthAccounts)
+		.where(eq(oauthAccounts.providerUserId, spotifyId))
+		.limit(1);
+
+	const user = await db
+		.select()
+		.from(users)
+		.where(eq(users.id, account[0].userId))
+		.limit(1);
+
+	return user[0];
+};
+
+export const insertUser = async (newUser: InsertUser) => {
+	const result = await db.insert(users).values(newUser).returning();
+
+	return result[0];
 };

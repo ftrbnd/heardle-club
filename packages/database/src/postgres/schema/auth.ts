@@ -6,7 +6,7 @@ import { usersToClubs } from './tables';
 export const users = pgTable('users', {
 	id: text().primaryKey(),
 	email: text().unique().notNull(),
-	displayName: varchar({ length: 100 }).notNull(),
+	displayName: varchar({ length: 100 }),
 	...timestamps,
 });
 export const usersRelations = relations(users, ({ many }) => ({
@@ -30,6 +30,7 @@ export const oauthAccountsRelations = relations(oauthAccounts, ({ one }) => ({
 
 export const sessions = pgTable('sessions', {
 	id: text().primaryKey(),
+	secretHash: text().notNull(),
 	userId: text().notNull(),
 	expiresAt: timestamp({
 		withTimezone: true,
