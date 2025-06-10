@@ -28,7 +28,7 @@ export const getDailySong = async () => {
 	return dailySong;
 };
 
-export const getCustomSong = async (id: number) => {
+export const getCustomSong = async (id: string) => {
 	const response = await redis.get(`custom_song:${id}`);
 	const customSong = customSongSchema.parse(response);
 
@@ -52,14 +52,14 @@ export const deleteCustomSong = async (params: DeleteCustomSongParams) => {
 	// TODO: send request to backend server
 };
 
-export const getUnlimitedSongs = async (clubId: number) => {
+export const getUnlimitedSongs = async (clubId: string) => {
 	const response = await redis.mget(`unlimited_songs:${clubId}:*`);
 	const unlimitedSongs = heardleSongSchema.array().parse(response);
 
 	return unlimitedSongs;
 };
 
-export const getUsersFromClub = async (clubId: number) => {
+export const getUsersFromClub = async (clubId: string) => {
 	const clubUsers = await db
 		.select()
 		.from(usersToClubs)

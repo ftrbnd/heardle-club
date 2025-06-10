@@ -10,7 +10,7 @@ import { relations } from 'drizzle-orm';
 import { users } from './auth';
 
 export const clubs = pgTable('clubs', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: text().primaryKey(),
 	subdomain: varchar({ length: 10 }).unique().notNull(),
 	displayName: varchar({ length: 50 }).notNull(),
 	heardleDay: integer().notNull().default(0),
@@ -26,10 +26,10 @@ export const clubsRelations = relations(clubs, ({ many }) => ({
 export const usersToClubs = pgTable(
 	'users_to_clubs',
 	{
-		userId: integer()
+		userId: text()
 			.notNull()
 			.references(() => users.id),
-		clubId: integer()
+		clubId: text()
 			.notNull()
 			.references(() => clubs.id),
 	},
@@ -47,13 +47,13 @@ export const usersToClubsRelations = relations(usersToClubs, ({ one }) => ({
 }));
 
 export const baseSongs = pgTable('base_songs', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: text().primaryKey(),
 	title: text().notNull(),
 	artist: varchar({ length: 50 }).notNull(),
 	album: varchar({ length: 100 }),
 	image: text(),
 	audio: text().notNull(),
-	clubId: integer().notNull(),
+	clubId: text().notNull(),
 	...timestamps,
 });
 
@@ -65,13 +65,13 @@ export const baseSongsRelations = relations(baseSongs, ({ one }) => ({
 }));
 
 export const statistics = pgTable('statistics', {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: text().primaryKey(),
 	gamesPlayed: integer().notNull().default(0),
 	gamesWon: integer().notNull().default(0),
 	currentStreak: integer().notNull().default(0),
 	maxStreak: integer().notNull().default(0),
 	accuracy: integer().notNull().default(0),
-	clubId: integer().notNull(),
+	clubId: text().notNull(),
 	...timestamps,
 });
 

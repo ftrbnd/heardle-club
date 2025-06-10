@@ -29,7 +29,6 @@
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.0",
 		"@upstash/redis": "^1.35.0",
-		"better-auth": "^1.2.8",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.44.0",
 		"drizzle-zod": "^0.8.2",
