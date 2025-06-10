@@ -26,6 +26,9 @@ importers:
       '@upstash/redis':
         specifier: ^1.35.0
         version: 1.35.0
+      arctic:
+        specifier: ^3.7.0
+        version: 3.7.0
       next:
         specifier: 15.3.3
         version: 15.3.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -78,12 +81,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.0
         version: 0.44.0(@neondatabase/serverless@1.0.0)(@types/pg@8.15.2)(@upstash/redis@1.35.0)(kysely@0.28.2)
-      drizzle-zod:
-        specifier: ^0.8.2
-        version: 0.8.2(drizzle-orm@0.44.0(@neondatabase/serverless@1.0.0)(@types/pg@8.15.2)(@upstash/redis@1.35.0)(kysely@0.28.2))(zod@3.25.51)
       zod:
-        specifier: ^3.25.51
-        version: 3.25.51
+        specifier: ^3.25.57
+        version: 3.25.57
     devDependencies:
       drizzle-kit:
         specifier: ^0.31.1
@@ -677,6 +677,24 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
+  '@oslojs/asn1@1.0.0':
+    resolution: {integrity: sha512-zw/wn0sj0j0QKbIXfIlnEcTviaCzYOY3V5rAyjR6YtOByFtJiT574+8p9Wlach0lZH9fddD4yb9laEAIl4vXQA==}
+
+  '@oslojs/binary@1.0.0':
+    resolution: {integrity: sha512-9RCU6OwXU6p67H4NODbuxv2S3eenuQ4/WFLrsq+K/k682xrznH5EVWA7N4VFk9VYVcbFtKqur5YQQZc0ySGhsQ==}
+
+  '@oslojs/crypto@1.0.1':
+    resolution: {integrity: sha512-7n08G8nWjAr/Yu3vu9zzrd0L9XnrJfpMioQcvCMxBIiF5orECHe5/3J0jmXRVvgfqMm/+4oxlQ+Sq39COYLcNQ==}
+
+  '@oslojs/encoding@0.4.1':
+    resolution: {integrity: sha512-hkjo6MuIK/kQR5CrGNdAPZhS01ZCXuWDRJ187zh6qqF2+yMHZpD9fAYpX8q2bOO6Ryhl3XpCT6kUX76N8hhm4Q==}
+
+  '@oslojs/encoding@1.1.0':
+    resolution: {integrity: sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ==}
+
+  '@oslojs/jwt@0.2.0':
+    resolution: {integrity: sha512-bLE7BtHrURedCn4Mco3ma9L4Y1GR2SMBuIvjWr7rmQ4/W/4Jy70TIAgZ+0nIlk0xHz1vNP8x8DCns45Sb2XRbg==}
+
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
 
@@ -956,6 +974,9 @@ packages:
   ansi-styles@4.3.0:
     resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
     engines: {node: '>=8'}
+
+  arctic@3.7.0:
+    resolution: {integrity: sha512-ZMQ+f6VazDgUJOd+qNV+H7GohNSYal1mVjm5kEaZfE2Ifb7Ss70w+Q7xpJC87qZDkMZIXYf0pTIYZA0OPasSbw==}
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
@@ -1243,12 +1264,6 @@ packages:
         optional: true
       sqlite3:
         optional: true
-
-  drizzle-zod@0.8.2:
-    resolution: {integrity: sha512-9Do/16OjFFNrQDZgvMtxtDDwKWbFOxUAIwNPKX98SfxrP8H18vhN1BvNXbhelLcdgCE7GEaXDJqBjMExSkhpkA==}
-    peerDependencies:
-      drizzle-orm: '>=0.36.0'
-      zod: ^3.25.1
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -2353,8 +2368,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod@3.25.51:
-    resolution: {integrity: sha512-TQSnBldh+XSGL+opiSIq0575wvDPqu09AqWe1F7JhUMKY+M91/aGlK4MhpVNO7MgYfHcVCB1ffwAUTJzllKJqg==}
+  zod@3.25.57:
+    resolution: {integrity: sha512-6tgzLuwVST5oLUxXTmBqoinKMd3JeesgbgseXeFasKKj8Q1FCZrHnbqJOyiEvr4cVAlbug+CgIsmJ8cl/pU5FA==}
 
 snapshots:
 
@@ -2751,6 +2766,25 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
+  '@oslojs/asn1@1.0.0':
+    dependencies:
+      '@oslojs/binary': 1.0.0
+
+  '@oslojs/binary@1.0.0': {}
+
+  '@oslojs/crypto@1.0.1':
+    dependencies:
+      '@oslojs/asn1': 1.0.0
+      '@oslojs/binary': 1.0.0
+
+  '@oslojs/encoding@0.4.1': {}
+
+  '@oslojs/encoding@1.1.0': {}
+
+  '@oslojs/jwt@0.2.0':
+    dependencies:
+      '@oslojs/encoding': 0.4.1
+
   '@rtsao/scc@1.1.0': {}
 
   '@rushstack/eslint-patch@1.11.0': {}
@@ -3017,6 +3051,12 @@ snapshots:
     dependencies:
       color-convert: 2.0.1
 
+  arctic@3.7.0:
+    dependencies:
+      '@oslojs/crypto': 1.0.1
+      '@oslojs/encoding': 1.1.0
+      '@oslojs/jwt': 0.2.0
+
   argparse@2.0.1: {}
 
   aria-query@5.3.2: {}
@@ -3244,11 +3284,6 @@ snapshots:
       '@types/pg': 8.15.2
       '@upstash/redis': 1.35.0
       kysely: 0.28.2
-
-  drizzle-zod@0.8.2(drizzle-orm@0.44.0(@neondatabase/serverless@1.0.0)(@types/pg@8.15.2)(@upstash/redis@1.35.0)(kysely@0.28.2))(zod@3.25.51):
-    dependencies:
-      drizzle-orm: 0.44.0(@neondatabase/serverless@1.0.0)(@types/pg@8.15.2)(@upstash/redis@1.35.0)(kysely@0.28.2)
-      zod: 3.25.51
 
   dunder-proto@1.0.1:
     dependencies:
@@ -4643,4 +4678,4 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod@3.25.51: {}
+  zod@3.25.57: {}
