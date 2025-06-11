@@ -1,6 +1,6 @@
 import {
 	createSession,
-	generateSessionToken,
+	generateSecureRandomString,
 	setSessionTokenCookie,
 } from '@/lib/auth/session';
 import { spotify } from '@/lib/auth/spotify';
@@ -59,6 +59,7 @@ export async function validateCallback(request: Request) {
 			status: 400,
 		});
 	}
+
 	const spotifyUserResponse = await fetch('https://api.spotify.com/v1/me', {
 		headers: {
 			Authorization: `Bearer ${tokens.accessToken()}`,
@@ -67,10 +68,10 @@ export async function validateCallback(request: Request) {
 	const spotifyUser = await spotifyUserResponse.json();
 
 	const existingUser = await getUserFromSpotifyId(spotifyUser.id);
-
 	if (existingUser) {
 		const session = await createSession(existingUser.id);
-		await setSessionTokenCookie(session.token, session.expiresAt);
+		await setSessionTokenCookie(session.token, session.lastVerifiedAt);
+
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -79,15 +80,22 @@ export async function validateCallback(request: Request) {
 		});
 	}
 
-	const { id, token } = generateSessionToken();
-
-	const user = await insertUser({
-		id,
-		email: spotifyUser.email,
-	});
+	const userId = generateSecureRandomString();
+	const { user } = await insertUser(
+		{
+			id: userId,
+			email: spotifyUser.email,
+		},
+		{
+			id: generateSecureRandomString(),
+			provider: 'spotify',
+			providerUserId: spotifyUser.id,
+			userId,
+		}
+	);
 
 	const session = await createSession(user.id);
-	await setSessionTokenCookie(token, session.expiresAt);
+	await setSessionTokenCookie(session.token, session.lastVerifiedAt);
 	return new Response(null, {
 		status: 302,
 		headers: {

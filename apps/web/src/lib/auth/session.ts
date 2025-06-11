@@ -4,15 +4,20 @@ import {
 	insertSession,
 	selectSession,
 	deleteSession as deleteSessionFromDb,
+	updateSession,
 } from '@repo/database/api';
 import { InsertSession } from '@repo/database/postgres';
 import { cookies } from 'next/headers';
+import { cache } from 'react';
 
 interface SessionWithToken extends InsertSession {
 	token: string;
 }
 
 export type OAuthProviders = 'spotify' | 'discord' | 'reddit' | 'twitter';
+const inactivityTimeoutSeconds = 60 * 60 * 24 * 10; // 10 days
+const activityCheckIntervalSeconds = 60 * 60; // 1 hour
+const SESSION_TOKEN_COOKIE = 'session_token' as const;
 
 export function generateSecureRandomString(): string {
 	const alphabet = 'abcdefghijklmnpqrstuvwxyz23456789';
@@ -43,9 +48,9 @@ export async function createSession(userId: string): Promise<SessionWithToken> {
 	const session: SessionWithToken = {
 		id,
 		userId,
-		secretHash: secretHash.toString(),
+		secretHash,
+		lastVerifiedAt: now,
 		createdAt: now,
-		expiresAt: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000), // 30 days
 		token,
 	};
 
@@ -54,24 +59,28 @@ export async function createSession(userId: string): Promise<SessionWithToken> {
 	return session;
 }
 
-export async function setSessionTokenCookie(token: string, expiresAt: Date) {
+export async function setSessionTokenCookie(
+	token: string,
+	lastVerifiedAt: Date
+) {
 	const cookieStore = await cookies();
 
-	const maxAge = Math.max(
-		0,
-		Math.floor((expiresAt.getTime() - Date.now()) / 1000)
+	const expiresAt = new Date(
+		lastVerifiedAt.getTime() + inactivityTimeoutSeconds * 1000
 	);
 
-	cookieStore.set('session_token', token, {
+	cookieStore.set(SESSION_TOKEN_COOKIE, token, {
+		httpOnly: true,
 		path: '/',
 		secure: process.env.NODE_ENV === 'production',
-		httpOnly: true,
-		maxAge,
 		sameSite: 'lax',
+		expires: expiresAt,
 	});
 }
 
 export async function validateSessionToken(token: string) {
+	const now = new Date();
+
 	const tokenParts = token.split('.');
 	if (tokenParts.length != 2) {
 		return null;
@@ -83,26 +92,31 @@ export async function validateSessionToken(token: string) {
 	if (!session) return null;
 
 	const tokenSecretHash = await hashSecret(sessionSecret);
-	const sessionSecretHash = await hashSecret(session.secretHash);
-	const validSecret = constantTimeEqual(tokenSecretHash, sessionSecretHash);
-	if (!validSecret) {
+	const isValidSecret = constantTimeEqual(tokenSecretHash, session.secretHash);
+	if (!isValidSecret) {
 		return null;
+	}
+
+	if (
+		now.getTime() - session.lastVerifiedAt.getTime() >=
+		activityCheckIntervalSeconds * 1000
+	) {
+		session.lastVerifiedAt = now;
+		const updatedTime = Math.floor(session.lastVerifiedAt.getTime() / 1000);
+		await updateSession(sessionId, new Date(updatedTime));
 	}
 
 	return session;
 }
 
-const sessionExpiresInSeconds = 60 * 60 * 24; // 1 day
-
 async function getSession(sessionId: string) {
 	const now = new Date();
-
 	const session = await selectSession(sessionId);
 
-	// Check expiration
+	// Inactivity timeout
 	if (
-		now.getTime() - session.createdAt.getTime() >=
-		sessionExpiresInSeconds * 1000
+		now.getTime() - session.lastVerifiedAt.getTime() >=
+		inactivityTimeoutSeconds * 1000
 	) {
 		await deleteSession(sessionId);
 		return null;
@@ -110,6 +124,16 @@ async function getSession(sessionId: string) {
 
 	return session;
 }
+
+export const getCurrentSession = cache(async () => {
+	const cookieStore = await cookies();
+	const token = cookieStore.get(SESSION_TOKEN_COOKIE)?.value ?? null;
+	if (token === null) {
+		return null;
+	}
+	const result = await validateSessionToken(token);
+	return result;
+});
 
 async function deleteSession(sessionId: string): Promise<void> {
 	await deleteSessionFromDb(sessionId);
