@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db, InsertOAuthAccount, InsertSession, InsertUser } from '../postgres';
 import { oauthAccounts, sessions, users } from '../postgres/schema/auth';
 import { baseSongs, clubs, usersToClubs } from '../postgres/schema/tables';
@@ -89,15 +89,31 @@ export const deleteSession = async (sessionId: string) => {
 	await db.delete(sessions).where(eq(sessions.id, sessionId));
 };
 
-export const getUserFromSpotifyId = async (spotifyId: string) => {
+export const getUserByEmail = async (email: string) => {
 	const result = await db
-		.select({ user: users })
+		.select()
 		.from(users)
-		.innerJoin(oauthAccounts, eq(users.id, oauthAccounts.userId))
-		.where(eq(oauthAccounts.providerUserId, spotifyId))
+		.where(eq(users.email, email))
 		.limit(1);
 
-	return result.length > 0 ? result[0].user : null;
+	return result.length > 0 ? result[0] : null;
+};
+
+export const addOAuthAccount = async (newAccount: InsertOAuthAccount) => {
+	const accountExists = await db
+		.select()
+		.from(oauthAccounts)
+		.where(
+			and(
+				eq(oauthAccounts.provider, newAccount.provider),
+				eq(oauthAccounts.userId, newAccount.userId)
+			)
+		);
+	if (accountExists.length > 0) return accountExists[0];
+
+	const result = await db.insert(oauthAccounts).values(newAccount).returning();
+
+	return result.length > 0 ? result[0] : null;
 };
 
 export const insertUser = async (

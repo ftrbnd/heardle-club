@@ -1,22 +1,13 @@
-import { createAuthorizationURL } from '@/app/login/[provider]/_spotify';
-import { OAuthProviders } from '@/lib/auth/session';
+import { createAuthorizationURL } from '@/app/login/[provider]/_handlers';
 
 export async function GET(
 	_request: Request,
-	{ params }: { params: Promise<{ provider: OAuthProviders }> }
+	{ params }: { params: Promise<{ provider: string }> }
 ): Promise<Response> {
 	const { provider } = await params;
 
-	switch (provider) {
-		case 'spotify':
-			return createAuthorizationURL();
-		case 'discord':
-		case 'reddit':
-		case 'twitter':
-			return new Response(`${provider} login not yet implemented`, {
-				status: 501,
-			});
-		default:
-			return new Response('Provider not supported', { status: 400 });
-	}
+	if (provider !== 'spotify' && provider !== 'discord')
+		return new Response('Provider not supported', { status: 400 });
+
+	return createAuthorizationURL(provider);
 }

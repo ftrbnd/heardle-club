@@ -14,7 +14,6 @@ interface SessionWithToken extends InsertSession {
 	token: string;
 }
 
-export type OAuthProviders = 'spotify' | 'discord' | 'reddit' | 'twitter';
 const inactivityTimeoutSeconds = 60 * 60 * 24 * 10; // 10 days
 const activityCheckIntervalSeconds = 60 * 60; // 1 hour
 const SESSION_TOKEN_COOKIE = 'session_token' as const;

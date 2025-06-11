@@ -3,20 +3,27 @@ import {
 	generateSecureRandomString,
 	setSessionTokenCookie,
 } from '@/lib/auth/session';
-import { spotify } from '@/lib/auth/spotify';
-import { insertUser, getUserFromSpotifyId } from '@repo/database/api';
+import {
+	getAuthorizationURL,
+	getTokens,
+	OAuthProvider,
+	providerCookies,
+	providerEndpoints,
+} from '@/lib/auth/providers';
+import {
+	insertUser,
+	getUserByEmail,
+	addOAuthAccount,
+} from '@repo/database/api';
 import { generateState, OAuth2Tokens } from 'arctic';
 import { cookies } from 'next/headers';
 
-const STATE_COOKIE = 'spotify_oauth_state' as const;
-
-export async function createAuthorizationURL() {
+export async function createAuthorizationURL(provider: OAuthProvider) {
 	const state = generateState();
-	const scopes: string[] = ['user-read-private', 'user-read-email'];
-	const url = spotify.createAuthorizationURL(state, null, scopes);
+	const url = getAuthorizationURL(provider, state);
 
 	const cookieStore = await cookies();
-	cookieStore.set(STATE_COOKIE, state, {
+	cookieStore.set(providerCookies.get(provider)!, state, {
 		path: '/',
 		secure: process.env.NODE_ENV === 'production',
 		httpOnly: true,
@@ -32,12 +39,16 @@ export async function createAuthorizationURL() {
 	});
 }
 
-export async function validateCallback(request: Request) {
+export async function validateCallback(
+	request: Request,
+	provider: OAuthProvider
+) {
 	const url = new URL(request.url);
 	const code = url.searchParams.get('code');
 	const state = url.searchParams.get('state');
 	const cookieStore = await cookies();
-	const storedState = cookieStore.get(STATE_COOKIE)?.value ?? null;
+	const storedState =
+		cookieStore.get(providerCookies.get(provider)!)?.value ?? null;
 
 	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
@@ -52,7 +63,7 @@ export async function validateCallback(request: Request) {
 
 	let tokens: OAuth2Tokens;
 	try {
-		tokens = await spotify.validateAuthorizationCode(code, null);
+		tokens = await getTokens(provider, code, null);
 	} catch {
 		// Invalid code or client credentials
 		return new Response(null, {
@@ -60,16 +71,22 @@ export async function validateCallback(request: Request) {
 		});
 	}
 
-	const spotifyUserResponse = await fetch('https://api.spotify.com/v1/me', {
+	const providerUserResponse = await fetch(providerEndpoints.get(provider)!, {
 		headers: {
 			Authorization: `Bearer ${tokens.accessToken()}`,
 		},
 	});
-	const spotifyUser = await spotifyUserResponse.json();
+	const providerUserDetails = await providerUserResponse.json();
 
-	const existingUser = await getUserFromSpotifyId(spotifyUser.id);
+	const existingUser = await getUserByEmail(providerUserDetails.email);
 	if (existingUser) {
 		const session = await createSession(existingUser.id);
+		await addOAuthAccount({
+			id: generateSecureRandomString(),
+			provider,
+			providerUserId: providerUserDetails.id,
+			userId: existingUser.id,
+		});
 		await setSessionTokenCookie(session.token, session.lastVerifiedAt);
 
 		return new Response(null, {
@@ -84,12 +101,12 @@ export async function validateCallback(request: Request) {
 	const { user } = await insertUser(
 		{
 			id: userId,
-			email: spotifyUser.email,
+			email: providerUserDetails.email,
 		},
 		{
 			id: generateSecureRandomString(),
-			provider: 'spotify',
-			providerUserId: spotifyUser.id,
+			provider,
+			providerUserId: providerUserDetails.id,
 			userId,
 		}
 	);
