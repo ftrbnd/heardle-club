@@ -78,6 +78,11 @@ export async function setSessionTokenCookie(
 	});
 }
 
+export async function deleteSessionTokenCookie() {
+	const cookieStore = await cookies();
+	cookieStore.delete(SESSION_TOKEN_COOKIE);
+}
+
 export async function validateSessionToken(token: string) {
 	const now = new Date();
 
@@ -135,7 +140,7 @@ export const getCurrentSession = cache(async () => {
 	return result;
 });
 
-async function deleteSession(sessionId: string): Promise<void> {
+export async function deleteSession(sessionId: string): Promise<void> {
 	await deleteSessionFromDb(sessionId);
 }
 

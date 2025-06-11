@@ -1,7 +1,26 @@
 import Link from 'next/link';
 import { protocol, rootDomain } from '@/lib/utils';
 import { getAllSubdomains } from '@/lib/subdomains';
-import { getCurrentSession } from '@/lib/auth/session';
+import {
+	deleteSession,
+	deleteSessionTokenCookie,
+	getCurrentSession,
+} from '@/lib/auth/session';
+import { redirect } from 'next/navigation';
+
+async function logout() {
+	'use server';
+	const session = await getCurrentSession();
+	if (!session) {
+		return {
+			error: 'Unauthorized',
+		};
+	}
+
+	await deleteSession(session.id);
+	await deleteSessionTokenCookie();
+	return redirect('/login');
+}
 
 export default async function HomePage() {
 	const subdomains = await getAllSubdomains();
@@ -14,7 +33,10 @@ export default async function HomePage() {
 					<h1 className='text-4xl font-bold tracking-tight'>{rootDomain}</h1>
 					<p className='mt-3 text-lg'>Create your own Club</p>
 					{session ? (
-						<p>Session ID: {session.id}</p>
+						<div>
+							<p>Session ID: {session.id}</p>
+							<button onClick={logout}>Log out</button>
+						</div>
 					) : (
 						<Link href='/login'>Log in</Link>
 					)}

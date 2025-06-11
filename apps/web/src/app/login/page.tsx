@@ -10,6 +10,9 @@ export default async function Page() {
 		<>
 			<h1>Sign in</h1>
 			<Link href='/login/spotify'>Sign in with Spotify</Link>
+			<Link href='/login/discord'>Sign in with Discord</Link>
+			<Link href='/login/reddit'>Sign in with Reddit</Link>
+			<Link href='/login/twitter'>Sign in with Twitter</Link>
 		</>
 	);
 }
