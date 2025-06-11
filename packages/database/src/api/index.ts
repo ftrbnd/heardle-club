@@ -115,3 +115,13 @@ export const insertUser = async (
 		account: accountResult[0],
 	};
 };
+
+export const updateSession = async (
+	sessionId: string,
+	lastVerifiedAt: Date
+) => {
+	await db
+		.update(sessions)
+		.set({ lastVerifiedAt })
+		.where(eq(sessions.id, sessionId));
+};

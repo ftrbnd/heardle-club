@@ -1,5 +1,11 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, timestamp, varchar, text } from 'drizzle-orm/pg-core';
+import {
+	pgTable,
+	timestamp,
+	varchar,
+	text,
+	customType,
+} from 'drizzle-orm/pg-core';
 import { timestamps } from '../schema.helpers';
 import { usersToClubs } from './tables';
 
@@ -28,14 +34,20 @@ export const oauthAccountsRelations = relations(oauthAccounts, ({ one }) => ({
 	}),
 }));
 
+const binary = customType<{
+	data: Uint8Array;
+	default: false;
+}>({
+	dataType() {
+		return 'bytea';
+	},
+});
+
 export const sessions = pgTable('sessions', {
 	id: text().primaryKey(),
-	secretHash: text().notNull(),
+	secretHash: binary().notNull(),
 	userId: text().notNull(),
-	expiresAt: timestamp({
-		withTimezone: true,
-		mode: 'date',
-	}).notNull(),
+	lastVerifiedAt: timestamp().notNull(),
 	...timestamps,
 });
 export const sessionsRelations = relations(sessions, ({ one }) => ({
