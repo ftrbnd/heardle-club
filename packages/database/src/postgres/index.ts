@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/neon-http';
 import * as auth from './schema/auth';
 import * as tables from './schema/tables';
