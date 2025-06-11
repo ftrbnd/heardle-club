@@ -3,9 +3,9 @@ import { OAuthProviders } from '@/lib/auth/session';
 
 export async function GET(
 	request: Request,
-	{ params }: { params: { provider: OAuthProviders } }
+	{ params }: { params: Promise<{ provider: OAuthProviders }> }
 ): Promise<Response> {
-	const { provider } = params;
+	const { provider } = await params;
 
 	switch (provider) {
 		case 'spotify':

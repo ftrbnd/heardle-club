@@ -8,13 +8,15 @@ import { insertUser, getUserFromSpotifyId } from '@repo/database/api';
 import { generateState, OAuth2Tokens } from 'arctic';
 import { cookies } from 'next/headers';
 
+const STATE_COOKIE = 'spotify_oauth_state' as const;
+
 export async function createAuthorizationURL() {
 	const state = generateState();
-	const scopes: string[] = [];
+	const scopes: string[] = ['user-read-private', 'user-read-email'];
 	const url = spotify.createAuthorizationURL(state, null, scopes);
 
 	const cookieStore = await cookies();
-	cookieStore.set('spotify_oauth_state', state, {
+	cookieStore.set(STATE_COOKIE, state, {
 		path: '/',
 		secure: process.env.NODE_ENV === 'production',
 		httpOnly: true,
@@ -35,7 +37,8 @@ export async function validateCallback(request: Request) {
 	const code = url.searchParams.get('code');
 	const state = url.searchParams.get('state');
 	const cookieStore = await cookies();
-	const storedState = cookieStore.get('spotify_oauth_state')?.value ?? null;
+	const storedState = cookieStore.get(STATE_COOKIE)?.value ?? null;
+
 	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
 			status: 400,
