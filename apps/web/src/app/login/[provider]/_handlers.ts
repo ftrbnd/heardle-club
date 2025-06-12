@@ -5,10 +5,10 @@ import {
 } from '@/lib/auth/session';
 import {
 	getAuthorizationURL,
+	getProviderCookie,
+	getProviderEndpoint,
 	getTokens,
 	OAuthProvider,
-	providerCookies,
-	providerEndpoints,
 } from '@/lib/auth/providers';
 import {
 	insertUser,
@@ -23,7 +23,7 @@ export async function createAuthorizationURL(provider: OAuthProvider) {
 	const url = getAuthorizationURL(provider, state);
 
 	const cookieStore = await cookies();
-	cookieStore.set(providerCookies.get(provider)!, state, {
+	cookieStore.set(getProviderCookie(provider), state, {
 		path: '/',
 		secure: process.env.NODE_ENV === 'production',
 		httpOnly: true,
@@ -48,7 +48,7 @@ export async function validateCallback(
 	const state = url.searchParams.get('state');
 	const cookieStore = await cookies();
 	const storedState =
-		cookieStore.get(providerCookies.get(provider)!)?.value ?? null;
+		cookieStore.get(getProviderCookie(provider))?.value ?? null;
 
 	if (code === null || state === null || storedState === null) {
 		return new Response(null, {
@@ -71,7 +71,7 @@ export async function validateCallback(
 		});
 	}
 
-	const providerUserResponse = await fetch(providerEndpoints.get(provider)!, {
+	const providerUserResponse = await fetch(getProviderEndpoint(provider), {
 		headers: {
 			Authorization: `Bearer ${tokens.accessToken()}`,
 		},

@@ -14,36 +14,31 @@ export const discord = new Discord(
 	process.env.DISCORD_REDIRECT_URI!
 );
 
-const providerScopes = new Map<OAuthProvider, string[]>([
-	['spotify', ['user-read-private', 'user-read-email']],
-	['discord', ['identify', 'email']],
-]);
+const providerConfigs = {
+	spotify: {
+		client: spotify,
+		scopes: ['user-read-private', 'user-read-email'],
+		cookie: 'SPOTIFY_OAUTH_STATE',
+		endpoint: 'https://api.spotify.com/v1/me',
+	},
+	discord: {
+		client: discord,
+		scopes: ['identify', 'email'],
+		cookie: 'DISCORD_OAUTH_STATE',
+		endpoint: 'https://discord.com/api/users/@me',
+	},
+} as const;
 
-export const providerCookies = new Map<OAuthProvider, string>([
-	['spotify', 'SPOTIFY_OAUTH_STATE'],
-	['discord', 'DISCORD_OAUTH_STATE'],
-]);
-
-export const providerEndpoints = new Map<OAuthProvider, string>([
-	['spotify', 'https://api.spotify.com/v1/me'],
-	['discord', 'https://discord.com/api/users/@me'],
-]);
+export const getProviderScopes = (provider: OAuthProvider) =>
+	providerConfigs[provider].scopes;
+export const getProviderCookie = (provider: OAuthProvider) =>
+	providerConfigs[provider].cookie;
+export const getProviderEndpoint = (provider: OAuthProvider) =>
+	providerConfigs[provider].endpoint;
 
 export const getAuthorizationURL = (provider: OAuthProvider, state: string) => {
-	switch (provider) {
-		case 'spotify':
-			return spotify.createAuthorizationURL(
-				state,
-				null,
-				providerScopes.get('spotify') ?? []
-			);
-		case 'discord':
-			return discord.createAuthorizationURL(
-				state,
-				null,
-				providerScopes.get('discord') ?? []
-			);
-	}
+	const config = providerConfigs[provider];
+	return config.client.createAuthorizationURL(state, null, [...config.scopes]);
 };
 
 export const getTokens = async (
@@ -51,10 +46,6 @@ export const getTokens = async (
 	code: string,
 	codeVerifier: string | null
 ) => {
-	switch (provider) {
-		case 'spotify':
-			return spotify.validateAuthorizationCode(code, codeVerifier);
-		case 'discord':
-			return discord.validateAuthorizationCode(code, codeVerifier);
-	}
+	const config = providerConfigs[provider];
+	return config.client.validateAuthorizationCode(code, codeVerifier);
 };
