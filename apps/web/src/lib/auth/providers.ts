@@ -14,7 +14,7 @@ export const discord = new Discord(
 	process.env.DISCORD_REDIRECT_URI!
 );
 
-const providerConfigs = {
+export const providerConfigs = {
 	spotify: {
 		client: spotify,
 		scopes: ['user-read-private', 'user-read-email'],
