@@ -47,6 +47,7 @@ export default async function HomePage() {
 					<ul>
 						{subdomains.map(({ subdomain, name }) => (
 							<Link
+								prefetch={false}
 								className='underline'
 								key={subdomain}
 								href={`${protocol}://${subdomain}.${rootDomain}`}>

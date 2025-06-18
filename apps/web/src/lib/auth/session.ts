@@ -106,8 +106,7 @@ export async function validateSessionToken(token: string) {
 		activityCheckIntervalSeconds * 1000
 	) {
 		session.lastVerifiedAt = now;
-		const updatedTime = Math.floor(session.lastVerifiedAt.getTime() / 1000);
-		await updateSession(sessionId, new Date(updatedTime));
+		await updateSession(sessionId, now);
 	}
 
 	return session;
@@ -135,8 +134,8 @@ export const getCurrentSession = cache(async () => {
 	if (token === null) {
 		return null;
 	}
-	const result = await validateSessionToken(token);
-	return result;
+	const session = await validateSessionToken(token);
+	return session;
 });
 
 export async function deleteSession(sessionId: string): Promise<void> {

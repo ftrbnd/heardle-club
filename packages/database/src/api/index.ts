@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { db, InsertOAuthAccount, InsertSession, InsertUser } from '../postgres';
 import { oauthAccounts, sessions, users } from '../postgres/schema/auth';
 import { baseSongs, clubs, usersToClubs } from '../postgres/schema/tables';
@@ -138,6 +138,9 @@ export const updateSession = async (
 ) => {
 	await db
 		.update(sessions)
-		.set({ lastVerifiedAt })
+		.set({
+			lastVerifiedAt,
+			updatedAt: sql`now() AT TIME ZONE 'utc'`,
+		})
 		.where(eq(sessions.id, sessionId));
 };
