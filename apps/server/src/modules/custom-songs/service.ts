@@ -11,13 +11,13 @@ export abstract class CustomSong {
 		startTime,
 		userId,
 		clubId,
-	}: CustomSongModel.createSongBody) {
+	}: CustomSongModel.CreateSongBody) {
 		// TODO: download, upload, respond with song/link
 
 		if (Math.random() < 0.5) {
 			throw status(
 				400,
-				'Invalid song or start time' satisfies CustomSongModel.createSongInvalid
+				'Invalid song or start time' satisfies CustomSongModel.CreateSongInvalid
 			);
 		}
 

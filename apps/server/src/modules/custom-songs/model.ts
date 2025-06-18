@@ -10,15 +10,15 @@ export namespace CustomSongModel {
 	});
 
 	// Define it as TypeScript type
-	export type createSongBody = typeof createSongBody.static;
+	export type CreateSongBody = typeof createSongBody.static;
 
 	// Repeat for other models
 	export const createSongResponse = t.Object({
 		song: t.String(),
 	});
 
-	export type createSongResponse = typeof createSongResponse.static;
+	export type CreateSongResponse = typeof createSongResponse.static;
 
 	export const createSongInvalid = t.Literal('Invalid song or start time');
-	export type createSongInvalid = typeof createSongInvalid.static;
+	export type CreateSongInvalid = typeof createSongInvalid.static;
 }
