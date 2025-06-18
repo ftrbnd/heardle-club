@@ -29,6 +29,9 @@ importers:
       '@repo/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@sinclair/typemap':
+        specifier: ^0.10.0
+        version: 0.10.0(@sinclair/typebox@0.34.35)(valibot@1.1.0(typescript@5.8.2))(zod@3.25.57)
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0
@@ -112,6 +115,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.2
         version: 0.44.2(@neondatabase/serverless@1.0.1)(@types/pg@8.15.2)(@upstash/redis@1.35.0)(kysely@0.28.2)
+      drizzle-zod:
+        specifier: ^0.8.2
+        version: 0.8.2(drizzle-orm@0.44.2(@neondatabase/serverless@1.0.1)(@types/pg@8.15.2)(@upstash/redis@1.35.0)(kysely@0.28.2))(zod@3.25.57)
       zod:
         specifier: ^3.25.57
         version: 3.25.57
@@ -751,6 +757,13 @@ packages:
   '@sinclair/typebox@0.34.35':
     resolution: {integrity: sha512-C6ypdODf2VZkgRT6sFM8E1F8vR+HcffniX0Kp8MsU8PIfrlXbNCBz0jzj17GjdmjTx1OtZzdH8+iALL21UjF5A==}
 
+  '@sinclair/typemap@0.10.0':
+    resolution: {integrity: sha512-+vJNE9gTfstdYx3Db2mFi3EDyOJyJ/DsM2RORpE3FppUxFMzBfVDnBDxSgqQOtTSA5uS40LZJfq//3IG1YRUDw==}
+    peerDependencies:
+      '@sinclair/typebox': ^0.34.30
+      valibot: ^1.0.0
+      zod: ^3.24.1
+
   '@spotify/web-api-ts-sdk@1.2.0':
     resolution: {integrity: sha512-JUaebva3Ohwo5I5tuTqyW/FKGOMbb40YevJMySAOINRxP7qQ/AMjBzfJx0zeO6yS+wAPfQSoGNsZaUggHw8vsA==}
 
@@ -1332,6 +1345,12 @@ packages:
         optional: true
       sqlite3:
         optional: true
+
+  drizzle-zod@0.8.2:
+    resolution: {integrity: sha512-9Do/16OjFFNrQDZgvMtxtDDwKWbFOxUAIwNPKX98SfxrP8H18vhN1BvNXbhelLcdgCE7GEaXDJqBjMExSkhpkA==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: ^3.25.1
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -2447,6 +2466,14 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
+  valibot@1.1.0:
+    resolution: {integrity: sha512-Nk8lX30Qhu+9txPYTwM0cFlWLdPFsFr6LblzqIySfbZph9+BFsAHsNvHOymEviUepeIW6KFHzpX8TKhbptBXXw==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   which-boxed-primitive@1.1.1:
     resolution: {integrity: sha512-TbX3mj8n0odCBFVlY8AxkqcHASw3L60jIuF8jFP78az3C2YhmGvqbHBpAjTRH2/xqYunrJ9g1jSyjCjpoWzIAA==}
     engines: {node: '>= 0.4'}
@@ -2916,8 +2943,13 @@ snapshots:
 
   '@rushstack/eslint-patch@1.11.0': {}
 
-  '@sinclair/typebox@0.34.35':
-    optional: true
+  '@sinclair/typebox@0.34.35': {}
+
+  '@sinclair/typemap@0.10.0(@sinclair/typebox@0.34.35)(valibot@1.1.0(typescript@5.8.2))(zod@3.25.57)':
+    dependencies:
+      '@sinclair/typebox': 0.34.35
+      valibot: 1.1.0(typescript@5.8.2)
+      zod: 3.25.57
 
   '@spotify/web-api-ts-sdk@1.2.0': {}
 
@@ -3430,6 +3462,11 @@ snapshots:
       '@types/pg': 8.15.2
       '@upstash/redis': 1.35.0
       kysely: 0.28.2
+
+  drizzle-zod@0.8.2(drizzle-orm@0.44.2(@neondatabase/serverless@1.0.1)(@types/pg@8.15.2)(@upstash/redis@1.35.0)(kysely@0.28.2))(zod@3.25.57):
+    dependencies:
+      drizzle-orm: 0.44.2(@neondatabase/serverless@1.0.1)(@types/pg@8.15.2)(@upstash/redis@1.35.0)(kysely@0.28.2)
+      zod: 3.25.57
 
   dunder-proto@1.0.1:
     dependencies:
@@ -4817,6 +4854,10 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  valibot@1.1.0(typescript@5.8.2):
+    optionalDependencies:
+      typescript: 5.8.2
 
   which-boxed-primitive@1.1.1:
     dependencies:
