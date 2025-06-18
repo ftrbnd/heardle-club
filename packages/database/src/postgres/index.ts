@@ -12,3 +12,4 @@ export const schema = {
 };
 
 export * from './schema.types';
+export * from './schema.zod';

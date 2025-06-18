@@ -1,5 +1,11 @@
 import { and, eq, sql } from 'drizzle-orm';
-import { db, InsertOAuthAccount, InsertSession, InsertUser } from '../postgres';
+import {
+	db,
+	InsertClub,
+	InsertOAuthAccount,
+	InsertSession,
+	InsertUser,
+} from '../postgres';
 import { oauthAccounts, sessions, users } from '../postgres/schema/auth';
 import { baseSongs, clubs, usersToClubs } from '../postgres/schema/tables';
 import { redis } from '../redis';
@@ -8,6 +14,12 @@ import {
 	dailySongSchema,
 	heardleSongSchema,
 } from '../redis/schema';
+
+export const insertClub = async (newClub: InsertClub) => {
+	const result = await db.insert(clubs).values(newClub).returning();
+
+	return result[0];
+};
 
 export const getClubs = async () => {
 	const allClubs = await db.select().from(clubs);
