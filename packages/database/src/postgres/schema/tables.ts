@@ -1,4 +1,5 @@
 import {
+	index,
 	integer,
 	pgTable,
 	primaryKey,
@@ -6,16 +7,28 @@ import {
 	varchar,
 } from 'drizzle-orm/pg-core';
 import { timestamps } from '../schema.helpers';
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { users } from './auth';
 
-export const clubs = pgTable('clubs', {
-	id: text().primaryKey(),
-	subdomain: varchar({ length: 10 }).unique().notNull(),
-	displayName: varchar({ length: 50 }).notNull(),
-	heardleDay: integer().notNull().default(0),
-	...timestamps,
-});
+export const clubs = pgTable(
+	'clubs',
+	{
+		id: text().primaryKey(),
+		subdomain: varchar({ length: 10 }).unique().notNull(),
+		displayName: varchar({ length: 50 }).notNull(),
+		heardleDay: integer().notNull().default(0),
+		...timestamps,
+	},
+	(table) => [
+		index('search_index').using(
+			'gin',
+			sql`(
+				setweight(to_tsvector('english', ${table.displayName}), 'A') ||
+				setweight(to_tsvector('english', ${table.subdomain}), 'B')
+			)`
+		),
+	]
+);
 
 export const clubsRelations = relations(clubs, ({ many }) => ({
 	songs: many(baseSongs),

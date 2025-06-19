@@ -16,10 +16,14 @@
 			"dependsOn": ["^check-types"]
 		},
 		"dev": {
-			"dependsOn": ["db:push"],
+			"dependsOn": ["db:seed"],
 			"cache": false,
 			"persistent": true,
 			"interactive": true
+		},
+		"db:seed": {
+			"dependsOn": ["db:push"],
+			"cache": false
 		},
 		"db:push": {
 			"dependsOn": ["db:generate"],
@@ -31,9 +35,6 @@
 		"db:migrate": {
 			"cache": false,
 			"persistent": true
-		},
-		"db:seed": {
-			"cache": true
 		}
 	}
 }

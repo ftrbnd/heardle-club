@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '../postgres';
 import { InsertClub } from '../postgres/schema.types';
 import { users } from '../postgres/schema/auth';
@@ -10,10 +10,14 @@ export const insertClub = async (newClub: InsertClub) => {
 	return result[0];
 };
 
-export const getClubs = async () => {
-	const allClubs = await db.select().from(clubs);
+export const searchClubs = async (query: string) => {
+	const result = await db.select().from(clubs).where(sql`(
+			setweight(to_tsvector('english', ${clubs.displayName}), 'A') ||
+			setweight(to_tsvector('english', ${clubs.subdomain}), 'B'))
+			@@ to_tsquery('english', ${query}
+		  )`);
 
-	return allClubs;
+	return result;
 };
 
 export const getUsersFromClub = async (clubId: string) => {

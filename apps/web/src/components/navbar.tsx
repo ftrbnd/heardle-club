@@ -1,3 +1,5 @@
+import { SearchClub } from '@/components/clubs/search';
+
 export function Navbar() {
 	return (
 		<nav>
@@ -6,7 +8,9 @@ export function Navbar() {
 				<li>About</li>
 				<li>Rules</li>
 				<li>Create your own!</li>
-				<li>Search</li>
+				<li>
+					<SearchClub />
+				</li>
 				<li>Account</li>
 			</ul>
 		</nav>
