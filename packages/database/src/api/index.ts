@@ -88,13 +88,13 @@ export const insertSession = async (newSession: InsertSession) => {
 };
 
 export const selectSession = async (sessionId: string) => {
-	const session = await db
+	const result = await db
 		.select()
 		.from(sessions)
 		.where(eq(sessions.id, sessionId))
 		.limit(1);
 
-	return session[0];
+	return result.length > 0 ? result[0] : null;
 };
 
 export const deleteSession = async (sessionId: string) => {

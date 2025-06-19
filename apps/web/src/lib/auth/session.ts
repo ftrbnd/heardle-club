@@ -115,6 +115,7 @@ export async function validateSessionToken(token: string) {
 async function getSession(sessionId: string) {
 	const now = new Date();
 	const session = await selectSession(sessionId);
+	if (!session) return null;
 
 	// Inactivity timeout
 	if (
