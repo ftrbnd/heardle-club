@@ -6,7 +6,8 @@
 		"dev": "tsc --watch",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "drizzle-kit migrate"
+		"db:migrate": "drizzle-kit migrate",
+		"db:seed": "tsx ./src/postgres/scripts/seed.ts"
 	},
 	"exports": {
 		"./postgres": {
@@ -32,6 +33,7 @@
 		"@upstash/redis": "^1.35.0",
 		"dotenv": "^16.5.0",
 		"drizzle-orm": "^0.44.2",
+		"drizzle-seed": "^0.3.1",
 		"drizzle-zod": "^0.8.2",
 		"zod": "^3.25.57"
 	}
