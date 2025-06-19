@@ -25,3 +25,26 @@ export const getUsersFromClub = async (clubId: string) => {
 
 	return clubUsers;
 };
+
+export const getTrendingClubs = async () => {
+	const result = await db.select().from(clubs).limit(10);
+	result.sort(
+		(a, b) =>
+			(b.updatedAt ?? b.createdAt).getTime() -
+			(a.updatedAt ?? a.createdAt).getTime()
+	);
+
+	return result;
+};
+
+export const getJoinedClubs = async (userId?: string) => {
+	if (!userId) return [];
+
+	const result = await db
+		.select()
+		.from(usersToClubs)
+		.leftJoin(clubs, eq(usersToClubs.clubId, clubs.id))
+		.where(eq(usersToClubs.userId, userId));
+
+	return result;
+};
