@@ -1,0 +1,1 @@
+ALTER TABLE "clubs" ADD COLUMN "artist_id" text NOT NULL;
