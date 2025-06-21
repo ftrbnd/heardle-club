@@ -2,6 +2,7 @@
 
 import { searchArtist } from '@/actions/spotify';
 import { Artist } from '@spotify/web-api-ts-sdk';
+import Image from 'next/image';
 import { FormEvent, useDeferredValue, useState } from 'react';
 
 const MODAL_ID = 'create_club_modal';
@@ -41,14 +42,34 @@ export function CreateClub() {
 						<input
 							type='text'
 							placeholder='Enter an artist or band'
-							className='input input-bordered w-24 md:w-full'
+							className='input input-bordered w-full'
 							value={query}
 							onChange={(e) => setQuery(e.target.value)}
 						/>
 					</form>
-					{results.map((artist) => (
-						<p key={artist.id}>{artist.name}</p>
-					))}
+					<div className='carousel carousel-vertical rounded-box h-96 flex flex-col gap-2'>
+						{results.map((artist) => (
+							<div
+								key={artist.id}
+								className='carousel-item card bg-base-100 image-full w-full shadow-sm'>
+								<figure>
+									<Image
+										src={
+											artist.images.find((img) => img)?.url ??
+											'/artist_placeholder.jpg'
+										}
+										alt={artist.name}
+										height={50}
+										width={50}
+										className='w-full max-h-18'
+									/>
+								</figure>
+								<div className='card-body'>
+									<p className='font-bold'>{artist.name}</p>
+								</div>
+							</div>
+						))}
+					</div>
 				</div>
 				<form
 					method='dialog'

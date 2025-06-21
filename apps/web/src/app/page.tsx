@@ -9,7 +9,7 @@ export default async function HomePage() {
 	const joinedClubs = joined.map((j) => j.clubs).filter((c) => c !== null);
 
 	return (
-		<div className='py-8 flex flex-col gap-8 items-center'>
+		<div className='py-8 px-4 flex flex-col gap-8 items-center'>
 			<ClubsCollection
 				clubs={trending}
 				title='Trending'

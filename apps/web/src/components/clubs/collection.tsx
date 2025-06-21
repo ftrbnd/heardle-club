@@ -13,10 +13,10 @@ export function ClubsCollection({
 	session,
 }: ClubsCollectionParams) {
 	return (
-		<section className='flex flex-col gap-2'>
+		<section className='flex flex-col gap-2 w-full'>
 			<h3 className='text-3xl'>{title}</h3>
 			{title === 'Your Clubs' && !session ? (
-				<div className='card bg-base-100 w-96 shadow-sm'>
+				<div className='card bg-base-100 w-96 shadow-sm self-center'>
 					<div className='card-body'>
 						<p>Create an account to save your favorite clubs.</p>
 						<div className='card-actions justify-end'>
@@ -25,7 +25,7 @@ export function ClubsCollection({
 					</div>
 				</div>
 			) : clubs.length === 0 ? (
-				<div className='card bg-base-100 w-96 shadow-sm'>
+				<div className='card bg-base-100 w-96 shadow-sm self-center'>
 					<div className='card-body'>
 						<h2 className='card-title'>You haven&apos;t joined a club yet.</h2>
 						<p>
