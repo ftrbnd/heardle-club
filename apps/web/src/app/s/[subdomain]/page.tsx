@@ -1,8 +1,7 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 import { protocol, rootDomain } from '@/lib/utils';
-import { getSubdomainName } from '@/lib/subdomains';
+import { getClubBySubdomain } from '@repo/database/api';
+import Link from 'next/link';
 
 export async function generateMetadata({
 	params,
@@ -10,17 +9,17 @@ export async function generateMetadata({
 	params: Promise<{ subdomain: string }>;
 }): Promise<Metadata> {
 	const { subdomain } = await params;
-	const name = await getSubdomainName(subdomain);
+	const club = await getClubBySubdomain(subdomain);
 
-	if (!name) {
+	if (!club) {
 		return {
 			title: rootDomain,
 		};
 	}
 
 	return {
-		title: `${name} Club`,
-		description: `Heardle Club for ${name}`,
+		title: `${club.displayName} Club`,
+		description: `Heardle Club for ${club.displayName}`,
 	};
 }
 
@@ -30,33 +29,39 @@ export default async function SubdomainPage({
 	params: Promise<{ subdomain: string }>;
 }) {
 	const { subdomain } = await params;
-	const subdomainData = await getSubdomainName(subdomain);
+	const club = await getClubBySubdomain(subdomain);
 
-	if (!subdomainData) {
-		notFound();
+	if (!club) {
+		return (
+			<div className='flex-1 flex flex-col items-center justify-center w-full'>
+				<div
+					role='alert'
+					className='alert alert-error px-16'>
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						className='h-6 w-6 shrink-0 stroke-current'
+						fill='none'
+						viewBox='0 0 24 24'>
+						<path
+							strokeLinecap='round'
+							strokeLinejoin='round'
+							strokeWidth='2'
+							d='M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'
+						/>
+					</svg>
+					<Link
+						href={`${protocol}://${rootDomain}`}
+						className='link'>
+						This club does not exist.
+					</Link>
+				</div>
+			</div>
+		);
 	}
 
 	return (
-		<div className='flex min-h-screen flex-col bg-gradient-to-b from-blue-50 to-white p-4'>
-			<div className='absolute top-4 right-4'>
-				<Link
-					href={`${protocol}://${rootDomain}`}
-					className='text-sm text-gray-500 hover:text-gray-700 transition-colors'>
-					{rootDomain}
-				</Link>
-			</div>
-
-			<div className='flex-1 flex items-center justify-center'>
-				<div className='text-center'>
-					<div className='text-9xl mb-6'>{subdomainData}</div>
-					<h1 className='text-4xl font-bold tracking-tight text-gray-900'>
-						Welcome to {subdomain}.{rootDomain}
-					</h1>
-					<p className='mt-3 text-lg text-gray-600'>
-						This is your custom subdomain page
-					</p>
-				</div>
-			</div>
+		<div className='flex-1'>
+			<p className='text-3xl'>{club.displayName}</p>
 		</div>
 	);
 }
