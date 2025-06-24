@@ -36,6 +36,9 @@ async function main() {
 					minValue: 0,
 					isUnique: false,
 				}),
+				imageURL: funcs.default({
+					defaultValue: undefined,
+				}),
 			},
 		},
 	}));

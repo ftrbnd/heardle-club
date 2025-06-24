@@ -18,6 +18,7 @@ export const clubs = pgTable(
 		subdomain: varchar({ length: 10 }).unique().notNull(),
 		displayName: varchar({ length: 50 }).notNull(),
 		heardleDay: integer().notNull().default(0),
+		imageURL: text(),
 		...timestamps,
 	},
 	(table) => [
