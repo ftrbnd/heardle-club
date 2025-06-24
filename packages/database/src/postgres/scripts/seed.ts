@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { reset, seed } from 'drizzle-seed';
 import { db, schema } from '..';
 import { clubs } from '../schema/tables';
+import { redis } from '../../redis';
 
 async function main() {
 	await reset(db, schema);
@@ -42,7 +43,27 @@ async function main() {
 			},
 		},
 	}));
-	console.log('✔️  Seeded database');
+	console.log('✔️  Seeded POSTGRES database');
+
+	const result = await db
+		.select({
+			subdomain: clubs.subdomain,
+			artistId: clubs.artistId,
+			displayName: clubs.displayName,
+		})
+		.from(clubs);
+
+	const p = redis.multi();
+
+	for (const { subdomain, artistId, displayName } of result) {
+		p.set(`subdomain:${subdomain}`, {
+			artistId,
+			displayName,
+		});
+	}
+
+	await p.exec();
+	console.log('✔️  Seeded REDIS database');
 }
 
 main();
