@@ -1,12 +1,15 @@
 import { CreateClub } from '@/components/clubs/create-club';
 import { FindClub } from '@/components/clubs/find-club';
+import Link from 'next/link';
 
 export function Navbar() {
 	return (
-		<nav className='navbar bg-base-100 shadow-sm'>
-			<div className='flex-1'>
+		<nav className='navbar bg-base-100 shadow-sm sticky top-0 z-50'>
+			<Link
+				href='/'
+				className='flex-1'>
 				<h1 className='btn btn-ghost text-xl'>Heardle Club</h1>
-			</div>
+			</Link>
 			<div className='flex gap-2'>
 				<FindClub />
 				<CreateClub />

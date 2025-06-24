@@ -13,7 +13,7 @@ export function ClubsCollection({
 	session,
 }: ClubsCollectionParams) {
 	return (
-		<section className='flex flex-col gap-2 w-full'>
+		<section className='flex flex-col gap-2 items-center'>
 			<h3 className='text-3xl'>{title}</h3>
 			{title === 'Your Clubs' && !session ? (
 				<div className='card bg-base-100 w-96 shadow-sm self-center'>

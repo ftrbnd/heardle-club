@@ -26,11 +26,19 @@ export function useSearch<T>({ modalId, searchFn }: UseSearchParams<T>) {
 		modal.showModal();
 	};
 
+	const closeModal = () => {
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
+		if (!modal) return;
+
+		modal.close();
+	};
+
 	return {
 		query,
 		setQuery,
 		results,
 		handleSubmit,
 		openModal,
+		closeModal,
 	};
 }

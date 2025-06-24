@@ -4,6 +4,7 @@ import { searchArtist } from '@/actions/spotify';
 import { SearchModal } from '@/components/search-modal';
 import { useSearch } from '@/hooks/use-search';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const MODAL_ID = 'create_club_modal';
 
@@ -14,6 +15,7 @@ export function CreateClub() {
 		results: artists,
 		handleSubmit,
 		openModal,
+		closeModal,
 	} = useSearch({
 		modalId: MODAL_ID,
 		searchFn: searchArtist,
@@ -31,25 +33,30 @@ export function CreateClub() {
 			openModal={openModal}
 			handleSubmit={handleSubmit}>
 			{artists.map((artist) => (
-				<div
+				<Link
+					onClick={closeModal}
 					key={artist.id}
-					className='carousel-item card bg-base-100 image-full w-full shadow-sm'>
-					<figure>
-						<Image
-							src={
-								artist.images.find((img) => img)?.url ??
-								'/artist_placeholder.jpg'
-							}
-							alt={artist.name}
-							height={50}
-							width={50}
-							className='w-full max-h-18'
-						/>
-					</figure>
-					<div className='card-body'>
-						<p className='font-bold'>{artist.name}</p>
+					href={`/new?artistId=${artist.id}`}
+					prefetch={false}
+					passHref>
+					<div className='hover:cursor-pointer hover:opacity-80 carousel-item card bg-base-100 image-full w-full shadow-sm'>
+						<figure>
+							<Image
+								src={
+									artist.images.find((img) => img)?.url ??
+									'/artist_placeholder.jpg'
+								}
+								alt={artist.name}
+								height={50}
+								width={50}
+								className='w-full max-h-18'
+							/>
+						</figure>
+						<div className='card-body'>
+							<p className='font-bold'>{artist.name}</p>
+						</div>
 					</div>
-				</div>
+				</Link>
 			))}
 		</SearchModal>
 	);
