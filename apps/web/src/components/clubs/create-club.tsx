@@ -8,7 +8,13 @@ import Image from 'next/image';
 const MODAL_ID = 'create_club_modal';
 
 export function CreateClub() {
-	const { query, setQuery, results, handleSubmit, openModal } = useSearch({
+	const {
+		query,
+		setQuery,
+		results: artists,
+		handleSubmit,
+		openModal,
+	} = useSearch({
 		modalId: MODAL_ID,
 		searchFn: searchArtist,
 	});
@@ -19,11 +25,12 @@ export function CreateClub() {
 			query={query}
 			setQuery={setQuery}
 			buttonLabel='Create your own'
+			buttonClassName='btn-primary'
 			modalLabel='Create a club'
 			placeholder='Enter an artist or band'
 			openModal={openModal}
 			handleSubmit={handleSubmit}>
-			{results.map((artist) => (
+			{artists.map((artist) => (
 				<div
 					key={artist.id}
 					className='carousel-item card bg-base-100 image-full w-full shadow-sm'>

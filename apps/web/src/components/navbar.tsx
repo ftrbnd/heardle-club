@@ -1,5 +1,5 @@
 import { CreateClub } from '@/components/clubs/create-club';
-import { SearchClub } from '@/components/clubs/search';
+import { FindClub } from '@/components/clubs/find-club';
 
 export function Navbar() {
 	return (
@@ -8,7 +8,7 @@ export function Navbar() {
 				<h1 className='btn btn-ghost text-xl'>Heardle Club</h1>
 			</div>
 			<div className='flex gap-2'>
-				<SearchClub />
+				<FindClub />
 				<CreateClub />
 				<div className='dropdown dropdown-end'>
 					<div
