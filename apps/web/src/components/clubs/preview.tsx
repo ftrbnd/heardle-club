@@ -13,7 +13,7 @@ export async function ClubPreview({ club }: { club: SelectClub }) {
 			href={href}
 			prefetch={false}
 			passHref>
-			<div className='card bg-base-100 w-96 shadow-sm'>
+			<div className='card bg-base-100 max-w-96 shadow-sm'>
 				<figure>
 					<Image
 						src={
