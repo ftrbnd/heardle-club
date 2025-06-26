@@ -15,7 +15,7 @@ export const clubs = pgTable(
 	{
 		id: text().primaryKey(),
 		artistId: text().notNull(),
-		subdomain: varchar({ length: 10 }).unique().notNull(),
+		subdomain: varchar({ length: 25 }).unique().notNull(),
 		displayName: varchar({ length: 50 }).notNull(),
 		heardleDay: integer().notNull().default(0),
 		imageURL: text(),

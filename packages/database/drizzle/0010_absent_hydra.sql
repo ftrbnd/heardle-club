@@ -1,0 +1,1 @@
+ALTER TABLE "clubs" ALTER COLUMN "subdomain" SET DATA TYPE varchar(25);
