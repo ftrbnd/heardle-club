@@ -1,10 +1,14 @@
-// Service handle business logic, decoupled from Elysia controller
+import { generateState } from 'arctic';
 import type { AuthModel } from './model';
+import { getAuthorizationURL } from '@/modules/auth/providers.config';
 
-// If the class doesn't need to store a property,
-// you may use `abstract class` to avoid class allocation
 export abstract class Auth {
 	static async createAuthorizationURL({
 		provider,
-	}: AuthModel.CreateAuthorizationURLBody) {}
+	}: AuthModel.LoginProviderParams) {
+		const state = generateState();
+		const url = getAuthorizationURL(provider, state);
+
+		return { state, url };
+	}
 }

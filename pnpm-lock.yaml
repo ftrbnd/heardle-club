@@ -35,6 +35,9 @@ importers:
       '@spotify/web-api-ts-sdk':
         specifier: ^1.2.0
         version: 1.2.0
+      arctic:
+        specifier: ^3.7.0
+        version: 3.7.0
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0

@@ -1,22 +1,21 @@
+import { oauthProvider } from '@/modules/auth/providers.config';
 import { t } from 'elysia';
 
-enum OAuthProvider {
-	spotify,
-	discord,
-}
-
 export namespace AuthModel {
-	export const createAuthorizationURLBody = t.Object({
-		provider: t.Enum(OAuthProvider),
+	export const loginProviderParams = t.Object({
+		provider: oauthProvider,
 	});
+	export type LoginProviderParams = typeof loginProviderParams.static;
 
-	export type CreateAuthorizationURLBody =
-		typeof createAuthorizationURLBody.static;
-
-	export const redirectToAuthorizationURL = t.Object({
-		authorizationURL: t.String(),
+	export const oauthStateCookies = t.Cookie({
+		SPOTIFY_OAUTH_STATE: t.Optional(t.String()),
+		DISCORD_OAUTH_STATE: t.Optional(t.String()),
 	});
+	export type OAuthStateCookies = typeof oauthStateCookies.static;
 
-	export type RedirectToAuthorizationURL =
-		typeof redirectToAuthorizationURL.static;
+	export const redirectResponse = t.Literal('Redirecting to provider');
+	export type RedirectResponse = typeof redirectResponse.static;
+
+	export const invalidProviderCookie = t.Literal('Invalid provider cookie');
+	export type InvalidProviderCookie = typeof invalidProviderCookie.static;
 }
