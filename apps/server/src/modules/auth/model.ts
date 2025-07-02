@@ -10,6 +10,7 @@ export namespace AuthModel {
 	export const oauthStateCookies = t.Cookie({
 		SPOTIFY_OAUTH_STATE: t.Optional(t.String()),
 		DISCORD_OAUTH_STATE: t.Optional(t.String()),
+		session_token: t.Optional(t.String()),
 	});
 	export type OAuthStateCookies = typeof oauthStateCookies.static;
 
@@ -18,4 +19,13 @@ export namespace AuthModel {
 
 	export const invalidProviderCookie = t.Literal('Invalid provider cookie');
 	export type InvalidProviderCookie = typeof invalidProviderCookie.static;
+
+	export const loginCallbackQuery = t.Object({
+		code: t.Optional(t.String()),
+		state: t.Optional(t.String()),
+	});
+	export type LoginCallbackQuery = typeof loginCallbackQuery.static;
+
+	export const unauthorized = t.Literal('Unauthorized');
+	export type Unauthorized = typeof unauthorized.static;
 }
