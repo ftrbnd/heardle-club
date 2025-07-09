@@ -42,9 +42,12 @@ export const auth = new Elysia({ prefix: '/auth' })
 					process.env.NODE_ENV === 'production' ? 'heardle.club' : undefined,
 			});
 
-			set.headers = { location: url.toString() };
-			const response = redirect(url.href, 302);
-			return new Response(response.body, response);
+			return new Response(null, {
+				status: 302,
+				headers: {
+					location: url.href,
+				},
+			});
 		},
 		{
 			params: AuthModel.loginProviderParams,
@@ -57,16 +60,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 	)
 	.get(
 		'/login/:provider/callback',
-		async ({
-			params: { provider },
-			query: { code, state },
-			set,
-			redirect,
-			cookie,
-		}) => {
-			const indexOfComma = state?.indexOf(',');
-			const trimmedState = state?.slice(0, indexOfComma);
-
+		async ({ params: { provider }, query: { code, state }, cookie }) => {
 			const storedState = (
 				provider === 'spotify'
 					? cookie.SPOTIFY_OAUTH_STATE
@@ -75,7 +69,6 @@ export const auth = new Elysia({ prefix: '/auth' })
 						: null
 			)?.value;
 
-			state = trimmedState ?? state;
 			if (!code || !state || !storedState) {
 				return status(401, 'Unauthorized');
 			}
@@ -107,9 +100,12 @@ export const auth = new Elysia({ prefix: '/auth' })
 					process.env.NODE_ENV === 'production' ? 'heardle.club' : undefined,
 			});
 
-			set.headers = { location: '/' };
-			const response = redirect('/', 302);
-			return new Response(response.body, response);
+			return new Response(null, {
+				status: 302,
+				headers: {
+					location: '/',
+				},
+			});
 		},
 		{
 			params: AuthModel.loginProviderParams,

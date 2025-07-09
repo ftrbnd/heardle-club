@@ -30,8 +30,9 @@ export abstract class Auth {
 
 	static async getProviderUserDetails(provider: OAuthProvider, code: string) {
 		const tokens = await getTokens(provider, code, null);
+		const endpoint = getProviderEndpoint(provider);
 
-		const providerUserResponse = await fetch(getProviderEndpoint(provider), {
+		const providerUserResponse = await fetch(endpoint, {
 			headers: {
 				Authorization: `Bearer ${tokens.accessToken()}`,
 			},
