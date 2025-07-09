@@ -21,8 +21,8 @@ export namespace AuthModel {
 	export type InvalidProviderCookie = typeof invalidProviderCookie.static;
 
 	export const loginCallbackQuery = t.Object({
-		code: t.Optional(t.String()),
-		state: t.Optional(t.String()),
+		code: t.String(),
+		state: t.String(),
 	});
 	export type LoginCallbackQuery = typeof loginCallbackQuery.static;
 

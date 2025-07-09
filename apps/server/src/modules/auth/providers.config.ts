@@ -22,7 +22,7 @@ export const discord = new Discord(
 export const providerConfigs = {
 	spotify: {
 		client: spotify,
-		scopes: ['user-read-private', 'user-read-email'],
+		scopes: [],
 		cookie: 'SPOTIFY_OAUTH_STATE',
 		endpoint: 'https://api.spotify.com/v1/me',
 	},

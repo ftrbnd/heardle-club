@@ -64,6 +64,9 @@ export const auth = new Elysia({ prefix: '/auth' })
 			redirect,
 			cookie,
 		}) => {
+			const indexOfComma = state?.indexOf(',');
+			const trimmedState = state?.slice(0, indexOfComma);
+
 			const storedState = (
 				provider === 'spotify'
 					? cookie.SPOTIFY_OAUTH_STATE
@@ -72,6 +75,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 						: null
 			)?.value;
 
+			state = trimmedState ?? state;
 			if (!code || !state || !storedState) {
 				return status(401, 'Unauthorized');
 			}
