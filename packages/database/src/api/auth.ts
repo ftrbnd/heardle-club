@@ -1,6 +1,6 @@
 import { eq, and, sql } from 'drizzle-orm';
 import { InsertSession, db, InsertOAuthAccount } from '../postgres';
-import { sessions, oauthAccounts } from '../postgres/schema/auth';
+import { sessions, oauthAccounts, users } from '../postgres/schema/auth';
 
 export const insertSession = async (newSession: InsertSession) => {
 	const result = await db.insert(sessions).values(newSession).returning();

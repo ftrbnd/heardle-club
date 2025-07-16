@@ -1,7 +1,13 @@
 import { AuthModel } from '@/modules/auth/model';
 import { Auth } from '@/modules/auth/service';
 import { validateSessionToken } from '@/modules/auth/session';
-import { Elysia, status } from 'elysia';
+import { getUserById } from '@repo/database/api';
+import { Elysia, status, t } from 'elysia';
+
+const CLIENT_URL =
+	process.env.NODE_ENV === 'production'
+		? 'https://heardle.club'
+		: 'http://[::1]:3000';
 
 export const auth = new Elysia({ prefix: '/auth' })
 	.macro({
@@ -16,8 +22,25 @@ export const auth = new Elysia({ prefix: '/auth' })
 		}),
 	})
 	.get(
+		'/me',
+		async ({ headers }) => {
+			const bearerToken = headers.authorization;
+			const token = bearerToken.split(' ')[1];
+
+			const session = await validateSessionToken(token);
+			const user = getUserById(session?.userId);
+
+			return user;
+		},
+		{
+			headers: t.Object({
+				authorization: t.String(),
+			}),
+		}
+	)
+	.get(
 		'/login/:provider',
-		async ({ params: { provider }, cookie, redirect, set }) => {
+		async ({ params: { provider }, cookie }) => {
 			const { state, url } = await Auth.createAuthorizationURL({
 				provider,
 			});
@@ -84,13 +107,14 @@ export const auth = new Elysia({ prefix: '/auth' })
 			const existingUser = await Auth.getExistingUser(
 				providerUserDetails.email
 			);
-			const { sessionExpiresAt } = await Auth.setUserDetails(
+			const { sessionExpiresAt, sessionToken } = await Auth.setUserDetails(
 				provider,
 				existingUser,
 				providerUserDetails
 			);
 
 			cookie.session_token.set({
+				value: sessionToken,
 				httpOnly: true,
 				path: '/',
 				secure: process.env.NODE_ENV === 'production',
@@ -103,7 +127,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 			return new Response(null, {
 				status: 302,
 				headers: {
-					location: '/',
+					location: CLIENT_URL,
 				},
 			});
 		},

@@ -12,6 +12,18 @@ export const getUserByEmail = async (email: string) => {
 	return result.length > 0 ? result[0] : null;
 };
 
+export const getUserById = async (userId?: string) => {
+	if (!userId) return null;
+
+	const result = await db
+		.select()
+		.from(users)
+		.where(eq(users.id, userId))
+		.limit(1);
+
+	return result.length > 0 ? result[0] : null;
+};
+
 export const insertUser = async (
 	newUser: InsertUser,
 	newAccount: InsertOAuthAccount

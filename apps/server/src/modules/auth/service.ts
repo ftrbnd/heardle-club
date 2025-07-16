@@ -64,7 +64,7 @@ export abstract class Auth {
 			session.lastVerifiedAt.getTime() + inactivityTimeoutSeconds * 1000
 		);
 
-		return { sessionExpiresAt: expiresAt };
+		return { sessionExpiresAt: expiresAt, sessionToken: session.token };
 	}
 
 	static async registerNewUser(
@@ -91,7 +91,7 @@ export abstract class Auth {
 			session.lastVerifiedAt.getTime() + inactivityTimeoutSeconds * 1000
 		);
 
-		return { sessionExpiresAt: expiresAt };
+		return { sessionExpiresAt: expiresAt, sessionToken: session.token };
 	}
 
 	static async setUserDetails(
@@ -99,7 +99,7 @@ export abstract class Auth {
 		existingUser: SelectUser | null,
 		providerUserDetails: any
 	) {
-		const { sessionExpiresAt } = existingUser
+		const { sessionExpiresAt, sessionToken } = existingUser
 			? await Auth.updateExistingUser(
 					existingUser,
 					provider,
@@ -111,6 +111,6 @@ export abstract class Auth {
 					providerUserDetails.id
 				);
 
-		return { sessionExpiresAt };
+		return { sessionExpiresAt, sessionToken };
 	}
 }
