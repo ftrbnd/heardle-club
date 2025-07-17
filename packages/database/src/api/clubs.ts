@@ -14,8 +14,8 @@ export const searchClubs = async (query: string) => {
 	const result = await db.select().from(clubs).where(sql`(
 			setweight(to_tsvector('english', ${clubs.displayName}), 'A') ||
 			setweight(to_tsvector('english', ${clubs.subdomain}), 'B'))
-			@@ to_tsquery('english', ${query}
-		  )`);
+			@@ phraseto_tsquery('english', ${query}
+			)`);
 
 	return result;
 };
