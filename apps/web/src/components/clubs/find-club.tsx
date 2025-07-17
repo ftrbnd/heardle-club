@@ -2,6 +2,7 @@
 
 import { searchForClubs } from '@/actions/db';
 import { ClubSearchResult } from '@/components/clubs/club-search-result';
+import { CreateClub } from '@/components/clubs/create-club';
 import { SearchModal } from '@/components/search-modal';
 import { useSearch } from '@/hooks/use-search';
 
@@ -11,6 +12,7 @@ export function FindClub() {
 	const {
 		query,
 		setQuery,
+		dirty,
 		results: clubs,
 		handleSubmit,
 		openModal,
@@ -30,7 +32,12 @@ export function FindClub() {
 			placeholder='Enter an artist or band'
 			openModal={openModal}
 			handleSubmit={handleSubmit}>
-			{clubs.length === 0 && <p className='text-center p-4'>No clubs found.</p>}
+			{dirty && clubs.length === 0 && (
+				<div className='flex flex-col items-center'>
+					<p className='text-center p-4'>No clubs found.</p>
+					<CreateClub />
+				</div>
+			)}
 			{clubs.map((club) => (
 				<ClubSearchResult
 					key={club.id}

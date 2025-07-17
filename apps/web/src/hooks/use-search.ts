@@ -11,12 +11,19 @@ export function useSearch<T>({ modalId, searchFn }: UseSearchParams<T>) {
 	const [query, setQuery] = useState('');
 	const deferredQuery = useDeferredValue(query);
 	const [results, setResults] = useState<T[]>([]);
+	const [dirty, setDirty] = useState(false);
 
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		const res = await searchFn(deferredQuery);
-		setResults(res);
+		if (deferredQuery !== '') {
+			const res = await searchFn(deferredQuery);
+			setResults(res);
+			setDirty(true);
+		} else {
+			setResults([]);
+			setDirty(false);
+		}
 	};
 
 	const openModal = () => {
@@ -36,6 +43,7 @@ export function useSearch<T>({ modalId, searchFn }: UseSearchParams<T>) {
 	return {
 		query,
 		setQuery,
+		dirty,
 		results,
 		handleSubmit,
 		openModal,
