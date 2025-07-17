@@ -1,6 +1,6 @@
 import { AuthModel } from '@/modules/auth/model';
 import { Auth } from '@/modules/auth/service';
-import { validateSessionToken } from '@/modules/auth/session';
+import { deleteSession, validateSessionToken } from '@/modules/auth/session';
 import { getUserById } from '@repo/database/api';
 import { Elysia, status, t } from 'elysia';
 
@@ -28,14 +28,12 @@ export const auth = new Elysia({ prefix: '/auth' })
 			const token = bearerToken.split(' ')[1];
 
 			const session = await validateSessionToken(token);
-			const user = getUserById(session?.userId);
+			const user = await getUserById(session?.userId);
 
-			return user;
+			return { user };
 		},
 		{
-			headers: t.Object({
-				authorization: t.String(),
-			}),
+			headers: AuthModel.authHeaders,
 		}
 	)
 	.get(
@@ -139,6 +137,23 @@ export const auth = new Elysia({ prefix: '/auth' })
 				401: AuthModel.unauthorized,
 			},
 			currentSession: true,
+		}
+	)
+	.get(
+		'/logout',
+		async ({ headers }) => {
+			const bearerToken = headers.authorization;
+			const token = bearerToken.split(' ')[1];
+
+			const session = await validateSessionToken(token);
+			if (session) await deleteSession(session.id);
+
+			return new Response(null, {
+				status: 204,
+			});
+		},
+		{
+			headers: AuthModel.authHeaders,
 		}
 	)
 	.onError(({ error }) => {

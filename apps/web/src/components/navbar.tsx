@@ -1,11 +1,13 @@
+import { getCurrentUser } from '@/actions/auth';
 import { CreateClub } from '@/components/clubs/create-club';
 import { FindClub } from '@/components/clubs/find-club';
 import { protocol, rootDomain } from '@/lib/utils';
 import { SelectClub } from '@repo/database/postgres';
 import Link from 'next/link';
 
-export function Navbar({ club }: { club?: SelectClub | null }) {
+export async function Navbar({ club }: { club?: SelectClub | null }) {
 	const title = club ? club.displayName : 'Heardle Club';
+	const user = await getCurrentUser();
 
 	return (
 		<nav className='navbar bg-base-100 shadow-sm sticky top-0 z-50'>
@@ -48,8 +50,17 @@ export function Navbar({ club }: { club?: SelectClub | null }) {
 							<a>Rules</a>
 						</li>
 						<li>
-							<a>Account</a>
+							{user ? <a>My account</a> : <Link href='/login'>Log in</Link>}
 						</li>
+						{user && (
+							<li>
+								<Link
+									href='/logout'
+									prefetch={false}>
+									Log out
+								</Link>
+							</li>
+						)}
 					</ul>
 				</div>
 			</div>

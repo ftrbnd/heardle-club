@@ -1,21 +1,20 @@
+import { getCurrentUser } from '@/actions/auth';
+import { FindClub } from '@/components/clubs/find-club';
 import { ClubPreview } from '@/components/clubs/preview';
-import { SelectClub, SelectSession } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres';
 
 interface ClubsCollectionParams {
 	title: 'Trending' | 'Your Clubs';
 	clubs: SelectClub[];
-	session: SelectSession | null;
 }
 
-export function ClubsCollection({
-	title,
-	clubs,
-	session,
-}: ClubsCollectionParams) {
+export async function ClubsCollection({ title, clubs }: ClubsCollectionParams) {
+	const user = await getCurrentUser();
+
 	return (
 		<section className='flex flex-col gap-2 items-center'>
 			<h3 className='text-3xl'>{title}</h3>
-			{title === 'Your Clubs' && !session ? (
+			{title === 'Your Clubs' && !user ? (
 				<div className='card bg-base-100 w-96 shadow-sm self-center'>
 					<div className='card-body'>
 						<p>Create an account to save your favorite clubs.</p>
@@ -33,7 +32,7 @@ export function ClubsCollection({
 							are title and actions parts
 						</p>
 						<div className='card-actions justify-end'>
-							<button className='btn btn-primary'>Find a club</button>
+							<FindClub />
 						</div>
 					</div>
 				</div>
