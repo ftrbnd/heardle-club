@@ -1,8 +1,17 @@
 import 'dotenv/config';
 import { reset } from 'drizzle-seed';
-import { db, InsertClub, schema } from '..';
+import { db, InsertClub, InsertUser, schema } from '..';
 import { clubs } from '../schema/tables';
 import { redis } from '../../redis';
+import { users } from '../schema/auth';
+
+const defaultUsers: InsertUser[] = [
+	{
+		id: '001',
+		email: 'giosalas25@gmail.com',
+		displayName: 'giosalad',
+	},
+];
 
 const defaultClubs: InsertClub[] = [
 	{
@@ -10,60 +19,70 @@ const defaultClubs: InsertClub[] = [
 		displayName: 'The Marías',
 		subdomain: 'themarias',
 		id: '001',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '3l0CmX0FuQjFxr8SK7Vqag',
 		displayName: 'Clairo',
 		subdomain: 'clairo',
 		id: '002',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '3l0CmX0FuQjFxr8SK7Vqag',
 		displayName: 'wave to earth',
 		subdomain: 'wavetoearth',
 		id: '003',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '4q3ewBCX7sLwd24euuV69X',
 		displayName: 'Bad Bunny',
 		subdomain: 'badbunny',
 		id: '004',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '3Sz7ZnJQBIHsXLUSo0OQtM',
 		displayName: 'Mac DeMarco',
 		subdomain: 'macdemarco',
 		id: '005',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '3zmfs9cQwzJl575W1ZYXeT',
 		displayName: 'Men I Trust',
 		subdomain: 'menitrust',
 		id: '006',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '1t20wYnTiAT0Bs7H1hv9Wt',
 		displayName: 'EDEN',
 		subdomain: 'eden',
 		id: '007',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '163tK9Wjr9P9DmM0AVK7lm',
 		displayName: 'Lorde',
 		subdomain: 'lorde',
 		id: '008',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '07D1Bjaof0NFlU32KXiqUP',
 		displayName: 'Lucy Dacus',
 		subdomain: 'lucydacus',
 		id: '009',
+		ownerId: defaultUsers[0].id,
 	},
 	{
 		artistId: '0NIPkIjTV8mB795yEIiPYL',
 		displayName: 'Wallows',
 		subdomain: 'wallows',
 		id: '010',
+		ownerId: defaultUsers[0].id,
 	},
 ];
 
@@ -71,9 +90,11 @@ async function main() {
 	await reset(db, schema);
 	console.log('✔️  Reset database');
 
+	const insertedUsers = await db.insert(users).values(defaultUsers).returning();
+
 	const insertedClubs = await db.insert(clubs).values(defaultClubs).returning();
 	console.log(
-		`✔️  Seeded POSTGRES database with ${insertedClubs.length} clubs`
+		`✔️  Seeded POSTGRES database with ${insertedUsers.length} users and ${insertedClubs.length} clubs`
 	);
 
 	const p = redis.multi();
