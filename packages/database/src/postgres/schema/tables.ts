@@ -19,6 +19,9 @@ export const clubs = pgTable(
 		displayName: varchar({ length: 50 }).notNull(),
 		heardleDay: integer().notNull().default(0),
 		imageURL: text(),
+		ownerId: text()
+			.references(() => users.id)
+			.notNull(),
 		...timestamps,
 	},
 	(table) => [
@@ -32,10 +35,14 @@ export const clubs = pgTable(
 	]
 );
 
-export const clubsRelations = relations(clubs, ({ many }) => ({
+export const clubsRelations = relations(clubs, ({ many, one }) => ({
 	songs: many(baseSongs),
 	statistics: many(statistics),
 	usersToClubs: many(usersToClubs),
+	owner: one(users, {
+		fields: [clubs.ownerId],
+		references: [users.id],
+	}),
 }));
 
 export const usersToClubs = pgTable(

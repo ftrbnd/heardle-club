@@ -7,18 +7,20 @@ import {
 	customType,
 } from 'drizzle-orm/pg-core';
 import { timestamps } from '../schema.helpers';
-import { usersToClubs } from './tables';
+import { clubs, usersToClubs } from './tables';
 
 export const users = pgTable('users', {
 	id: text().primaryKey(),
 	email: text().unique().notNull(),
 	displayName: varchar({ length: 100 }),
+	imageURL: text(),
 	...timestamps,
 });
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
 	sessions: many(sessions),
 	oauthAccounts: many(oauthAccounts),
 	usersToClubs: many(usersToClubs),
+	club: one(clubs),
 }));
 
 export const oauthAccounts = pgTable('oauth_accounts', {
