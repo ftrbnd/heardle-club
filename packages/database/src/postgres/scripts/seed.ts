@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { reset } from 'drizzle-seed';
 import { db, InsertClub, InsertUser, schema } from '..';
-import { clubs } from '../schema/tables';
+import { clubs, usersToClubs } from '../schema/tables';
 import { redis } from '../../redis';
 import { users } from '../schema/auth';
 
@@ -91,10 +91,16 @@ async function main() {
 	console.log('✔️  Reset database');
 
 	const insertedUsers = await db.insert(users).values(defaultUsers).returning();
-
 	const insertedClubs = await db.insert(clubs).values(defaultClubs).returning();
+
+	const relations = insertedClubs.map((club) => ({
+		clubId: club.id,
+		userId: insertedUsers[0].id,
+	}));
+	const result = await db.insert(usersToClubs).values(relations).returning();
+
 	console.log(
-		`✔️  Seeded POSTGRES database with ${insertedUsers.length} users and ${insertedClubs.length} clubs`
+		`✔️  Seeded POSTGRES database with ${insertedUsers.length} user${insertedUsers.length === 1 ? '' : 's'}, ${insertedClubs.length} club${insertedClubs.length === 1 ? '' : 's'}, and ${result.length} users-to-clubs relations`
 	);
 
 	const p = redis.multi();

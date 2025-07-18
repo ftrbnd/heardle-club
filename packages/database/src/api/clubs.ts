@@ -5,9 +5,13 @@ import { users } from '../postgres/schema/auth';
 import { clubs, usersToClubs } from '../postgres/schema/tables';
 
 export const insertClub = async (newClub: InsertClub) => {
-	const result = await db.insert(clubs).values(newClub).returning();
+	const [club] = await db.insert(clubs).values(newClub).returning();
+	await db.insert(usersToClubs).values({
+		clubId: club.id,
+		userId: club.ownerId,
+	});
 
-	return result[0];
+	return club;
 };
 
 export const searchClubs = async (query: string) => {

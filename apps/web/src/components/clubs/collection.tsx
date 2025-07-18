@@ -2,6 +2,7 @@ import { getCurrentUser } from '@/actions/auth';
 import { FindClub } from '@/components/clubs/find-club';
 import { ClubPreview } from '@/components/clubs/preview';
 import { SelectClub } from '@repo/database/postgres';
+import Link from 'next/link';
 
 interface ClubsCollectionParams {
 	title: 'Trending' | 'Your Clubs';
@@ -17,9 +18,15 @@ export async function ClubsCollection({ title, clubs }: ClubsCollectionParams) {
 			{title === 'Your Clubs' && !user ? (
 				<div className='card bg-base-100 w-96 shadow-sm self-center'>
 					<div className='card-body'>
-						<p>Create an account to save your favorite clubs.</p>
+						<h2 className='card-title'>
+							Create an account to save your favorite clubs.
+						</h2>
 						<div className='card-actions justify-end'>
-							<button className='btn btn-primary'>Sign in</button>
+							<Link
+								href='/login'
+								className='btn btn-primary'>
+								Log in
+							</Link>
 						</div>
 					</div>
 				</div>
@@ -27,10 +34,6 @@ export async function ClubsCollection({ title, clubs }: ClubsCollectionParams) {
 				<div className='card bg-base-100 w-96 shadow-sm self-center'>
 					<div className='card-body'>
 						<h2 className='card-title'>You haven&apos;t joined a club yet.</h2>
-						<p>
-							A card component has a figure, a body part, and inside body there
-							are title and actions parts
-						</p>
 						<div className='card-actions justify-end'>
 							<FindClub />
 						</div>
