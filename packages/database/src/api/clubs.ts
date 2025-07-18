@@ -72,3 +72,15 @@ export const getClubBySubdomain = async (subdomain: string) => {
 
 	return result.length > 0 ? result[0] : null;
 };
+
+export const addUserToClub = async (userId: string, clubId: string) => {
+	const result = await db
+		.insert(usersToClubs)
+		.values({
+			clubId,
+			userId,
+		})
+		.returning();
+
+	return result[0];
+};

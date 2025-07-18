@@ -1,5 +1,6 @@
+import { ClubMembers } from '@/components/clubs/club-members';
 import { protocol, rootDomain } from '@/lib/utils';
-import { getClubBySubdomain } from '@repo/database/api';
+import { getClubBySubdomain, getUsersFromClub } from '@repo/database/api';
 import Link from 'next/link';
 
 export default async function SubdomainPage({
@@ -12,9 +13,18 @@ export default async function SubdomainPage({
 
 	if (!club) return <ClubNotFound />;
 
+	const result = await getUsersFromClub(club.id);
+	const members = result
+		.map((res) => res.users)
+		.filter((member) => member !== null);
+
 	return (
-		<div className='flex-1'>
+		<div className='flex-1 flex flex-col items-center justify-center'>
 			<p className='text-xl'>Welcome to {club.displayName}</p>
+			<ClubMembers
+				club={club}
+				members={members}
+			/>
 		</div>
 	);
 }

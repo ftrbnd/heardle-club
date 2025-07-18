@@ -1,7 +1,7 @@
 'use server';
 
 import { protocol, rootDomain } from '@/lib/utils';
-import { insertClub, searchClubs } from '@repo/database/api';
+import { addUserToClub, insertClub, searchClubs } from '@repo/database/api';
 import {
 	insertClubSchema,
 	generateSecureRandomString,
@@ -36,4 +36,11 @@ export async function createClub(
 	const newClub = await insertClub(validatedFields);
 
 	redirect(`${protocol}://${newClub.subdomain}.${rootDomain}`);
+}
+
+export async function joinClub(userId?: string, clubId?: string) {
+	if (!userId || !clubId) return null;
+
+	const result = await addUserToClub(userId, clubId);
+	return result;
 }

@@ -26,14 +26,9 @@ export async function ClubPreview({ club }: { club: SelectClub }) {
 						className='w-full max-h-48 object-cover'
 					/>
 				</figure>
-				<div className='card-body'>
-					<h2 className='card-title'>
-						{club.displayName}
-						<div className='badge badge-secondary'>Day {club.heardleDay}</div>
-					</h2>
-					<div className='card-actions justify-end'>
-						<div className='btn btn-outline'>Join</div>
-					</div>
+				<div className='card-body flex flex-row justify-between'>
+					<h2 className='card-title'>{club.displayName}</h2>
+					<div className='badge badge-secondary'>Day {club.heardleDay}</div>
 				</div>
 			</div>
 		</Link>
