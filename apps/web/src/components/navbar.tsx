@@ -1,7 +1,5 @@
 import { getCurrentUser } from '@/actions/auth';
-import { CreateClub } from '@/components/clubs/create-club';
-import { FindClub } from '@/components/clubs/find-club';
-import { protocol, rootDomain } from '@/lib/utils';
+import { NavbarItems } from '@/components/navbar-items';
 import { SelectClub } from '@repo/database/postgres';
 import Link from 'next/link';
 
@@ -17,16 +15,7 @@ export async function Navbar({ club }: { club?: SelectClub | null }) {
 				<h1 className='btn btn-ghost text-xl'>{title}</h1>
 			</Link>
 			<div className='flex gap-2'>
-				{club ? (
-					<Link href={`${protocol}://${rootDomain}`}>
-						<h2 className='btn btn-ghost text-lg'>Heardle Club</h2>
-					</Link>
-				) : (
-					<>
-						<FindClub />
-						<CreateClub />
-					</>
-				)}
+				<NavbarItems club={club} />
 				<div className='dropdown dropdown-end'>
 					<div
 						tabIndex={0}
