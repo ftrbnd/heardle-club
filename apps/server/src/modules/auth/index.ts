@@ -7,7 +7,11 @@ import { Elysia, status, t } from 'elysia';
 const CLIENT_URL =
 	process.env.NODE_ENV === 'production'
 		? 'https://heardle.club'
-		: 'http://[::1]:3000';
+		: 'http://localhost:3000';
+
+const NGROK_DOMAIN = process.env.NGROK_DOMAIN;
+const cookieDomain =
+	process.env.NODE_ENV === 'production' ? 'heardle.club' : NGROK_DOMAIN;
 
 export const auth = new Elysia({ prefix: '/auth' })
 	.macro({
@@ -59,8 +63,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 				value: state,
 				secure: process.env.NODE_ENV === 'production',
 				maxAge: 1 * 60 * 60, // 1 hour
-				domain:
-					process.env.NODE_ENV === 'production' ? 'heardle.club' : undefined,
+				domain: cookieDomain,
 			});
 
 			return new Response(null, {
@@ -118,8 +121,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 				secure: process.env.NODE_ENV === 'production',
 				sameSite: 'lax',
 				expires: sessionExpiresAt,
-				domain:
-					process.env.NODE_ENV === 'production' ? 'heardle.club' : undefined,
+				domain: cookieDomain,
 			});
 
 			return new Response(null, {
