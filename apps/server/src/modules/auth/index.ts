@@ -1,7 +1,7 @@
 import { AuthModel } from '@/modules/auth/model';
 import { Auth } from '@/modules/auth/service';
 import { deleteSession, validateSessionToken } from '@/modules/auth/session';
-import { CLIENT_URL, SERVER_DOMAIN } from '@/utils/domains';
+import { rootDomain, rootURL } from '@/utils/domains';
 import { getUserById } from '@repo/database/api';
 import { Elysia, status, t } from 'elysia';
 
@@ -44,7 +44,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 				value: state,
 				secure: process.env.NODE_ENV === 'production',
 				maxAge: 1 * 60 * 60, // 1 hour
-				domain: SERVER_DOMAIN,
+				domain: rootDomain,
 			});
 
 			return new Response(null, {
@@ -97,13 +97,13 @@ export const auth = new Elysia({ prefix: '/auth' })
 				secure: process.env.NODE_ENV === 'production',
 				sameSite: 'lax',
 				expires: sessionExpiresAt,
-				domain: SERVER_DOMAIN,
+				domain: rootDomain,
 			});
 
 			return new Response(null, {
 				status: 302,
 				headers: {
-					location: CLIENT_URL,
+					location: rootURL,
 				},
 			});
 		},

@@ -1,4 +1,4 @@
-import { DISCORD_REDIRECT_URI, SPOTIFY_REDIRECT_URI } from '@/utils/domains';
+import { discordRedirectURI, spotifyRedirectURI } from '@/utils/domains';
 import { Discord, Spotify } from 'arctic';
 import { t } from 'elysia';
 
@@ -11,13 +11,13 @@ export type OAuthProvider = typeof oauthProvider.static;
 export const spotify = new Spotify(
 	process.env.SPOTIFY_CLIENT_ID!,
 	process.env.SPOTIFY_CLIENT_SECRET!,
-	SPOTIFY_REDIRECT_URI
+	spotifyRedirectURI
 );
 
 export const discord = new Discord(
 	process.env.DISCORD_CLIENT_ID!,
 	process.env.DISCORD_CLIENT_SECRET!,
-	DISCORD_REDIRECT_URI
+	discordRedirectURI
 );
 
 export const providerConfigs = {
