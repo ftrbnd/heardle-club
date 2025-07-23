@@ -1,10 +1,10 @@
-import { protocol, rootDomain } from '@/lib/utils';
+import { getSubdomainUrl } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export function ClubSearchResult({ club }: { club: SelectClub }) {
-	const href = `${protocol}://${club.subdomain}.${rootDomain}`;
+	const href = getSubdomainUrl(club.subdomain);
 
 	return (
 		<Link

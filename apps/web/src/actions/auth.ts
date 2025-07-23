@@ -1,6 +1,7 @@
 'use server';
 
-import { AUTH_URL, User, userSchema } from '@/lib/auth';
+import { User, userSchema } from '@/actions/_user';
+import { AUTH_URL } from '@/lib/domains';
 import { cookies } from 'next/headers';
 
 const SESSION_TOKEN_COOKIE = 'session_token';

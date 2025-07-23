@@ -1,7 +1,7 @@
 'use client';
 
 import { joinClub } from '@/actions/db';
-import { User } from '@/lib/auth';
+import { User } from '@/actions/_user';
 import { SelectClub, SelectUser } from '@repo/database/postgres';
 
 interface JoinClubProps {

@@ -1,6 +1,6 @@
 'use server';
 
-import { protocol, rootDomain } from '@/lib/utils';
+import { getSubdomainUrl } from '@/lib/domains';
 import { addUserToClub, insertClub, searchClubs } from '@repo/database/api';
 import {
 	insertClubSchema,
@@ -35,7 +35,8 @@ export async function createClub(
 	const validatedFields = insertClubSchema.parse(rawFormData);
 	const newClub = await insertClub(validatedFields);
 
-	redirect(`${protocol}://${newClub.subdomain}.${rootDomain}`);
+	const subdomain = getSubdomainUrl(newClub.subdomain);
+	redirect(subdomain);
 }
 
 export async function joinClub(userId?: string, clubId?: string) {

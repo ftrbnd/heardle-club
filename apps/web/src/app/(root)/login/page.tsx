@@ -1,7 +1,7 @@
 import { getCurrentUser } from '@/actions/auth';
+import { AUTH_URL } from '@/lib/domains';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AUTH_URL } from '@/lib/auth';
 
 export default async function Page() {
 	const user = await getCurrentUser();

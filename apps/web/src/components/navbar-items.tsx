@@ -2,7 +2,7 @@
 
 import { CreateClub } from '@/components/clubs/create-club';
 import { FindClub } from '@/components/clubs/find-club';
-import { protocol, rootDomain } from '@/lib/utils';
+import { CLIENT_URL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -16,7 +16,7 @@ export function NavbarItems({ club }: NavbarItemsProps) {
 
 	if (club)
 		return (
-			<Link href={`${protocol}://${rootDomain}`}>
+			<Link href={CLIENT_URL}>
 				<h2 className='btn btn-ghost text-lg'>Heardle Club</h2>
 			</Link>
 		);

@@ -1,8 +1,8 @@
 import { getCurrentUser } from '@/actions/auth';
 import { getArtist } from '@/actions/spotify';
 import { NewClubForm } from '@/components/clubs/new-club-form';
-import { User } from '@/lib/auth';
-import { protocol, rootDomain } from '@/lib/utils';
+import { User } from '@/actions/_user';
+import { getSubdomainUrl } from '@/lib/domains';
 import { getClubByArtistId } from '@repo/database/api';
 import { SelectClub } from '@repo/database/postgres';
 import { Artist } from '@spotify/web-api-ts-sdk';
@@ -90,7 +90,7 @@ export function FormDisabledAlert({
 			</svg>
 			{club ? (
 				<Link
-					href={`${protocol}://${club.subdomain}.${rootDomain}`}
+					href={getSubdomainUrl(club.subdomain)}
 					className='link'>
 					A club for {artist.name} already exists!
 				</Link>

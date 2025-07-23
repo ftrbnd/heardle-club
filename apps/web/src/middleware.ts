@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { rootDomain } from '@/lib/utils';
+import { ROOT_DOMAIN } from '@/lib/domains';
 
 function extractSubdomain(request: NextRequest): string | null {
 	const url = request.url;
@@ -23,7 +23,7 @@ function extractSubdomain(request: NextRequest): string | null {
 	}
 
 	// Production environment
-	const rootDomainFormatted = rootDomain.split(':')[0];
+	const rootDomainFormatted = ROOT_DOMAIN.split(':')[0];
 
 	// Handle preview deployment URLs (tenant---branch-name.vercel.app)
 	if (hostname.includes('---') && hostname.endsWith('.vercel.app')) {
