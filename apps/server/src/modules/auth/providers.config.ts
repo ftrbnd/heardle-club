@@ -24,13 +24,13 @@ export const providerConfigs = {
 	spotify: {
 		client: spotify,
 		scopes: ['user-read-email', 'user-read-private'],
-		cookie: 'SPOTIFY_OAUTH_STATE',
+		cookie: 'spotify_oauth_state',
 		endpoint: 'https://api.spotify.com/v1/me',
 	},
 	discord: {
 		client: discord,
 		scopes: ['identify', 'email'],
-		cookie: 'DISCORD_OAUTH_STATE',
+		cookie: 'discord_oauth_state',
 		endpoint: 'https://discord.com/api/users/@me',
 	},
 } as const;

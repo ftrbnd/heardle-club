@@ -1,11 +1,11 @@
 import { getArtist } from '@/actions/spotify';
-import { getSubdomainUrl } from '@/lib/domains';
+import { getSubdomainURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export async function ClubPreview({ club }: { club: SelectClub }) {
-	const href = getSubdomainUrl(club.subdomain);
+	const href = getSubdomainURL(club.subdomain);
 	const artist = await getArtist(club.artistId);
 
 	return (

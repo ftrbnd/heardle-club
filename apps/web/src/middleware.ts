@@ -1,5 +1,5 @@
+import { rootDomain } from '@/lib/domains';
 import { type NextRequest, NextResponse } from 'next/server';
-import { ROOT_DOMAIN } from '@/lib/domains';
 
 function extractSubdomain(request: NextRequest): string | null {
 	const url = request.url;
@@ -8,10 +8,7 @@ function extractSubdomain(request: NextRequest): string | null {
 
 	// Local development environment
 	// ensuring client domain doesn't exist means we are not using a tunnel
-	if (
-		(!process.env.CLIENT_DOMAIN && url.includes('localhost')) ||
-		url.includes('127.0.0.1')
-	) {
+	if ((!rootDomain && url.includes('localhost')) || url.includes('127.0.0.1')) {
 		// Try to extract subdomain from the full URL
 		const fullUrlMatch = url.match(/http:\/\/([^.]+)\.localhost/);
 		if (fullUrlMatch && fullUrlMatch[1]) {
@@ -27,7 +24,7 @@ function extractSubdomain(request: NextRequest): string | null {
 	}
 
 	// Production environment
-	const rootDomainFormatted = ROOT_DOMAIN.split(':')[0];
+	const rootDomainFormatted = rootDomain.split(':')[0];
 
 	// Handle preview deployment URLs (tenant---branch-name.vercel.app)
 	if (hostname.includes('---') && hostname.endsWith('.vercel.app')) {
@@ -47,6 +44,7 @@ function extractSubdomain(request: NextRequest): string | null {
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 	const subdomain = extractSubdomain(request);
+	console.log({ subdomain });
 
 	if (subdomain) {
 		// // TODO: manage /play page, root pages

@@ -1,10 +1,10 @@
-import { getSubdomainUrl } from '@/lib/domains';
+import { getSubdomainURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export function ClubSearchResult({ club }: { club: SelectClub }) {
-	const href = getSubdomainUrl(club.subdomain);
+	const href = getSubdomainURL(club.subdomain);
 
 	return (
 		<Link

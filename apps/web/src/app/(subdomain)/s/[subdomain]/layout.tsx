@@ -1,5 +1,5 @@
 import { Navbar } from '@/components/navbar';
-import { ROOT_DOMAIN } from '@/lib/domains';
+import { rootDomain } from '@/lib/domains';
 import { getClubBySubdomain } from '@repo/database/api';
 import { Metadata } from 'next';
 import { ReactNode } from 'react';
@@ -14,7 +14,7 @@ export async function generateMetadata({
 
 	if (!club) {
 		return {
-			title: ROOT_DOMAIN,
+			title: rootDomain,
 		};
 	}
 

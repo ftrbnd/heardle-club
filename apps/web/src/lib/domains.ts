@@ -1,14 +1,14 @@
-export const clientProtocol =
-	process.env.NODE_ENV === 'production' || process.env.CLIENT_DOMAIN
-		? 'https'
-		: 'http';
-export const CLIENT_DOMAIN = process.env.CLIENT_DOMAIN || 'localhost:3000';
-export const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || CLIENT_DOMAIN;
-export const CLIENT_URL = `${clientProtocol}://${ROOT_DOMAIN}` as const;
-export const getSubdomainUrl = (subdomain: string) =>
-	`${clientProtocol}://${subdomain}.${CLIENT_DOMAIN}` as const;
+export const rootDomain =
+	process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'localhost:3000';
+export const rootDomainExists =
+	process.env.NEXT_PUBLIC_ROOT_DOMAIN !== undefined;
 
-export const serverProtocol = process.env.SERVER_DOMAIN ? 'https' : 'http';
-export const SERVER_DOMAIN = process.env.SERVER_DOMAIN || 'localhost:3001';
-export const SERVER_URL = `${serverProtocol}://${SERVER_DOMAIN}`;
-export const AUTH_URL = `${SERVER_URL}/auth` as const;
+export const protocol =
+	process.env.NODE_ENV === 'production' || rootDomainExists ? 'https' : 'http';
+
+export const rootURL = `${protocol}://${rootDomain}` as const;
+export const getSubdomainURL = (subdomain: string) =>
+	`${protocol}://${subdomain}.${rootDomain}` as const;
+
+export const serverURL = `${protocol}://api.${rootDomain}`;
+export const authURL = `${serverURL}/auth` as const;

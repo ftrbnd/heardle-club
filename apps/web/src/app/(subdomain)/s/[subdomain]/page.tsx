@@ -1,5 +1,5 @@
 import { ClubMembers } from '@/components/clubs/club-members';
-import { CLIENT_URL } from '@/lib/domains';
+import { rootURL } from '@/lib/domains';
 import { getClubBySubdomain, getUsersFromClub } from '@repo/database/api';
 import Link from 'next/link';
 
@@ -48,7 +48,7 @@ function ClubNotFound() {
 					/>
 				</svg>
 				<Link
-					href={CLIENT_URL}
+					href={rootURL}
 					className='link'>
 					This club does not exist.
 				</Link>

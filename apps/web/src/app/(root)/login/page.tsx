@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/actions/auth';
-import { AUTH_URL } from '@/lib/domains';
+import { authURL } from '@/lib/domains';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -14,13 +14,13 @@ export default async function Page() {
 					<h2 className='card-title'>Welcome to Heardle Club!</h2>
 					<Link
 						className='btn btn-primary'
-						href={`${AUTH_URL}/login/spotify`}
+						href={`${authURL}/login/spotify`}
 						prefetch={false}>
 						Sign in with Spotify
 					</Link>
 					<Link
 						className='btn btn-secondary'
-						href={`${AUTH_URL}/login/discord`}
+						href={`${authURL}/login/discord`}
 						prefetch={false}>
 						Sign in with Discord
 					</Link>
