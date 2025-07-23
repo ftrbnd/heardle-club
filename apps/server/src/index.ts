@@ -7,8 +7,7 @@ import { customSongs } from '@/modules/custom-songs';
 import { clubs } from '@/modules/clubs';
 import { auth } from '@/modules/auth';
 import ngrok from '@ngrok/ngrok';
-
-const PORT = 3001;
+import { SERVER_DOMAIN, SERVER_PORT } from '@/utils/domains';
 
 const app = new Elysia({ adapter: node() })
 	.get('/', () => 'Hello Elysia')
@@ -16,15 +15,15 @@ const app = new Elysia({ adapter: node() })
 	.use(cronPlugin)
 	.use(clubs)
 	.use(customSongs)
-	.listen(PORT, ({ hostname, port }) => {
+	.listen(SERVER_PORT, ({ hostname, port }) => {
 		console.log(`🦊 Elysia is running at ${hostname}${port}`);
 	});
 
 async function setupNgrok() {
 	const listener = await ngrok.forward({
-		addr: PORT,
+		addr: SERVER_PORT,
 		authtoken_from_env: true,
-		domain: process.env.NGROK_DOMAIN,
+		domain: SERVER_DOMAIN,
 	});
 
 	console.log(`Ingress established at: ${listener.url()}`);
