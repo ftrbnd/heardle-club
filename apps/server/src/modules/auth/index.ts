@@ -39,18 +39,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 				provider,
 			});
 
-			const providerCookie =
-				provider === 'spotify'
-					? cookie.SPOTIFY_OAUTH_STATE
-					: provider === 'discord'
-						? cookie.DISCORD_OAUTH_STATE
-						: null;
-			if (!providerCookie)
-				return status(
-					400,
-					'Invalid provider cookie' satisfies AuthModel.InvalidProviderCookie
-				);
-
+			const providerCookie = cookie[`${provider}_oauth_state`];
 			providerCookie.set({
 				value: state,
 				secure: process.env.NODE_ENV === 'production',
@@ -77,13 +66,8 @@ export const auth = new Elysia({ prefix: '/auth' })
 	.get(
 		'/login/:provider/callback',
 		async ({ params: { provider }, query: { code, state }, cookie }) => {
-			const storedState = (
-				provider === 'spotify'
-					? cookie.SPOTIFY_OAUTH_STATE
-					: provider === 'discord'
-						? cookie.DISCORD_OAUTH_STATE
-						: null
-			)?.value;
+			const providerCookie = cookie[`${provider}_oauth_state`];
+			const storedState = providerCookie?.value;
 
 			if (!code || !state || !storedState) {
 				return status(401, 'Unauthorized');

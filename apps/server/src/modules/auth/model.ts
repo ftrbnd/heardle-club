@@ -13,8 +13,8 @@ export namespace AuthModel {
 	export type LoginProviderParams = typeof loginProviderParams.static;
 
 	export const oauthStateCookies = t.Cookie({
-		SPOTIFY_OAUTH_STATE: t.Optional(t.String()),
-		DISCORD_OAUTH_STATE: t.Optional(t.String()),
+		spotify_oauth_state: t.Optional(t.String()),
+		discord_oauth_state: t.Optional(t.String()),
 		session_token: t.Optional(t.String()),
 	});
 	export type OAuthStateCookies = typeof oauthStateCookies.static;
