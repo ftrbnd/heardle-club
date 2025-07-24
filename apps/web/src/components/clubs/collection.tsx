@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/actions/auth';
 import { FindClub } from '@/components/clubs/find-club';
 import { ClubPreview } from '@/components/clubs/preview';
+import { loginURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Link from 'next/link';
 
@@ -23,7 +24,7 @@ export async function ClubsCollection({ title, clubs }: ClubsCollectionParams) {
 						</h2>
 						<div className='card-actions justify-end'>
 							<Link
-								href='/login'
+								href={loginURL}
 								className='btn btn-primary'>
 								Log in
 							</Link>

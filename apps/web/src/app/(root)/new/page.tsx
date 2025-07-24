@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/actions/auth';
 import { getArtist } from '@/actions/spotify';
 import { NewClubForm } from '@/components/clubs/new-club-form';
 import { User } from '@/actions/_user';
-import { getSubdomainURL } from '@/lib/domains';
+import { getSubdomainURL, loginURL } from '@/lib/domains';
 import { getClubByArtistId } from '@repo/database/api';
 import { SelectClub } from '@repo/database/postgres';
 import { Artist } from '@spotify/web-api-ts-sdk';
@@ -97,7 +97,7 @@ export function FormDisabledAlert({
 			) : !user ? (
 				<p>
 					<Link
-						href='/login'
+						href={loginURL}
 						className='link'>
 						Log in
 					</Link>{' '}

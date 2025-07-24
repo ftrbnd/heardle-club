@@ -9,6 +9,7 @@ export const protocol =
 export const rootURL = `${protocol}://${rootDomain}` as const;
 export const getSubdomainURL = (subdomain: string) =>
 	`${protocol}://${subdomain}.${rootDomain}` as const;
+export const loginURL = `${rootURL}/login` as const;
 
 export const serverURL = `${protocol}://api.${rootDomain}`;
 export const authURL = `${serverURL}/auth` as const;
