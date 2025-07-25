@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/actions/auth';
 import { NavbarItems } from '@/components/navbar-items';
-import { loginURL } from '@/lib/domains';
+import { accountURL, loginURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Link from 'next/link';
 
@@ -40,7 +40,11 @@ export async function Navbar({ club }: { club?: SelectClub | null }) {
 							<a>Rules</a>
 						</li>
 						<li>
-							{user ? <a>My account</a> : <Link href={loginURL}>Log in</Link>}
+							{user ? (
+								<Link href={accountURL}>My account</Link>
+							) : (
+								<Link href={loginURL}>Log in</Link>
+							)}
 						</li>
 						{user && (
 							<li>
