@@ -1,7 +1,12 @@
 'use server';
 
 import { getSubdomainURL } from '@/lib/domains';
-import { addUserToClub, insertClub, searchClubs } from '@repo/database/api';
+import {
+	addUserToClub,
+	insertClub,
+	removeUserFromClub,
+	searchClubs,
+} from '@repo/database/api';
 import {
 	insertClubSchema,
 	generateSecureRandomString,
@@ -44,4 +49,10 @@ export async function joinClub(userId?: string, clubId?: string) {
 
 	const result = await addUserToClub(userId, clubId);
 	return result;
+}
+
+export async function leaveClub(userId?: string, clubId?: string) {
+	if (!userId || !clubId) return null;
+
+	await removeUserFromClub(userId, clubId);
 }

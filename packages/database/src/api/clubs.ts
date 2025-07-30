@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { db } from '../postgres';
 import { InsertClub } from '../postgres/schema.types';
 import { users } from '../postgres/schema/auth';
@@ -87,4 +87,21 @@ export const addUserToClub = async (userId: string, clubId: string) => {
 		.returning();
 
 	return result[0];
+};
+
+export const removeUserFromClub = async (userId: string, clubId: string) => {
+	const userOwnedClubs = await db
+		.select()
+		.from(clubs)
+		.where(eq(clubs.ownerId, userId));
+	if (userOwnedClubs.length > 0)
+		throw new Error(
+			'You cannot leave a club you own. Delete the club instead.'
+		);
+
+	await db
+		.delete(usersToClubs)
+		.where(
+			and(eq(usersToClubs.userId, userId), eq(usersToClubs.clubId, clubId))
+		);
 };

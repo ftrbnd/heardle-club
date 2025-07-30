@@ -1,5 +1,6 @@
+import { getCurrentUser } from '@/actions/auth';
 import { getArtist } from '@/actions/spotify';
-import { LogOut } from '@/components/icons/log-out';
+import { LeaveClubButton } from '@/components/clubs/leave-club-button';
 import { getSubdomainURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Image from 'next/image';
@@ -12,6 +13,7 @@ export async function ClubPreview({
 	club: SelectClub;
 	display: 'grid' | 'list';
 }) {
+	const user = await getCurrentUser();
 	const clubSubdomain = getSubdomainURL(club.subdomain);
 	const artist = await getArtist(club.artistId);
 	const artistImage =
@@ -61,9 +63,10 @@ export async function ClubPreview({
 					</div>
 				</div>
 			</div>
-			<button className='btn btn-square btn-ghost'>
-				<LogOut />
-			</button>
+			<LeaveClubButton
+				userId={user?.id}
+				clubId={club.id}
+			/>
 		</div>
 	);
 }
