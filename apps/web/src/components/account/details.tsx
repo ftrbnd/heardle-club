@@ -1,4 +1,5 @@
 import { User } from '@/actions/_user';
+import Image from 'next/image';
 
 interface AccountDetailsProps {
 	user: User;
@@ -6,11 +7,14 @@ interface AccountDetailsProps {
 
 export function AccountDetails({ user }: AccountDetailsProps) {
 	return (
-		<div className='card lg:card-side bg-base-100 shadow-sm md:mx-16'>
+		<div className='place-self-center card lg:card-side bg-base-100 shadow-sm md:mx-16'>
 			<figure>
-				<img
+				<Image
 					src='https://img.daisyui.com/images/stock/photo-1494232410401-ad00d5433cfa.webp'
+					className='self-start max-w-96 max-h-96'
 					alt='Album'
+					height={500}
+					width={500}
 				/>
 			</figure>
 			<div className='card-body'>

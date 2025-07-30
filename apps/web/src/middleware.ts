@@ -44,7 +44,6 @@ function extractSubdomain(request: NextRequest): string | null {
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 	const subdomain = extractSubdomain(request);
-	console.log({ subdomain });
 
 	if (subdomain) {
 		// // TODO: manage /play page, root pages
