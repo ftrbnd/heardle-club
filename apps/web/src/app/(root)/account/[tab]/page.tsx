@@ -45,6 +45,7 @@ export default async function Page({
 				<ClubsCollection
 					clubs={clubs}
 					title='Your Clubs'
+					display='list'
 				/>
 			)}
 		</div>

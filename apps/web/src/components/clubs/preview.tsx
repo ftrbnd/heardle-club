@@ -1,24 +1,31 @@
 import { getArtist } from '@/actions/spotify';
+import { LogOut } from '@/components/icons/log-out';
 import { getSubdomainURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export async function ClubPreview({ club }: { club: SelectClub }) {
-	const href = getSubdomainURL(club.subdomain);
+export async function ClubPreview({
+	club,
+	display,
+}: {
+	club: SelectClub;
+	display: 'grid' | 'list';
+}) {
+	const clubSubdomain = getSubdomainURL(club.subdomain);
 	const artist = await getArtist(club.artistId);
+	const artistImage =
+		artist.images.find((img) => img)?.url ?? '/artist_placeholder.jpg';
 
-	return (
+	return display === 'grid' ? (
 		<Link
-			href={href}
+			href={clubSubdomain}
 			prefetch={false}
 			passHref>
 			<div className='card bg-base-100 max-w-96 shadow-sm'>
 				<figure>
 					<Image
-						src={
-							artist.images.find((img) => img)?.url ?? '/artist_placeholder.jpg'
-						}
+						src={artistImage}
 						priority
 						alt={club.displayName}
 						width={200}
@@ -32,5 +39,31 @@ export async function ClubPreview({ club }: { club: SelectClub }) {
 				</div>
 			</div>
 		</Link>
+	) : (
+		<div className='flex gap-4 justify-between items-center bg-base-200 p-4 rounded-md'>
+			<div className='flex gap-2'>
+				<Image
+					src={artistImage}
+					priority
+					alt={club.displayName}
+					width={200}
+					height={200}
+					className='size-16 rounded-box'
+				/>
+				<div className='flex-1'>
+					<Link
+						href={clubSubdomain}
+						className='flex-1 link'>
+						{club.displayName}
+					</Link>
+					<div className='text-xs uppercase font-semibold opacity-60'>
+						Day {club.heardleDay}
+					</div>
+				</div>
+			</div>
+			<button className='btn btn-square btn-ghost'>
+				<LogOut />
+			</button>
+		</div>
 	);
 }

@@ -8,9 +8,14 @@ import Link from 'next/link';
 interface ClubsCollectionParams {
 	title: 'Trending' | 'Your Clubs';
 	clubs: SelectClub[];
+	display?: 'grid' | 'list';
 }
 
-export async function ClubsCollection({ title, clubs }: ClubsCollectionParams) {
+export async function ClubsCollection({
+	title,
+	clubs,
+	display = 'grid',
+}: ClubsCollectionParams) {
 	const user = await getCurrentUser();
 
 	return (
@@ -41,10 +46,14 @@ export async function ClubsCollection({ title, clubs }: ClubsCollectionParams) {
 					</div>
 				</div>
 			) : (
-				<ul className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+				<ul
+					className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${display === 'list' ? 'w-full md:px-16' : ''}`}>
 					{clubs.map((club) => (
 						<li key={club.id}>
-							<ClubPreview club={club} />
+							<ClubPreview
+								club={club}
+								display={display}
+							/>
 						</li>
 					))}
 				</ul>
