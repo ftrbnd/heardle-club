@@ -65,7 +65,7 @@ export async function ClubPreview({
 			</div>
 			<LeaveClubButton
 				userId={user?.id}
-				clubId={club.id}
+				club={club}
 			/>
 		</div>
 	);

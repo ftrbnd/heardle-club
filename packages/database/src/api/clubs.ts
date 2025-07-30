@@ -93,7 +93,7 @@ export const removeUserFromClub = async (userId: string, clubId: string) => {
 	const userOwnedClubs = await db
 		.select()
 		.from(clubs)
-		.where(eq(clubs.ownerId, userId));
+		.where(and(eq(clubs.id, clubId), eq(clubs.ownerId, userId)));
 	if (userOwnedClubs.length > 0)
 		throw new Error(
 			'You cannot leave a club you own. Delete the club instead.'

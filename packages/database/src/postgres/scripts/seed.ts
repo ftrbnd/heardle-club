@@ -11,6 +11,11 @@ const defaultUsers: InsertUser[] = [
 		email: 'giosalas25@gmail.com',
 		displayName: 'giosalad',
 	},
+	{
+		id: '002',
+		email: 'fakeuser@test.com',
+		displayName: 'Fake User',
+	},
 ];
 
 const defaultClubs: InsertClub[] = [
@@ -29,7 +34,7 @@ const defaultClubs: InsertClub[] = [
 		ownerId: defaultUsers[0].id,
 	},
 	{
-		artistId: '3l0CmX0FuQjFxr8SK7Vqag',
+		artistId: '5069JTmv5ZDyPeZaCCXiCg',
 		displayName: 'wave to earth',
 		subdomain: 'wavetoearth',
 		id: '003',
@@ -84,6 +89,13 @@ const defaultClubs: InsertClub[] = [
 		id: '010',
 		ownerId: defaultUsers[0].id,
 	},
+	{
+		artistId: '1oPRcJUkloHaRLYx0olBLJ',
+		displayName: 'Magdalena Bay',
+		subdomain: 'magdalenabay',
+		id: '011',
+		ownerId: defaultUsers[1].id,
+	},
 ];
 
 async function main() {
@@ -93,10 +105,18 @@ async function main() {
 	const insertedUsers = await db.insert(users).values(defaultUsers).returning();
 	const insertedClubs = await db.insert(clubs).values(defaultClubs).returning();
 
-	const relations = insertedClubs.map((club) => ({
-		clubId: club.id,
-		userId: insertedUsers[0].id,
-	}));
+	const relations = insertedClubs.map((club) => {
+		if (club.id === '011')
+			return {
+				clubId: club.id,
+				userId: defaultUsers[1].id,
+			};
+
+		return {
+			clubId: club.id,
+			userId: defaultUsers[0].id,
+		};
+	});
 	const result = await db.insert(usersToClubs).values(relations).returning();
 
 	console.log(

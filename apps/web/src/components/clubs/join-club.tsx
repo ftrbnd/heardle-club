@@ -3,6 +3,7 @@
 import { joinClub } from '@/actions/db';
 import { User } from '@/actions/_user';
 import { SelectClub, SelectUser } from '@repo/database/postgres';
+import { customToast } from '@/components/toast';
 
 interface JoinClubProps {
 	club: SelectClub;
@@ -14,9 +15,21 @@ export function JoinClub({ club, user, members }: JoinClubProps) {
 	const alreadyJoined = members.some((m) => m.id === user?.id);
 
 	const handleClick = async () => {
-		// TODO: users can't join because auth session does not persist across subdomains and root domain
-		const res = await joinClub(user?.id, club.id);
-		console.log(res);
+		try {
+			await joinClub(user?.id, club.id);
+
+			customToast({
+				type: 'success',
+				message: `Welcome to ${club.displayName}!`,
+			});
+		} catch (err) {
+			if (err && err instanceof Error) {
+				customToast({
+					type: 'error',
+					message: err.message,
+				});
+			}
+		}
 	};
 
 	return (
