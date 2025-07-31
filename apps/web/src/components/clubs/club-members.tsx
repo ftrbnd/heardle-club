@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@/actions/auth';
 import { JoinClub } from '@/components/clubs/join-club';
+import { Crown } from '@/components/icons/crown';
 import { SelectClub, SelectUser } from '@repo/database/postgres';
 
 interface ClubMembersProps {
@@ -21,8 +22,11 @@ export async function ClubMembers({ club, members }: ClubMembersProps) {
 
 			{members.map((member) => (
 				<li key={member.id}>
-					{/* {TODO: avatar} */}
-					<a>{member.displayName}</a>
+					<a className='flex'>
+						{/* {TODO: avatar} */}
+						{member.displayName}
+						{member.id === club.ownerId && <Crown />}
+					</a>
 				</li>
 			))}
 

@@ -1,5 +1,7 @@
-import { LEFT_DRAWER_ID, LeftDrawer } from '@/components/subdomain/left-drawer';
+import { getCurrentUser } from '@/actions/auth';
+import { LeftDrawer } from '@/components/subdomain/left-drawer';
 import { ClubNotFound } from '@/components/subdomain/not-found';
+import { Tabs } from '@/components/subdomain/tabs';
 import { getClubBySubdomain, getUsersFromClub } from '@repo/database/api';
 
 interface PageParams {
@@ -17,17 +19,18 @@ export default async function SubdomainPage({ params }: PageParams) {
 		.map((res) => res.users)
 		.filter((member) => member !== null);
 
+	const user = await getCurrentUser();
+	const isOwner = club.ownerId === user?.id;
+
 	return (
 		<div className='flex-1 flex flex-col items-center'>
-			<label
-				htmlFor={LEFT_DRAWER_ID}
-				className='btn drawer-button mt-2 lg:hidden'>
-				Members
-			</label>
-
 			<LeftDrawer
 				club={club}
 				members={members}>
+				<Tabs
+					isOwner={isOwner}
+					selectedTab='members'
+				/>
 				<p className='text-xl'>Welcome to {club.displayName}</p>
 			</LeftDrawer>
 		</div>

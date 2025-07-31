@@ -46,15 +46,16 @@ export async function middleware(request: NextRequest) {
 	const subdomain = extractSubdomain(request);
 
 	if (subdomain) {
-		// // TODO: manage /play page, root pages
-		// // Block access to admin page from subdomains
-		// if (pathname.startsWith('/admin')) {
-		// 	return NextResponse.redirect(new URL('/', request.url));
-		// }
+		console.log({ subdomain, pathname });
 
 		// For the root path on a subdomain, rewrite to the subdomain page
 		if (pathname === '/') {
 			return NextResponse.rewrite(new URL(`/s/${subdomain}`, request.url));
+		}
+		if (pathname === '/dashboard') {
+			return NextResponse.rewrite(
+				new URL(`/s/${subdomain}/dashboard`, request.url)
+			);
 		}
 	}
 

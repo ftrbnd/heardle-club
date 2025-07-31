@@ -4,11 +4,14 @@ import { getClubBySubdomain } from '@repo/database/api';
 import { Metadata } from 'next';
 import { ReactNode } from 'react';
 
+interface PageParams {
+	params: Promise<{ subdomain: string }>;
+	children?: ReactNode;
+}
+
 export async function generateMetadata({
 	params,
-}: {
-	params: Promise<{ subdomain: string }>;
-}): Promise<Metadata> {
+}: PageParams): Promise<Metadata> {
 	const { subdomain } = await params;
 	const club = await getClubBySubdomain(subdomain);
 
@@ -24,13 +27,7 @@ export async function generateMetadata({
 	};
 }
 
-export default async function Layout({
-	params,
-	children,
-}: {
-	params: Promise<{ subdomain: string }>;
-	children: ReactNode;
-}) {
+export default async function Layout({ params, children }: PageParams) {
 	const { subdomain } = await params;
 	const club = await getClubBySubdomain(subdomain);
 
