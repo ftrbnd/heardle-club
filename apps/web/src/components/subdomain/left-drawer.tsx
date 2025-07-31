@@ -12,7 +12,7 @@ export const LEFT_DRAWER_ID = 'members_drawer';
 
 export function LeftDrawer({ club, members, children }: LeftDrawerProps) {
 	return (
-		<div className='drawer lg:drawer-open z-51'>
+		<div className='drawer lg:drawer-open z-51 md:z-49'>
 			<input
 				id={LEFT_DRAWER_ID}
 				type='checkbox'

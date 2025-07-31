@@ -1,4 +1,6 @@
 import { getCurrentUser } from '@/actions/auth';
+import { Dashboard } from '@/app/(subdomain)/s/[subdomain]/(tab)/t/[tab]/_dashboard';
+import { SubdomainTab } from '@/components/subdomain/tabs';
 import { getClubBySubdomain } from '@repo/database/api';
 import { redirect } from 'next/navigation';
 
@@ -7,11 +9,16 @@ interface PageParams {
 }
 export default async function Page({ params }: PageParams) {
 	const { subdomain, tab } = await params;
-
 	const club = await getClubBySubdomain(subdomain);
+	if (!club) return redirect('/');
+
 	const user = await getCurrentUser();
 	const isOwner = club?.ownerId === user?.id;
 	if (!isOwner && tab === 'dashboard') return redirect('/');
 
-	return <div>TODO: {tab}</div>;
+	const tabPage = (tab[0].toUpperCase() + tab.substring(1)) as SubdomainTab;
+
+	if (tabPage === 'Dashboard') return <Dashboard club={club} />;
+
+	return <>TODO: {tabPage}</>;
 }

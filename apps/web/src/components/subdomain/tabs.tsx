@@ -18,36 +18,42 @@ interface SubdomainTabsProps {
 }
 export function Tabs({ isOwner, selectedTab }: SubdomainTabsProps) {
 	return (
-		<div
-			role='tablist'
-			className='tabs tabs-box px-2'>
-			<label
-				htmlFor={LEFT_DRAWER_ID}
-				role='tab'
-				className={cn(
-					'tab lg:hidden',
-					selectedTab === 'Members' && 'tab-active'
-				)}>
-				{selectedTab === 'Members' ? 'Members' : <Link href='/'>Members</Link>}
-			</label>
-			{isOwner && (
+		<div className='overflow-x-auto'>
+			<div
+				role='tablist'
+				className='tabs tabs-box min-w-max px-2'>
+				<label
+					htmlFor={LEFT_DRAWER_ID}
+					role='tab'
+					className={cn(
+						'tab lg:hidden',
+						selectedTab === 'Members' && 'tab-active'
+					)}>
+					{selectedTab === 'Members' ? (
+						'Members'
+					) : (
+						<Link href='/'>Members</Link>
+					)}
+				</label>
+				{isOwner && (
+					<Tab
+						name='Dashboard'
+						isActive={selectedTab === 'Dashboard'}
+					/>
+				)}
 				<Tab
-					name='Dashboard'
-					isActive={selectedTab === 'Dashboard'}
+					name='Leaderboard'
+					isActive={selectedTab === 'Leaderboard'}
 				/>
-			)}
-			<Tab
-				name='Leaderboard'
-				isActive={selectedTab === 'Leaderboard'}
-			/>
-			<Tab
-				name='Custom'
-				isActive={selectedTab === 'Custom'}
-			/>
-			<Tab
-				name='Unlimited'
-				isActive={selectedTab === 'Unlimited'}
-			/>
+				<Tab
+					name='Custom'
+					isActive={selectedTab === 'Custom'}
+				/>
+				<Tab
+					name='Unlimited'
+					isActive={selectedTab === 'Unlimited'}
+				/>
+			</div>
 		</div>
 	);
 }
