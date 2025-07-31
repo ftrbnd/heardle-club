@@ -2,32 +2,68 @@ import { LEFT_DRAWER_ID } from '@/components/subdomain/left-drawer';
 import { cn } from '@/lib/cn';
 import Link from 'next/link';
 
+export const subdomainTabs = [
+	'Members',
+	'Dashboard',
+	'Leaderboard',
+	'Custom',
+	'Unlimited',
+] as const;
+
+export type SubdomainTab = (typeof subdomainTabs)[number];
+
 interface SubdomainTabsProps {
 	isOwner: boolean;
-	selectedTab: 'members' | 'dashboard';
+	selectedTab: SubdomainTab;
 }
 export function Tabs({ isOwner, selectedTab }: SubdomainTabsProps) {
 	return (
 		<div
 			role='tablist'
-			className='tabs tabs-box'>
+			className='tabs tabs-box px-2'>
 			<label
 				htmlFor={LEFT_DRAWER_ID}
 				role='tab'
 				className={cn(
 					'tab lg:hidden',
-					selectedTab === 'members' && 'tab-active'
+					selectedTab === 'Members' && 'tab-active'
 				)}>
-				{selectedTab === 'members' ? 'Members' : <Link href='/'>Members</Link>}
+				{selectedTab === 'Members' ? 'Members' : <Link href='/'>Members</Link>}
 			</label>
 			{isOwner && (
-				<Link
-					role='tab'
-					href='/dashboard'
-					className={cn('tab', selectedTab === 'dashboard' && 'tab-active')}>
-					Dashboard
-				</Link>
+				<Tab
+					name='Dashboard'
+					isActive={selectedTab === 'Dashboard'}
+				/>
 			)}
+			<Tab
+				name='Leaderboard'
+				isActive={selectedTab === 'Leaderboard'}
+			/>
+			<Tab
+				name='Custom'
+				isActive={selectedTab === 'Custom'}
+			/>
+			<Tab
+				name='Unlimited'
+				isActive={selectedTab === 'Unlimited'}
+			/>
 		</div>
+	);
+}
+
+interface TabProps {
+	name: SubdomainTab;
+	isActive: boolean;
+}
+
+function Tab({ name, isActive }: TabProps) {
+	return (
+		<Link
+			role='tab'
+			href={`/${name.toLowerCase()}`}
+			className={cn('tab', isActive && 'tab-active')}>
+			{name}
+		</Link>
 	);
 }

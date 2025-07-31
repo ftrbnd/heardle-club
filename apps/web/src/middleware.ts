@@ -1,3 +1,4 @@
+import { subdomainTabs } from '@/components/subdomain/tabs';
 import { rootDomain } from '@/lib/domains';
 import { type NextRequest, NextResponse } from 'next/server';
 
@@ -41,20 +42,21 @@ function extractSubdomain(request: NextRequest): string | null {
 	return isSubdomain ? hostname.replace(`.${rootDomainFormatted}`, '') : null;
 }
 
+const subdomainTabPaths = subdomainTabs.map((tab) => `/${tab.toLowerCase()}`);
+
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 	const subdomain = extractSubdomain(request);
 
 	if (subdomain) {
-		console.log({ subdomain, pathname });
-
 		// For the root path on a subdomain, rewrite to the subdomain page
 		if (pathname === '/') {
 			return NextResponse.rewrite(new URL(`/s/${subdomain}`, request.url));
 		}
-		if (pathname === '/dashboard') {
+
+		if (subdomainTabPaths.includes(pathname)) {
 			return NextResponse.rewrite(
-				new URL(`/s/${subdomain}/dashboard`, request.url)
+				new URL(`/s/${subdomain}/t${pathname}`, request.url)
 			);
 		}
 	}

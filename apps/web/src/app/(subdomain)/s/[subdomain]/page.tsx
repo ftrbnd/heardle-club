@@ -29,7 +29,7 @@ export default async function SubdomainPage({ params }: PageParams) {
 				members={members}>
 				<Tabs
 					isOwner={isOwner}
-					selectedTab='members'
+					selectedTab='Members'
 				/>
 				<p className='text-xl'>Welcome to {club.displayName}</p>
 			</LeftDrawer>
