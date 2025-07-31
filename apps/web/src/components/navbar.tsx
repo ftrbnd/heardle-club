@@ -13,7 +13,12 @@ export async function Navbar({ club }: { club?: SelectClub | null }) {
 			<Link
 				href='/'
 				className='flex-1'>
-				<h1 className='btn btn-ghost text-xl'>{title}</h1>
+				<div className='btn btn-ghost'>
+					<h1 className='text-xl'>{title}</h1>
+					{club && (
+						<div className='badge badge-primary'>Day {club.heardleDay}</div>
+					)}
+				</div>
 			</Link>
 			<div className='flex gap-2'>
 				<NavbarItems club={club} />

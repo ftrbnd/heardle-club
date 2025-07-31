@@ -18,7 +18,7 @@ export function LeftDrawer({ club, members, children }: LeftDrawerProps) {
 				type='checkbox'
 				className='drawer-toggle'
 			/>
-			<div className='drawer-content flex flex-col'>
+			<div className='drawer-content'>
 				{/* Page content here */}
 				{children}
 			</div>

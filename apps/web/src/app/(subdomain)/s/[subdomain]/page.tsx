@@ -2,7 +2,12 @@ import { getCurrentUser } from '@/actions/auth';
 import { LeftDrawer } from '@/components/subdomain/left-drawer';
 import { ClubNotFound } from '@/components/subdomain/not-found';
 import { Tabs } from '@/components/subdomain/tabs';
-import { getClubBySubdomain, getUsersFromClub } from '@repo/database/api';
+import {
+	getClubBySubdomain,
+	getClubSongs,
+	getUsersFromClub,
+} from '@repo/database/api';
+import Link from 'next/link';
 
 interface PageParams {
 	params: Promise<{ subdomain: string }>;
@@ -22,6 +27,8 @@ export default async function SubdomainPage({ params }: PageParams) {
 	const user = await getCurrentUser();
 	const isOwner = club.ownerId === user?.id;
 
+	const songs = await getClubSongs(club.id);
+
 	return (
 		<div className='flex-1 flex flex-col items-center'>
 			<LeftDrawer
@@ -31,7 +38,23 @@ export default async function SubdomainPage({ params }: PageParams) {
 					isOwner={isOwner}
 					selectedTab='Members'
 				/>
-				<p className='text-xl'>Welcome to {club.displayName}</p>
+				<div className='h-full flex flex-col items-center justify-center'>
+					{songs.length > 0 ? (
+						<Link
+							href='/play'
+							prefetch={false}>
+							Play
+						</Link>
+					) : isOwner ? (
+						<Link
+							href='/dashboard'
+							className='btn btn-primary'>
+							Add some songs to get started.
+						</Link>
+					) : (
+						<p>No songs have been added yet.</p>
+					)}
+				</div>
 			</LeftDrawer>
 		</div>
 	);
