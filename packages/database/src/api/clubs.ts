@@ -2,7 +2,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import { db } from '../postgres';
 import { InsertClub } from '../postgres/schema.types';
 import { users } from '../postgres/schema/auth';
-import { clubs, usersToClubs } from '../postgres/schema/tables';
+import { baseSongs, clubs, usersToClubs } from '../postgres/schema/tables';
 
 export const insertClub = async (newClub: InsertClub) => {
 	const [club] = await db.insert(clubs).values(newClub).returning();
@@ -104,4 +104,13 @@ export const removeUserFromClub = async (userId: string, clubId: string) => {
 		.where(
 			and(eq(usersToClubs.userId, userId), eq(usersToClubs.clubId, clubId))
 		);
+};
+
+export const getClubSongs = async (clubId: string) => {
+	const songs = await db
+		.select()
+		.from(baseSongs)
+		.where(eq(baseSongs.clubId, clubId));
+
+	return songs;
 };
