@@ -1,5 +1,6 @@
 'use client';
 
+import { Search } from '@/components/icons/search';
 import { cn } from '@/lib/cn';
 import { ClassValue } from 'clsx';
 import { Dispatch, FormEvent, ReactNode, SetStateAction } from 'react';
@@ -32,23 +33,7 @@ export function SearchModal(props: SearchModalProps) {
 					<h3 className='font-bold text-lg'>{props.modalLabel}</h3>
 					<form onSubmit={(e) => props.handleSubmit(e)}>
 						<label className='input w-full'>
-							<svg
-								className='h-[1em] opacity-50'
-								xmlns='http://www.w3.org/2000/svg'
-								viewBox='0 0 24 24'>
-								<g
-									strokeLinejoin='round'
-									strokeLinecap='round'
-									strokeWidth='2.5'
-									fill='none'
-									stroke='currentColor'>
-									<circle
-										cx='11'
-										cy='11'
-										r='8'></circle>
-									<path d='m21 21-4.3-4.3'></path>
-								</g>
-							</svg>
+							<Search />
 							<input
 								type='search'
 								placeholder={props.placeholder}
