@@ -32,12 +32,15 @@ export function JoinClub({ club, user, members }: JoinClubProps) {
 		}
 	};
 
-	return (
-		<button
-			onClick={handleClick}
-			disabled={alreadyJoined || !user}
-			className='btn btn-primary btn-block'>
-			Join {club.displayName}
-		</button>
-	);
+	if (!alreadyJoined)
+		return (
+			<button
+				onClick={handleClick}
+				disabled={alreadyJoined || !user}
+				className='btn btn-primary btn-block'>
+				Join {club.displayName}
+			</button>
+		);
+
+	return <></>;
 }
