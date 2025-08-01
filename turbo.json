@@ -15,7 +15,10 @@
 		"check-types": {
 			"dependsOn": ["^check-types"]
 		},
-		"tunnel:start": {
+		"tunnel:start:mac": {
+			"cache": false
+		},
+		"tunnel:start:windows": {
 			"cache": false
 		},
 		"dev": {
