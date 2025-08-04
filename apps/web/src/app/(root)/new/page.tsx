@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/server/actions/auth';
-import { getArtist } from '@/lib/spotify';
+import { getArtist } from '@/server/actions/spotify';
 import { NewClubForm } from '@/server/components/clubs/new-club-form';
 import { User } from '@/server/actions/_user';
 import { getSubdomainURL, loginURL } from '@/lib/domains';

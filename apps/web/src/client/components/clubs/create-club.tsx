@@ -1,6 +1,6 @@
 'use client';
 
-import { searchArtist } from '@/lib/spotify';
+import { searchArtist } from '@/server/actions/spotify';
 import { SearchModal } from '@/client/components/search-modal';
 import { useSearch } from '@/client/hooks/use-search';
 import Image from 'next/image';
