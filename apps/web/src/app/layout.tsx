@@ -1,9 +1,8 @@
-import { Alert } from '@/server/components/icons/alert';
 import './globals.css';
 import { Footer } from '@/server/components/layout/footer';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Toaster } from 'sonner';
+import { Providers } from '@/client/providers';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -29,17 +28,10 @@ export default function RootLayout({
 		<html lang='en'>
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen w-full`}>
-				<Toaster
-					icons={{
-						success: <Alert type='success' />,
-						info: <Alert type='info' />,
-						warning: <Alert type='warning' />,
-						error: <Alert type='error' />,
-						loading: <Alert type='loading' />,
-					}}
-				/>
-				{children}
-				<Footer />
+				<Providers>
+					{children}
+					<Footer />
+				</Providers>
 			</body>
 		</html>
 	);
