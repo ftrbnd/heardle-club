@@ -1,5 +1,5 @@
-import { getCurrentUser } from '@/actions/auth';
-import { createClub } from '@/actions/db';
+import { getCurrentUser } from '@/server/actions/auth';
+import { createClub } from '@/server/actions/db';
 import { Artist } from '@spotify/web-api-ts-sdk';
 
 interface NewClubFormProps {

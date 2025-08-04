@@ -1,4 +1,4 @@
-import { Trash } from '@/components/icons/trash';
+import { Trash } from '@/server/components/icons/trash';
 import { getClubSongs } from '@repo/database/api';
 import { SelectClub } from '@repo/database/postgres';
 import Image from 'next/image';

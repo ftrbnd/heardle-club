@@ -1,6 +1,6 @@
 'use client';
 
-import { Search } from '@/components/icons/search';
+import { Search } from '@/server/components/icons/search';
 import { cn } from '@/lib/cn';
 import { ClassValue } from 'clsx';
 import { Dispatch, FormEvent, ReactNode, SetStateAction } from 'react';

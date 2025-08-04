@@ -1,6 +1,6 @@
-import { Alert } from '@/components/icons/alert';
+import { Alert } from '@/server/components/icons/alert';
 import './globals.css';
-import { Footer } from '@/components/footer';
+import { Footer } from '@/server/components/layout/footer';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Toaster } from 'sonner';

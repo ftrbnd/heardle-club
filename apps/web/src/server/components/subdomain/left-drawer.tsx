@@ -1,4 +1,4 @@
-import { ClubMembers } from '@/components/clubs/club-members';
+import { ClubMembers } from '@/server/components/clubs/club-members';
 import { SelectClub, SelectUser } from '@repo/database/postgres';
 import { ReactNode } from 'react';
 

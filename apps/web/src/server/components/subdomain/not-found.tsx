@@ -1,4 +1,4 @@
-import { Alert } from '@/components/icons/alert';
+import { Alert } from '@/server/components/icons/alert';
 import { rootURL } from '@/lib/domains';
 import Link from 'next/link';
 

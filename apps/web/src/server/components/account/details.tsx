@@ -1,4 +1,4 @@
-import { User } from '@/actions/_user';
+import { User } from '@/server/actions/_user';
 import Image from 'next/image';
 
 interface AccountDetailsProps {

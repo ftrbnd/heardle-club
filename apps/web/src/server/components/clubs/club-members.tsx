@@ -1,6 +1,6 @@
-import { getCurrentUser } from '@/actions/auth';
-import { JoinClub } from '@/components/clubs/join-club';
-import { Crown } from '@/components/icons/crown';
+import { getCurrentUser } from '@/server/actions/auth';
+import { JoinClub } from '@/client/components/clubs/join-club';
+import { Crown } from '@/server/components/icons/crown';
 import { SelectClub, SelectUser } from '@repo/database/postgres';
 
 interface ClubMembersProps {

@@ -1,6 +1,6 @@
-import { getCurrentUser } from '@/actions/auth';
-import { FindClub } from '@/components/clubs/find-club';
-import { ClubPreview } from '@/components/clubs/preview';
+import { getCurrentUser } from '@/server/actions/auth';
+import { FindClub } from '@/client/components/clubs/find-club';
+import { ClubPreview } from '@/server/components/clubs/preview';
 import { loginURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Link from 'next/link';

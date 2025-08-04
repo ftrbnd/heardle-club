@@ -1,6 +1,6 @@
-import { getCurrentUser } from '@/actions/auth';
-import { AccountDetails } from '@/components/account/details';
-import { ClubsCollection } from '@/components/clubs/collection';
+import { getCurrentUser } from '@/server/actions/auth';
+import { AccountDetails } from '@/server/components/account/details';
+import { ClubsCollection } from '@/server/components/clubs/collection';
 import { loginURL } from '@/lib/domains';
 import { getJoinedClubs } from '@repo/database/api';
 import Link from 'next/link';

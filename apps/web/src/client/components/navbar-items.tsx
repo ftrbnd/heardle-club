@@ -1,7 +1,7 @@
 'use client';
 
-import { CreateClub } from '@/components/clubs/create-club';
-import { FindClub } from '@/components/clubs/find-club';
+import { CreateClub } from '@/client/components/clubs/create-club';
+import { FindClub } from '@/client/components/clubs/find-club';
 import { rootURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Link from 'next/link';

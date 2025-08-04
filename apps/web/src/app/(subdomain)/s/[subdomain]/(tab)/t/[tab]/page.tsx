@@ -1,6 +1,6 @@
-import { getCurrentUser } from '@/actions/auth';
+import { getCurrentUser } from '@/server/actions/auth';
 import { Dashboard } from '@/app/(subdomain)/s/[subdomain]/(tab)/t/[tab]/_dashboard';
-import { SubdomainTab } from '@/components/subdomain/tabs';
+import { SubdomainTab } from '@/server/components/subdomain/tabs';
 import { getClubBySubdomain } from '@repo/database/api';
 import { redirect } from 'next/navigation';
 

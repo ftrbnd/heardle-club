@@ -1,7 +1,7 @@
-import { getCurrentUser } from '@/actions/auth';
-import { LeftDrawer } from '@/components/subdomain/left-drawer';
-import { ClubNotFound } from '@/components/subdomain/not-found';
-import { Tabs } from '@/components/subdomain/tabs';
+import { getCurrentUser } from '@/server/actions/auth';
+import { LeftDrawer } from '@/server/components/subdomain/left-drawer';
+import { ClubNotFound } from '@/server/components/subdomain/not-found';
+import { Tabs } from '@/server/components/subdomain/tabs';
 import {
 	getClubBySubdomain,
 	getClubSongs,

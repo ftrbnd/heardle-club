@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/actions/auth';
+import { getCurrentUser } from '@/server/actions/auth';
 import { authURL } from '@/lib/domains';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

@@ -1,4 +1,4 @@
-import { LEFT_DRAWER_ID } from '@/components/subdomain/left-drawer';
+import { LEFT_DRAWER_ID } from '@/server/components/subdomain/left-drawer';
 import { cn } from '@/lib/cn';
 import Link from 'next/link';
 

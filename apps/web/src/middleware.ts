@@ -1,4 +1,4 @@
-import { subdomainTabs } from '@/components/subdomain/tabs';
+import { subdomainTabs } from '@/server/components/subdomain/tabs';
 import { rootDomain } from '@/lib/domains';
 import { type NextRequest, NextResponse } from 'next/server';
 

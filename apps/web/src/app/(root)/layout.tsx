@@ -1,4 +1,4 @@
-import { Navbar } from '@/components/navbar';
+import { Navbar } from '@/server/components/layout/navbar';
 import { ReactNode } from 'react';
 
 export default async function Layout({ children }: { children: ReactNode }) {

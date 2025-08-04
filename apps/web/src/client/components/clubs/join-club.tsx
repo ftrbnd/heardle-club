@@ -1,9 +1,9 @@
 'use client';
 
-import { joinClub } from '@/actions/db';
-import { User } from '@/actions/_user';
+import { joinClub } from '@/server/actions/db';
+import { User } from '@/server/actions/_user';
 import { SelectClub, SelectUser } from '@repo/database/postgres';
-import { customToast } from '@/components/toast';
+import { customToast } from '@/client/components/toast';
 
 interface JoinClubProps {
 	club: SelectClub;

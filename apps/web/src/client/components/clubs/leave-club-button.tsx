@@ -1,8 +1,8 @@
 'use client';
 
-import { leaveClub } from '@/actions/db';
-import { LogOut } from '@/components/icons/log-out';
-import { customToast } from '@/components/toast';
+import { leaveClub } from '@/server/actions/db';
+import { LogOut } from '@/server/components/icons/log-out';
+import { customToast } from '@/client/components/toast';
 import { SelectClub } from '@repo/database/postgres';
 
 export function LeaveClubButton({

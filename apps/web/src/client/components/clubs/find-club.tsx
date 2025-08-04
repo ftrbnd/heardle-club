@@ -1,10 +1,10 @@
 'use client';
 
-import { searchForClubs } from '@/actions/db';
-import { ClubSearchResult } from '@/components/clubs/club-search-result';
-import { CreateClub } from '@/components/clubs/create-club';
-import { SearchModal } from '@/components/search-modal';
-import { useSearch } from '@/hooks/use-search';
+import { searchForClubs } from '@/server/actions/db';
+import { ClubSearchResult } from '@/server/components/clubs/club-search-result';
+import { CreateClub } from '@/client/components/clubs/create-club';
+import { SearchModal } from '@/client/components/search-modal';
+import { useSearch } from '@/client/hooks/use-search';
 
 const MODAL_ID = 'find_club_modal';
 

@@ -1,6 +1,6 @@
-import { getCurrentUser } from '@/actions/auth';
+import { getCurrentUser } from '@/server/actions/auth';
 import { getJoinedClubs, getTrendingClubs } from '@repo/database/api';
-import { ClubsCollection } from '@/components/clubs/collection';
+import { ClubsCollection } from '@/server/components/clubs/collection';
 
 export default async function HomePage() {
 	const user = await getCurrentUser();

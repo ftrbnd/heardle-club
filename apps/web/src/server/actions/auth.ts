@@ -1,6 +1,6 @@
 'use server';
 
-import { User, userSchema } from '@/actions/_user';
+import { User, userSchema } from '@/server/actions/_user';
 import { authURL } from '@/lib/domains';
 import { cookies } from 'next/headers';
 

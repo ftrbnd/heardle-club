@@ -1,4 +1,4 @@
-import { Navbar } from '@/components/navbar';
+import { Navbar } from '@/server/components/layout/navbar';
 import { rootDomain } from '@/lib/domains';
 import { getClubBySubdomain } from '@repo/database/api';
 import { Metadata } from 'next';

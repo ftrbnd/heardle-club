@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, AlertType } from '@/components/icons/alert';
+import { Alert, AlertType } from '@/server/components/icons/alert';
 import { toast } from 'sonner';
 
 interface ToastProps {

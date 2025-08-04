@@ -1,6 +1,6 @@
-import { getCurrentUser } from '@/actions/auth';
-import { getArtist } from '@/actions/spotify';
-import { LeaveClubButton } from '@/components/clubs/leave-club-button';
+import { getCurrentUser } from '@/server/actions/auth';
+import { getArtist } from '@/server/actions/spotify';
+import { LeaveClubButton } from '@/client/components/clubs/leave-club-button';
 import { getSubdomainURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Image from 'next/image';

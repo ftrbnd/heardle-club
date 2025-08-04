@@ -1,5 +1,5 @@
-import { getCurrentUser } from '@/actions/auth';
-import { NavbarItems } from '@/components/navbar-items';
+import { getCurrentUser } from '@/server/actions/auth';
+import { NavbarItems } from '@/client/components/navbar-items';
 import { accountURL, loginURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';
 import Link from 'next/link';
