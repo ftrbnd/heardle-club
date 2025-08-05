@@ -1,9 +1,9 @@
 'use client';
 
+import { clientGetArtistAlbums } from '@/app/spotify/_services';
 import { AddSongsButton } from '@/client/components/clubs/add-songs-button';
 import { ArtistAlbums } from '@/client/components/clubs/artist-albums';
 import { submitClubSongs } from '@/server/actions/backend';
-import { getArtistAlbums } from '@/server/actions/spotify';
 import { Search } from '@/server/components/icons/search';
 import { SelectClub } from '@repo/database/postgres';
 import { useQuery } from '@tanstack/react-query';
@@ -11,7 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 export function AddSongs({ club }: { club: SelectClub }) {
 	const { data: albums } = useQuery({
 		queryKey: ['artist', 'albums', club.artistId],
-		queryFn: () => getArtistAlbums(club.artistId),
+		queryFn: () => clientGetArtistAlbums(club.artistId),
 	});
 
 	return (

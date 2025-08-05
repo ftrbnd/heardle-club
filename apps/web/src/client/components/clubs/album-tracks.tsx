@@ -1,6 +1,6 @@
 'use client';
 
-import { getAlbumTracks } from '@/server/actions/spotify';
+import { clientGetAlbumTracks } from '@/app/spotify/_services';
 import { SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import { useQuery } from '@tanstack/react-query';
 
@@ -11,7 +11,7 @@ interface AlbumTracksProps {
 export function AlbumTracks({ album }: AlbumTracksProps) {
 	const { data: tracks } = useQuery({
 		queryKey: ['albums', 'tracks', album.id],
-		queryFn: () => getAlbumTracks(album.id),
+		queryFn: () => clientGetAlbumTracks(album.id),
 	});
 
 	const durationFormatted = (duration_ms: number) => {
