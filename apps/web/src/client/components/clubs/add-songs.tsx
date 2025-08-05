@@ -14,9 +14,11 @@ export function AddSongs({ club }: { club: SelectClub }) {
 		queryFn: () => clientGetArtistAlbums(club.artistId),
 	});
 
+	const submitWithClubId = submitClubSongs.bind(null, club.id);
+
 	return (
 		<form
-			action={submitClubSongs}
+			action={submitWithClubId}
 			className='p-2 flex flex-col w-full gap-4 items-center'>
 			<div className='flex w-full gap-2 items-center justify-between'>
 				<label className='input'>

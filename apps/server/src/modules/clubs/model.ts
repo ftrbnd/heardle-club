@@ -20,9 +20,16 @@ export namespace ClubModel {
 	export const createClubInvalid = t.Literal('Invalid club id');
 	export type CreateClubInvalid = typeof createClubInvalid.static;
 
+	export const initializeClubSongsBody = t.Object({
+		userId: t.String(),
+		trackIds: t.Array(t.String()),
+	});
+	export type InitializeClubSongsBody = typeof initializeClubSongsBody.static;
+
 	export const downloadClubSongsBody = t.Object({
-		artistId: t.String(),
 		clubId: t.String(),
+		artistId: t.String(),
+		trackIds: t.Optional(t.Array(t.String())),
 	});
 	export type DownloadClubSongsBody = typeof downloadClubSongsBody.static;
 
@@ -37,4 +44,10 @@ export namespace ClubModel {
 		'A club with this artist already exists'
 	);
 	export type DownloadClubSongsInvalid = typeof downloadClubSongsInvalid.static;
+
+	export const unauthorized = t.Literal('Unauthorized');
+	export type Unauthorized = typeof unauthorized.static;
+
+	export const notFound = t.Literal('Club not found');
+	export type NotFound = typeof notFound.static;
 }

@@ -31,7 +31,7 @@ export function AlbumTracks({ album }: AlbumTracksProps) {
 						type='checkbox'
 						className='checkbox'
 						name={track.name}
-						value={track.id}
+						value={`track_${track.id}`}
 					/>
 					<p className='font-thin opacity-70 min-w-4'>{track.track_number}</p>
 					<p className='font-bold flex-1'>{track.name}</p>

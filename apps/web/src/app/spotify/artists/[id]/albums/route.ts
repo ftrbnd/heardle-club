@@ -1,7 +1,7 @@
 import { getArtistAlbums } from '@/server/actions/spotify';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-static';
+export const fetchCache = 'force-cache';
 
 export async function GET(
 	_req: NextRequest,

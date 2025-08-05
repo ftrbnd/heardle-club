@@ -12,5 +12,5 @@ export const getSubdomainURL = (subdomain: string) =>
 export const loginURL = `${rootURL}/login` as const;
 export const accountURL = `${rootURL}/account` as const;
 
-export const serverURL = `${protocol}://api.${rootDomain}`;
+export const serverURL = `${protocol}://api.${rootDomain}` as const;
 export const authURL = `${serverURL}/auth` as const;

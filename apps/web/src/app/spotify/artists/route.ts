@@ -1,7 +1,7 @@
 import { searchArtist } from '@/server/actions/spotify';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const dynamic = 'force-static';
+export const fetchCache = 'force-cache';
 
 export async function GET(request: NextRequest) {
 	const searchParams = request.nextUrl.searchParams;

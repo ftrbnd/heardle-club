@@ -67,6 +67,16 @@ export const getClubByArtistId = async (artistId: string) => {
 	return result.length > 0 ? result[0] : null;
 };
 
+export const getClubById = async (clubId: string) => {
+	const result = await db
+		.select()
+		.from(clubs)
+		.where(eq(clubs.id, clubId))
+		.limit(1);
+
+	return result.length > 0 ? result[0] : null;
+};
+
 export const getClubBySubdomain = async (subdomain: string) => {
 	const result = await db
 		.select()
