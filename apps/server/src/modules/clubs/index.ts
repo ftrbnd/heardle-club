@@ -18,15 +18,16 @@ export const clubs = new Elysia({ prefix: '/clubs' }).post(
 
 		if (club.ownerId !== userId) return status(401, 'Unauthorized');
 
-		// TODO: set redis status
-
-		const response = await Club.downloadClubSongs({
+		Club.downloadClubSongs({
 			clubId,
 			artistId: club.artistId,
 			trackIds,
 		});
 
-		return response;
+		return {
+			code: 200,
+			response: 'Tracks received by server',
+		};
 	},
 	{
 		body: ClubModel.initializeClubSongsBody,

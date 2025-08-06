@@ -33,10 +33,9 @@ export namespace ClubModel {
 	});
 	export type DownloadClubSongsBody = typeof downloadClubSongsBody.static;
 
-	export const downloadClubSongsResponse = t.Object({
-		count: t.Number(),
-		tracks: t.Array(t.String()),
-	});
+	export const downloadClubSongsResponse = t.Literal(
+		'Tracks received by server'
+	);
 	export type DownloadClubSongsResponse =
 		typeof downloadClubSongsResponse.static;
 

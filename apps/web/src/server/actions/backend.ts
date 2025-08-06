@@ -18,7 +18,7 @@ export async function submitClubSongs(clubId: string, formData: FormData) {
 
 	// TODO: set redis status
 
-	const res = await fetch(`${serverURL}/clubs/${clubId}`, {
+	await fetch(`${serverURL}/clubs/${clubId}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -28,9 +28,4 @@ export async function submitClubSongs(clubId: string, formData: FormData) {
 			trackIds,
 		}),
 	});
-
-	if (!res.ok) {
-		console.error(res);
-		throw new Error(`Failed to send ${trackIds.length} tracks to server`);
-	}
 }
