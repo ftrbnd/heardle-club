@@ -19,7 +19,7 @@ export const clubs = new Elysia({ prefix: '/clubs' }).post(
 		if (club.ownerId !== userId) return status(401, 'Unauthorized');
 
 		Club.downloadClubSongs({
-			clubId,
+			club,
 			artistId: club.artistId,
 			trackIds,
 		});

@@ -1,6 +1,6 @@
 import { t } from 'elysia';
 import { TypeBox } from '@sinclair/typemap';
-import { insertClubSchema } from '@repo/database/postgres';
+import { insertClubSchema, selectClubSchema } from '@repo/database/postgres';
 
 export namespace ClubModel {
 	// Define a DTO for Elysia validation
@@ -27,7 +27,7 @@ export namespace ClubModel {
 	export type InitializeClubSongsBody = typeof initializeClubSongsBody.static;
 
 	export const downloadClubSongsBody = t.Object({
-		clubId: t.String(),
+		club: t.Any(), // TODO: check back above pr
 		artistId: t.String(),
 		trackIds: t.Optional(t.Array(t.String())),
 	});

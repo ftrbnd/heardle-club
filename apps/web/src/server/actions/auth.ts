@@ -25,7 +25,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
 			tags: ['user'],
 		},
 	});
-	if (!res.ok) throw new Error('Failed to get current user');
+	if (!res.ok) return null;
 
 	const data = await res.json();
 	const user = userSchema.parse(data.user);

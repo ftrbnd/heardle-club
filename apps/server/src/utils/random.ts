@@ -10,3 +10,7 @@ export function generateSecureRandomString(): string {
 	}
 	return id;
 }
+
+export function sanitizeString(str: string) {
+	return str.replace(/[\\\\/:*?\"<>|]/, '').toLowerCase();
+}

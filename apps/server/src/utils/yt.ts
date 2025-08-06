@@ -65,17 +65,12 @@ export async function searchVideo(client: Innertube, query: string) {
 	return firstResult.as(YTNodes.Video);
 }
 
-function cleanTitle(title: string) {
-	return title.replace(/[\\\\/:*?\"<>|]/, '').toLowerCase();
-}
-
 export async function downloadAudio(
 	client: Innertube,
 	videoId: string,
-	title: string
+	fileName: string
 ) {
-	const cleaned = cleanTitle(title);
-	const outputPath = `${cleaned}.mp3`;
+	const outputPath = `${fileName}.mp3`;
 
 	const stream = await client.download(videoId, {
 		client: 'YTMUSIC',
