@@ -1,5 +1,5 @@
 import { subdomainTabs } from '@/server/components/subdomain/tabs';
-import { rootDomain } from '@/lib/domains';
+import { rootDomain, rootURL } from '@/lib/domains';
 import { type NextRequest, NextResponse } from 'next/server';
 
 function extractSubdomain(request: NextRequest): string | null {
@@ -52,6 +52,10 @@ export async function middleware(request: NextRequest) {
 		// For the root path on a subdomain, rewrite to the subdomain page
 		if (pathname === '/') {
 			return NextResponse.rewrite(new URL(`/s/${subdomain}`, request.url));
+		}
+
+		if (pathname === '/login' || pathname.startsWith('/account')) {
+			return NextResponse.redirect(`${rootURL}${pathname}`);
 		}
 
 		if (subdomainTabPaths.includes(pathname)) {
