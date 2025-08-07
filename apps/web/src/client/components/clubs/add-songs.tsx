@@ -3,7 +3,9 @@
 import { clientGetArtistAlbums } from '@/app/spotify/_services';
 import { AddSongsButton } from '@/client/components/clubs/add-songs-button';
 import { ArtistAlbums } from '@/client/components/clubs/artist-albums';
+import { CustomToast } from '@/client/components/toast';
 import { submitClubSongs } from '@/server/actions/backend';
+import { getClubDownloadStatus } from '@/server/actions/db';
 import { Search } from '@/server/components/icons/search';
 import { SelectClub } from '@repo/database/postgres';
 import { useQuery } from '@tanstack/react-query';
@@ -14,7 +16,19 @@ export function AddSongs({ club }: { club: SelectClub }) {
 		queryFn: () => clientGetArtistAlbums(club.artistId),
 	});
 
+	// TODO: live update, stream/websocket?
+	const { data: downloadStatus } = useQuery({
+		queryKey: ['download-status', club.id],
+		queryFn: () => getClubDownloadStatus(club.id),
+		staleTime: 0,
+	});
+
 	const submitWithClubId = submitClubSongs.bind(null, club.id);
+
+	const [complete, total] = downloadStatus
+		? downloadStatus.split('/')
+		: ['0', '1'];
+	const downloadComplete = complete === total;
 
 	return (
 		<form
@@ -30,6 +44,13 @@ export function AddSongs({ club }: { club: SelectClub }) {
 				</label>
 				<AddSongsButton />
 			</div>
+
+			{downloadStatus && !downloadComplete && (
+				<CustomToast
+					message={`Downloading ${complete}/${total}...`}
+					type='loading'
+				/>
+			)}
 
 			{albums && <ArtistAlbums albums={albums} />}
 		</form>

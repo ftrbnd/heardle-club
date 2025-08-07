@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { db } from '../postgres';
 import { baseSongs } from '../postgres/schema/tables';
 import {
@@ -49,4 +50,26 @@ export const getUnlimitedSongs = async (clubId: string) => {
 	const unlimitedSongs = heardleSongSchema.array().parse(response);
 
 	return unlimitedSongs;
+};
+
+const clubDownloadStatusKey = (clubId: string) =>
+	`download_status:${clubId}` as const;
+
+export const setDownloadStatus = async (
+	clubId: string,
+	curAmt: number,
+	totalAmt: number
+) => {
+	await redis.set(clubDownloadStatusKey(clubId), `${curAmt}/${totalAmt}`);
+};
+
+export const clearDownloadStatus = async (clubId: string) => {
+	await redis.del(clubDownloadStatusKey(clubId));
+};
+
+export const getDownloadStatus = async (clubId: string) => {
+	const response = await redis.get(clubDownloadStatusKey(clubId));
+	const status = z.string().optional().nullable().parse(response);
+
+	return status;
 };

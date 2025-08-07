@@ -2,6 +2,7 @@
 
 import { serverURL } from '@/lib/domains';
 import { getCurrentUser } from '@/server/actions/auth';
+import { setDownloadStatus } from '@repo/database/api';
 
 export async function submitClubSongs(clubId: string, formData: FormData) {
 	const user = await getCurrentUser();
@@ -17,6 +18,7 @@ export async function submitClubSongs(clubId: string, formData: FormData) {
 	if (trackIds.length === 0) return;
 
 	// TODO: set redis status
+	await setDownloadStatus(clubId, 0, trackIds.length);
 
 	await fetch(`${serverURL}/clubs/${clubId}`, {
 		method: 'POST',

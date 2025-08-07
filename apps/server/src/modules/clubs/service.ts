@@ -3,10 +3,15 @@ import type { ClubModel } from './model';
 import { spotify } from '@/utils/spotify';
 import { generateClient, searchVideo, downloadAudio } from '@/utils/yt';
 import { SelectClub } from '@repo/database/postgres';
-import { SimplifiedTrack } from '@spotify/web-api-ts-sdk';
+import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
+import { setDownloadStatus, clearDownloadStatus } from '@repo/database/api';
+
+type TrackWithAlbum =
+	| Omit<Track, 'external_ids' | 'popularity'>
+	| (SimplifiedTrack & { album: Album });
 
 async function downloadMultipleTracks(
-	tracks: SimplifiedTrack[],
+	tracks: TrackWithAlbum[],
 	clubId: string
 ) {
 	const client = await generateClient();
@@ -24,11 +29,14 @@ async function downloadMultipleTracks(
 			await downloadAudio(client, ytVideo.video_id, fileName);
 
 			count++;
+			await setDownloadStatus(clubId, count, tracks.length);
 		} catch (error) {
 			console.log(`Failed to download ${track.name}`);
 			continue;
 		}
 	}
+
+	await clearDownloadStatus(clubId);
 
 	console.log(`Successfully downloaded ${count}/${tracks.length} tracks`);
 	return count;
@@ -43,7 +51,7 @@ export abstract class Club {
 		// TODO: fix after pr in ./model
 		const tempClub = club as SelectClub;
 
-		let tracks: SimplifiedTrack[] = [];
+		let tracks: TrackWithAlbum[] = [];
 
 		if (trackIds && trackIds.length > 0) {
 			// the tracks that the user submitted
@@ -54,7 +62,13 @@ export abstract class Club {
 			const albums = await spotify.artists.albums(artistId);
 			for (const item of albums.items) {
 				const album = await spotify.albums.get(item.id);
-				tracks.push(...album.tracks.items);
+
+				const tracksWithAlbum = album.tracks.items.map((item) => ({
+					...item,
+					album,
+				}));
+
+				tracks.push(...tracksWithAlbum);
 			}
 		}
 

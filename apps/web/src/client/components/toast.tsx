@@ -8,7 +8,7 @@ interface ToastProps {
 	message: string;
 }
 
-function CustomToast(props: ToastProps) {
+export function CustomToast(props: ToastProps) {
 	const { type, message } = props;
 
 	return (

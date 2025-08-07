@@ -3,6 +3,7 @@
 import { getSubdomainURL } from '@/lib/domains';
 import {
 	addUserToClub,
+	getDownloadStatus,
 	insertClub,
 	removeUserFromClub,
 	searchClubs,
@@ -55,4 +56,9 @@ export async function leaveClub(userId?: string, clubId?: string) {
 	if (!userId || !clubId) return null;
 
 	await removeUserFromClub(userId, clubId);
+}
+
+export async function getClubDownloadStatus(clubId: string) {
+	const status = await getDownloadStatus(clubId);
+	return status;
 }
