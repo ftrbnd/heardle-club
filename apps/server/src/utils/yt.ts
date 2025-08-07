@@ -85,4 +85,5 @@ export async function downloadAudio(
 	}
 
 	console.log(`Downloaded ${outputPath}`);
+	return outputPath;
 }

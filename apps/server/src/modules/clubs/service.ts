@@ -4,7 +4,11 @@ import { spotify } from '@/utils/spotify';
 import { generateClient, searchVideo, downloadAudio } from '@/utils/yt';
 import { SelectClub } from '@repo/database/postgres';
 import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
-import { setDownloadStatus, clearDownloadStatus } from '@repo/database/api';
+import {
+	setDownloadStatus,
+	clearDownloadStatus,
+	uploadFile,
+} from '@repo/database/api';
 
 type TrackWithAlbum =
 	| Omit<Track, 'external_ids' | 'popularity'>
@@ -19,19 +23,19 @@ async function downloadMultipleTracks(
 	let count = 0;
 	for (const track of tracks) {
 		const searchQuery = `${track.artists.map((artist) => artist.name).join(', ')} ${track.name}`;
-		console.log({ track: track.name, searchQuery });
 
 		try {
 			const ytVideo = await searchVideo(client, searchQuery);
-			console.log({ foundVideo: ytVideo.title.text });
 
-			const fileName = sanitizeString(`${clubId}_${track.name}`);
-			await downloadAudio(client, ytVideo.video_id, fileName);
+			const fileName = sanitizeString(track.name);
+			const path = await downloadAudio(client, ytVideo.video_id, fileName);
+			await uploadFile(path, clubId, track.id);
 
 			count++;
 			await setDownloadStatus(clubId, count, tracks.length);
 		} catch (error) {
-			console.log(`Failed to download ${track.name}`);
+			if (error instanceof Error)
+				console.log(`Failed to download ${track.name}:`, error);
 			continue;
 		}
 	}

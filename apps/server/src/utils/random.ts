@@ -12,5 +12,9 @@ export function generateSecureRandomString(): string {
 }
 
 export function sanitizeString(str: string) {
-	return str.replace(/[\\\\/:*?\"<>|]/, '').toLowerCase();
+	return str
+		.replaceAll('/', '_')
+		.replaceAll(' ', '_')
+		.replaceAll(/\W/g, '')
+		.toLowerCase();
 }
