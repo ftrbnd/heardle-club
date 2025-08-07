@@ -116,7 +116,9 @@ export const removeUserFromClub = async (userId: string, clubId: string) => {
 		);
 };
 
-export const getClubSongs = async (clubId: string) => {
+export const getClubSongs = async (clubId?: string) => {
+	if (!clubId) return [];
+
 	const songs = await db
 		.select()
 		.from(baseSongs)

@@ -70,8 +70,9 @@ export const usersToClubsRelations = relations(usersToClubs, ({ one }) => ({
 
 export const baseSongs = pgTable('base_songs', {
 	id: text().primaryKey(),
+	trackId: text().notNull(),
 	title: text().notNull(),
-	artist: varchar({ length: 50 }).notNull(),
+	artist: varchar({ length: 50 }).array().notNull(),
 	album: varchar({ length: 100 }),
 	image: text(),
 	audio: text().notNull(),

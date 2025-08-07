@@ -2,12 +2,17 @@ import { sanitizeString } from '@/utils/random';
 import type { ClubModel } from './model';
 import { spotify } from '@/utils/spotify';
 import { generateClient, searchVideo, downloadAudio } from '@/utils/yt';
-import { SelectClub } from '@repo/database/postgres';
+import {
+	generateSecureRandomString,
+	InsertBaseSong,
+	SelectClub,
+} from '@repo/database/postgres';
 import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
 import {
 	setDownloadStatus,
 	clearDownloadStatus,
 	uploadFile,
+	insertClubSong,
 } from '@repo/database/api';
 
 type TrackWithAlbum =
@@ -29,7 +34,18 @@ async function downloadMultipleTracks(
 
 			const fileName = sanitizeString(track.name);
 			const path = await downloadAudio(client, ytVideo.video_id, fileName);
-			await uploadFile(path, clubId, track.id);
+			const { id } = await uploadFile(path, clubId, track.id);
+
+			await insertClubSong({
+				id: generateSecureRandomString(),
+				trackId: track.id,
+				title: track.name,
+				artist: track.artists.map((artist) => artist.name),
+				album: track.album.name,
+				image: track.album.images.find((img) => img)?.url,
+				audio: id,
+				clubId,
+			});
 
 			count++;
 			await setDownloadStatus(clubId, count, tracks.length);

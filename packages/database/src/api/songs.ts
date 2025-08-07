@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { db } from '../postgres';
+import { db, InsertBaseSong } from '../postgres';
 import { baseSongs } from '../postgres/schema/tables';
 import {
 	redis,
@@ -72,4 +72,9 @@ export const getDownloadStatus = async (clubId: string) => {
 	const status = z.string().optional().nullable().parse(response);
 
 	return status;
+};
+
+export const insertClubSong = async (newSong: InsertBaseSong) => {
+	const response = await db.insert(baseSongs).values(newSong).returning();
+	return response.length > 0 ? response[0] : null;
 };
