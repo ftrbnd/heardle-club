@@ -11,20 +11,35 @@ export async function Dashboard({ club }: DashboardProps) {
 	const songs = await getClubSongs(club.id);
 
 	return (
-		<div>
-			<p className='p-4 pb-2  tracking-wide'>
-				Songs <span className='badge'>{songs.length}</span>
-			</p>
-			{songs.length > 0 ? (
-				<ClubSongs songs={songs} />
-			) : (
-				<div
-					role='alert'
-					className='alert alert-warning alert-soft'>
-					<span>Add some songs to get started!</span>
-				</div>
-			)}
-			<AddSongs club={club} />
+		<div className='tabs tabs-border'>
+			<input
+				type='radio'
+				name='club_dashboard'
+				className='tab'
+				aria-label='Club songs'
+				defaultChecked
+			/>
+			<div className='tab-content border-base-300 bg-base-100 md:p-10'>
+				{songs.length > 0 ? (
+					<ClubSongs songs={songs} />
+				) : (
+					<div
+						role='alert'
+						className='alert alert-warning alert-soft'>
+						<span>Add some songs to get started!</span>
+					</div>
+				)}
+			</div>
+
+			<input
+				type='radio'
+				name='club_dashboard'
+				className='tab'
+				aria-label='Add songs'
+			/>
+			<div className='tab-content border-base-300 bg-base-100 md:p-10'>
+				<AddSongs club={club} />
+			</div>
 		</div>
 	);
 }
