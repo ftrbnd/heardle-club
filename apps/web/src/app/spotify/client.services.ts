@@ -5,34 +5,32 @@ import {
 } from '@spotify/web-api-ts-sdk';
 
 async function spotifyFetch<T>(endpoint: string) {
-	const res = await fetch(endpoint);
+	const res = await fetch(`/spotify/${endpoint}`);
 	if (!res.ok) throw new Error(res.statusText);
 	const data: T = await res.json();
 	return data;
 }
 
 export async function clientSearchArtist(query: string) {
-	const artists = await spotifyFetch<Artist[]>(
-		`/spotify/artists?query=${query}}`
-	);
+	const artists = await spotifyFetch<Artist[]>(`artists?query=${query}}`);
 	return artists;
 }
 
 export async function clientGetArtist(artistId: string) {
-	const artist = await spotifyFetch<Artist>(`/spotify/artists/${artistId}}`);
+	const artist = await spotifyFetch<Artist>(`artists/${artistId}}`);
 	return artist;
 }
 
 export async function clientGetArtistAlbums(artistId: string) {
 	const albums = await spotifyFetch<SimplifiedAlbum[]>(
-		`/spotify/artists/${artistId}/albums`
+		`artists/${artistId}/albums`
 	);
 	return albums;
 }
 
 export async function clientGetAlbumTracks(albumId: string) {
 	const tracks = await spotifyFetch<SimplifiedTrack[]>(
-		`/spotify/albums/${albumId}/tracks`
+		`albums/${albumId}/tracks`
 	);
 	return tracks;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { clientGetAlbumTracks } from '@/app/spotify/_services';
+import { clientGetAlbumTracks } from '@/app/spotify/client.services';
 import { useSubdomain } from '@/client/hooks/use-subdomain';
 import { cn } from '@/lib/cn';
 import { SimplifiedAlbum, SimplifiedTrack } from '@spotify/web-api-ts-sdk';

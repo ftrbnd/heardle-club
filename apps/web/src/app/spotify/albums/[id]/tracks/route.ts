@@ -1,4 +1,4 @@
-import { getAlbumTracks } from '@/server/actions/spotify';
+import { getAlbumTracks } from '@/app/spotify/server.services';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(

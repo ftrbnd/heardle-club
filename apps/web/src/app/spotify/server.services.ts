@@ -1,6 +1,10 @@
-'use server';
+import { SpotifyApi } from '@spotify/web-api-ts-sdk';
 
-import { sdk } from '@/lib/spotify';
+const sdk = SpotifyApi.withClientCredentials(
+	process.env.SPOTIFY_CLIENT_ID!,
+	process.env.SPOTIFY_CLIENT_SECRET!,
+	['user-read-email', 'user-read-private']
+);
 
 export async function searchArtist(artist: string) {
 	if (artist === '') return [];

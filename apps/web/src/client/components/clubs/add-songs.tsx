@@ -1,6 +1,6 @@
 'use client';
 
-import { clientGetArtistAlbums } from '@/app/spotify/_services';
+import { clientGetArtistAlbums } from '@/app/spotify/client.services';
 import { AddSongsButton } from '@/client/components/clubs/add-songs-button';
 import { ArtistAlbums } from '@/client/components/clubs/artist-albums';
 import { CustomToast } from '@/client/components/toast';
