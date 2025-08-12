@@ -1,10 +1,10 @@
 'use client';
 
-import { searchForClubs } from '@/server/actions/db';
 import { ClubSearchResult } from '@/server/components/clubs/club-search-result';
 import { CreateClub } from '@/client/components/clubs/create-club';
 import { SearchModal } from '@/client/components/search-modal';
 import { useSearch } from '@/client/hooks/use-search';
+import { clientSearchClubs } from '@/app/api/clubs/services';
 
 const MODAL_ID = 'find_club_modal';
 
@@ -18,7 +18,7 @@ export function FindClub() {
 		openModal,
 	} = useSearch({
 		modalId: MODAL_ID,
-		searchFn: searchForClubs,
+		searchFn: clientSearchClubs,
 	});
 
 	return (

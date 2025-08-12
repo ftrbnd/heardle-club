@@ -1,4 +1,4 @@
-import { getArtist } from '@/app/spotify/server.services';
+import { getAlbumTracks } from '@/app/api/spotify/server.services';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -8,10 +8,10 @@ export async function GET(
 	const { id } = await params;
 	if (!id)
 		return NextResponse.json(
-			{ error: 'Artist ID is required' },
+			{ error: 'Album ID is required' },
 			{ status: 400 }
 		);
 
-	const artist = await getArtist(id);
-	return NextResponse.json(artist);
+	const tracks = await getAlbumTracks(id);
+	return NextResponse.json(tracks);
 }

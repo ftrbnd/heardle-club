@@ -1,4 +1,4 @@
-import { getArtistAlbums } from '@/app/spotify/server.services';
+import { getArtist } from '@/app/api/spotify/server.services';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -12,6 +12,6 @@ export async function GET(
 			{ status: 400 }
 		);
 
-	const albums = await getArtistAlbums(id);
-	return NextResponse.json(albums);
+	const artist = await getArtist(id);
+	return NextResponse.json(artist);
 }

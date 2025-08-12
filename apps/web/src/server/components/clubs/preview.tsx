@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/server/actions/auth';
-import { getArtist } from '@/app/spotify/server.services';
+import { getArtist } from '@/app/api/spotify/server.services';
 import { LeaveClubButton } from '@/client/components/clubs/leave-club-button';
 import { getSubdomainURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';

@@ -1,7 +1,10 @@
 'use client';
 
+import {
+	clientGetClubBySubdomain,
+	clientGetClubSongs,
+} from '@/app/api/clubs/services';
 import { protocol, rootDomain, rootURL } from '@/lib/domains';
-import { findClubBySubdomain, findClubSongs } from '@/server/actions/db';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
@@ -10,12 +13,13 @@ export function useSubdomain() {
 
 	const { data: club } = useQuery({
 		queryKey: ['subdomain', 'club', subdomain],
-		queryFn: () => findClubBySubdomain(subdomain),
+		queryFn: () => clientGetClubBySubdomain(subdomain),
+		enabled: subdomain !== '',
 	});
 
 	const { data: songs } = useQuery({
 		queryKey: ['subdomain', 'club', 'songs', subdomain],
-		queryFn: () => findClubSongs(club?.id),
+		queryFn: () => clientGetClubSongs(club?.id),
 		staleTime: 0,
 	});
 
