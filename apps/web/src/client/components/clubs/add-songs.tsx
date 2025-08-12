@@ -11,7 +11,7 @@ import { SelectClub } from '@repo/database/postgres';
 import { useQuery } from '@tanstack/react-query';
 
 export function AddSongs({ club }: { club: SelectClub }) {
-	const { data: albums } = useQuery({
+	const { data: albums, isPending } = useQuery({
 		queryKey: ['artist', 'albums', club.artistId],
 		queryFn: () => clientGetArtistAlbums(club.artistId),
 	});
@@ -52,7 +52,10 @@ export function AddSongs({ club }: { club: SelectClub }) {
 				/>
 			)}
 
-			{albums && <ArtistAlbums albums={albums} />}
+			<ArtistAlbums
+				albums={albums}
+				isPending={isPending}
+			/>
 		</form>
 	);
 }
