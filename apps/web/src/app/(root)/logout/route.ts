@@ -1,4 +1,4 @@
-import { logoutUser } from '@/server/actions/auth';
+import { logoutUser } from '@/app/api/auth/server.services';
 import { loginURL } from '@/lib/domains';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';

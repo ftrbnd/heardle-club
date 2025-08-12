@@ -1,7 +1,7 @@
 'use server';
 
 import { serverURL } from '@/lib/domains';
-import { getCurrentUser } from '@/server/actions/auth';
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { setDownloadStatus } from '@repo/database/api';
 
 export async function submitClubSongs(clubId: string, formData: FormData) {

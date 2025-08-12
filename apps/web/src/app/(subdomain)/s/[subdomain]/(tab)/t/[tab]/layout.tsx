@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/server/actions/auth';
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { SubdomainTab, Tabs } from '@/server/components/subdomain/tabs';
 import { getClubBySubdomain } from '@repo/database/api';
 import { ReactNode } from 'react';

@@ -1,12 +1,10 @@
-'use server';
-
-import { User, userSchema } from '@/server/actions/_user';
+import { User, userSchema } from '@/app/api/auth/_user';
 import { authURL } from '@/lib/domains';
 import { cookies } from 'next/headers';
 
 const SESSION_TOKEN_COOKIE = 'session_token';
 
-export const getSessionToken = async () => {
+const getSessionToken = async () => {
 	const cookieStore = await cookies();
 	const token = cookieStore.get(SESSION_TOKEN_COOKIE)?.value;
 
@@ -34,8 +32,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
 };
 
 export const logoutUser = async () => {
-	const cookieStore = await cookies();
-	const token = cookieStore.get(SESSION_TOKEN_COOKIE)?.value;
+	const token = await getSessionToken();
 
 	const res = await fetch(`${authURL}/logout`, {
 		headers: {
@@ -44,5 +41,5 @@ export const logoutUser = async () => {
 	});
 	if (!res.ok) throw new Error('Failed to log out');
 
-	cookieStore.delete(SESSION_TOKEN_COOKIE);
+	(await cookies()).delete(SESSION_TOKEN_COOKIE);
 };

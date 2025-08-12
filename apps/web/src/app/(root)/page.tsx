@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/server/actions/auth';
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getJoinedClubs, getTrendingClubs } from '@repo/database/api';
 import { ClubsCollection } from '@/server/components/clubs/collection';
 

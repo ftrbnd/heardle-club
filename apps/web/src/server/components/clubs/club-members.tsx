@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/server/actions/auth';
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { JoinClub } from '@/client/components/clubs/join-club';
 import { Crown } from '@/server/components/icons/crown';
 import { SelectClub, SelectUser } from '@repo/database/postgres';

@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/server/actions/auth';
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getArtist } from '@/app/api/spotify/server.services';
 import { LeaveClubButton } from '@/client/components/clubs/leave-club-button';
 import { getSubdomainURL } from '@/lib/domains';

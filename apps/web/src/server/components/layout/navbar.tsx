@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/server/actions/auth';
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { NavbarItems } from '@/client/components/navbar-items';
 import { accountURL, loginURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres';

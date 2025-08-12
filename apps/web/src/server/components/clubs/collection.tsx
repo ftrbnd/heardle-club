@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/server/actions/auth';
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { FindClub } from '@/client/components/clubs/find-club';
 import { ClubPreview } from '@/server/components/clubs/preview';
 import { loginURL } from '@/lib/domains';

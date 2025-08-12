@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/server/actions/auth';
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { createClub } from '@/server/actions/db';
 import { Artist } from '@spotify/web-api-ts-sdk';
 
