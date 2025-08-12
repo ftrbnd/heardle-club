@@ -2,11 +2,22 @@
 
 import { serverURL } from '@/lib/domains';
 import { getCurrentUser } from '@/app/api/auth/server.services';
-import { setDownloadStatus } from '@repo/database/api';
+import { getClubSongs, setDownloadStatus } from '@repo/database/api';
 
-export async function submitClubSongs(clubId: string, formData: FormData) {
+type ActionState = {
+	error?: string;
+	success?: boolean;
+};
+
+export async function submitClubSongs(
+	clubId: string,
+	prevState: ActionState,
+	formData: FormData
+): Promise<ActionState> {
 	const user = await getCurrentUser();
-	if (!user) throw new Error('Unauthorized');
+	if (!user) {
+		return { error: 'Unauthorized' };
+	}
 
 	const trackIds = [
 		...formData
@@ -15,10 +26,22 @@ export async function submitClubSongs(clubId: string, formData: FormData) {
 			.map((track) => track.toString().replace('track_', '')),
 	];
 
-	if (trackIds.length === 0) return;
+	if (trackIds.length === 0)
+		return {
+			error: 'Select at least one track.',
+		};
+
+	const clubSongs = await getClubSongs(clubId);
+	const trackIdsWithoutDuplicates = trackIds.filter(
+		(id) => !clubSongs.find((song) => song.trackId === id)
+	);
+	if (trackIdsWithoutDuplicates.length === 0) {
+		const pluralCheck = trackIds.length === 1 ? 'this song' : 'these songs';
+		return { error: `Your club already has ${pluralCheck}.` };
+	}
 
 	// TODO: set redis status
-	await setDownloadStatus(clubId, 0, trackIds.length);
+	await setDownloadStatus(clubId, 0, trackIdsWithoutDuplicates.length);
 
 	await fetch(`${serverURL}/clubs/${clubId}`, {
 		method: 'POST',
@@ -27,7 +50,11 @@ export async function submitClubSongs(clubId: string, formData: FormData) {
 		},
 		body: JSON.stringify({
 			userId: user.id,
-			trackIds,
+			trackIds: trackIdsWithoutDuplicates,
 		}),
 	});
+
+	return {
+		success: true,
+	};
 }
