@@ -16,6 +16,7 @@ export namespace AuthModel {
 		spotify_oauth_state: t.Optional(t.String()),
 		discord_oauth_state: t.Optional(t.String()),
 		session_token: t.Optional(t.String()),
+		login_referrer: t.Optional(t.String()),
 	});
 	export type OAuthStateCookies = typeof oauthStateCookies.static;
 

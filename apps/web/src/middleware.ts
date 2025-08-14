@@ -1,6 +1,7 @@
 import { subdomainTabs } from '@/server/components/subdomain/tabs';
 import { rootDomain, rootURL } from '@/lib/domains';
 import { type NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 
 function extractSubdomain(request: NextRequest): string | null {
 	const url = request.url;
@@ -63,6 +64,18 @@ export async function middleware(request: NextRequest) {
 				new URL(`/s/${subdomain}/t${pathname}`, request.url)
 			);
 		}
+	}
+
+	const c = await cookies();
+
+	if (pathname === '/login') {
+		const referrer = request.headers.get('referer');
+		c.set('login_referrer', referrer ?? rootURL, {
+			domain: rootDomain,
+			sameSite: 'lax',
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+		});
 	}
 
 	// On the root domain, allow normal access

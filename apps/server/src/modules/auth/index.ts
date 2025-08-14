@@ -100,10 +100,12 @@ export const auth = new Elysia({ prefix: '/auth' })
 				domain: rootDomain,
 			});
 
+			const loginReferrer = cookie.login_referrer.value;
+
 			return new Response(null, {
 				status: 302,
 				headers: {
-					location: rootURL,
+					location: loginReferrer ?? rootURL,
 				},
 			});
 		},
