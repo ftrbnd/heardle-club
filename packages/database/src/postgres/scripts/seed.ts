@@ -4,6 +4,7 @@ import { db, InsertClub, InsertUser, schema } from '..';
 import { clubs, usersToClubs } from '../schema/tables';
 import { redis } from '../../redis';
 import { users } from '../schema/auth';
+import { supabase } from '../../supabase';
 
 const defaultUsers: InsertUser[] = [
 	{
@@ -134,6 +135,15 @@ async function main() {
 
 	await p.exec();
 	console.log('✔️  Seeded REDIS database');
+
+	const { data: buckets } = await supabase.storage.listBuckets();
+	if (buckets) {
+		for (const bucket of buckets) {
+			await supabase.storage.emptyBucket(bucket.id);
+			await supabase.storage.deleteBucket(bucket.id);
+		}
+	}
+	console.log('✔️  Reset Supabase database');
 }
 
 main();
