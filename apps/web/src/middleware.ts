@@ -50,11 +50,6 @@ export async function middleware(request: NextRequest) {
 	const subdomain = extractSubdomain(request);
 
 	if (subdomain) {
-		// For the root path on a subdomain, rewrite to the subdomain page
-		if (pathname === '/') {
-			return NextResponse.rewrite(new URL(`/s/${subdomain}`, request.url));
-		}
-
 		if (pathname === '/login' || pathname.startsWith('/account')) {
 			return NextResponse.redirect(`${rootURL}${pathname}`);
 		}
@@ -64,6 +59,11 @@ export async function middleware(request: NextRequest) {
 				new URL(`/s/${subdomain}/t${pathname}`, request.url)
 			);
 		}
+
+		// For any other path on a subdomain, rewrite to the subdomain page
+		return NextResponse.rewrite(
+			new URL(`/s/${subdomain}${pathname}`, request.url)
+		);
 	}
 
 	const c = await cookies();

@@ -41,6 +41,7 @@ export default async function SubdomainPage({ params }: PageParams) {
 				<div className='h-full flex flex-col items-center justify-center'>
 					{songs.length > 0 ? (
 						<Link
+							className='btn btn-primary'
 							href='/play'
 							prefetch={false}>
 							Play
