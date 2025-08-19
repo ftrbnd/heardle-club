@@ -1,5 +1,5 @@
 import { supabase } from '../supabase';
-import { readFileSync, unlinkSync } from 'fs';
+import { promises, readFileSync, unlinkSync } from 'fs';
 
 const SONGS_BUCKET = 'club.songs' as const;
 
@@ -27,4 +27,21 @@ export const uploadFile = async (
 	console.log(`Deleted ${path} file locally`);
 
 	return data;
+};
+
+export const downloadSong = async (path: string) => {
+	const { data, error } = await supabase.storage
+		.from(SONGS_BUCKET)
+		.download(path);
+	if (error) throw error;
+
+	const arrayBuffer = await data.arrayBuffer();
+	const buffer = Buffer.from(arrayBuffer);
+
+	const [folderPath, _filePath] = path.split('/');
+
+	await promises.mkdir(folderPath, { recursive: true });
+	await promises.writeFile(path, buffer);
+
+	return path;
 };

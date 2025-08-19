@@ -12,6 +12,8 @@ import {
 	clearDownloadStatus,
 	uploadFile,
 	insertClubSong,
+	getRandomSong,
+	downloadSong,
 } from '@repo/database/api';
 
 type TrackWithAlbum =
@@ -32,8 +34,12 @@ async function downloadMultipleTracks(
 			const ytVideo = await searchVideo(client, searchQuery);
 
 			const fileName = sanitizeString(track.name);
-			const path = await downloadAudio(client, ytVideo.video_id, fileName);
-			const { id } = await uploadFile(path, clubId, track.id);
+			const audioFilePath = await downloadAudio(
+				client,
+				ytVideo.video_id,
+				fileName
+			);
+			const { path } = await uploadFile(audioFilePath, clubId, track.id);
 
 			await insertClubSong({
 				id: generateSecureRandomString(),
@@ -42,7 +48,8 @@ async function downloadMultipleTracks(
 				artist: track.artists.map((artist) => artist.name),
 				album: track.album.name,
 				image: track.album.images.find((img) => img)?.url,
-				audio: id,
+				audio: path,
+				duration: ytVideo.duration.seconds,
 				clubId,
 			});
 
@@ -59,6 +66,15 @@ async function downloadMultipleTracks(
 
 	console.log(`Successfully downloaded ${count}/${tracks.length} tracks`);
 	return count;
+}
+
+async function getRandomStartTime(duration: number): Promise<number> {
+	let randomStartTime = Math.floor(Math.random() * duration) - 7;
+	randomStartTime = randomStartTime < 0 ? 0 : randomStartTime; // set floor
+	randomStartTime =
+		randomStartTime + 6 > duration ? duration - 6 : randomStartTime; // set ceiling
+
+	return randomStartTime;
 }
 
 export abstract class Club {
@@ -93,5 +109,18 @@ export abstract class Club {
 
 		const count = await downloadMultipleTracks(tracks, tempClub.id);
 		return count;
+	}
+
+	static async setDailySong(clubId: string) {
+		const song = await getRandomSong(clubId);
+		if (!song) throw new Error('Club has no songs');
+
+		const startTime = await getRandomStartTime(song.duration);
+		console.log({ song: song.title, startTime });
+
+		const path = await downloadSong(song.audio);
+		console.log({ path });
+
+		return song;
 	}
 }

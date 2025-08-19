@@ -1,0 +1,1 @@
+ALTER TABLE "base_songs" ADD COLUMN "duration" integer NOT NULL;

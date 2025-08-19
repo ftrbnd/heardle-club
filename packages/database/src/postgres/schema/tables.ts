@@ -78,6 +78,7 @@ export const baseSongs = pgTable('base_songs', {
 	album: varchar({ length: 100 }),
 	image: text(),
 	audio: text().notNull(),
+	duration: integer().notNull(),
 	clubId: text().notNull(),
 	...timestamps,
 });
