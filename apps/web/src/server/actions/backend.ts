@@ -2,7 +2,12 @@
 
 import { serverURL } from '@/lib/domains';
 import { getCurrentUser } from '@/app/api/auth/server.services';
-import { getClubSongs, setDownloadStatus } from '@repo/database/api';
+import {
+	getClubById,
+	getClubSongs,
+	setDownloadStatus,
+} from '@repo/database/api';
+import { revalidatePath } from 'next/cache';
 
 type ActionState = {
 	error?: string;
@@ -53,6 +58,9 @@ export async function submitClubSongs(
 			trackIds: trackIdsWithoutDuplicates,
 		}),
 	});
+
+	const club = await getClubById(clubId);
+	revalidatePath(`/s/${club?.subdomain}`);
 
 	return {
 		success: true,

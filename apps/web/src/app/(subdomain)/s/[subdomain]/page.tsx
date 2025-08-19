@@ -38,7 +38,11 @@ export default async function SubdomainPage({ params }: PageParams) {
 					isOwner={isOwner}
 					selectedTab='Members'
 				/>
-				<div className='h-full flex flex-col items-center justify-center'>
+				<div className='h-full flex flex-col gap-2 items-center justify-center'>
+					<div
+						className={`badge badge-soft ${club.isActive ? 'badge-primary' : 'badge-secondary'}`}>
+						{club.isActive ? 'Active' : 'Inactive'}
+					</div>
 					{songs.length > 0 ? (
 						<Link
 							className='btn btn-primary'
