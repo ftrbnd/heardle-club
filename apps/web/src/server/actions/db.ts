@@ -4,6 +4,7 @@ import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getSubdomainURL } from '@/lib/domains';
 import {
 	addUserToClub,
+	deleteClub,
 	getClubById,
 	insertClub,
 	removeUserFromClub,
@@ -64,4 +65,15 @@ export async function setClubActiveStatus(clubId: string, isActive: boolean) {
 
 	revalidatePath(`/s/${newClub.subdomain}`);
 	return newClub;
+}
+
+export async function removeClub(clubId: string) {
+	const club = await getClubById(clubId);
+	if (!club) return null;
+	const user = await getCurrentUser();
+	if (!user) return null;
+	if (club.ownerId !== user.id) return null;
+
+	await deleteClub(clubId);
+	revalidatePath(`/s/${club.subdomain}`);
 }

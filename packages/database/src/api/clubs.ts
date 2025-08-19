@@ -141,3 +141,9 @@ export const updateClubActiveStatus = async (
 
 	return result[0];
 };
+
+export const deleteClub = async (clubId: string) => {
+	await db.delete(usersToClubs).where(eq(usersToClubs.clubId, clubId));
+
+	await db.delete(clubs).where(eq(clubs.id, clubId));
+};

@@ -1,7 +1,7 @@
 'use client';
 
 import { customPromiseToast } from '@/client/components/toast';
-import { setClubActiveStatus } from '@/server/actions/db';
+import { removeClub, setClubActiveStatus } from '@/server/actions/db';
 import { Pause } from '@/server/components/icons/pause';
 import { Play } from '@/server/components/icons/play';
 import { SelectClub } from '@repo/database/postgres';
@@ -11,15 +11,33 @@ interface ManageClubProps {
 }
 
 export function ManageClub({ club }: ManageClubProps) {
-	const setClubStatus = async (clubId: string) => {
-		const newStatus = club.isActive ? 'inActive' : 'active';
+	const setClubStatus = async () => {
+		const newStatus = club.isActive ? 'inactive' : 'active';
 		const isActive = club.isActive ? false : true;
 
 		customPromiseToast({
-			promise: setClubActiveStatus(clubId, isActive),
+			promise: setClubActiveStatus(club.id, isActive),
 			loadingText: `Setting club to ${newStatus}...`,
 			successText: `Set club to ${newStatus}`,
 			errorText: `Failed to set club to ${newStatus}`,
+		});
+	};
+
+	const openModal = () => {
+		const modal = document.getElementById(
+			'delete_club_modal'
+		) as HTMLDialogElement;
+		if (!modal) return;
+
+		modal.showModal();
+	};
+
+	const handleDelete = async () => {
+		customPromiseToast({
+			promise: removeClub(club.id),
+			loadingText: `Deleting ${club.displayName}...`,
+			successText: `Successfully deleted ${club.displayName}`,
+			errorText: `Failed to delete ${club.displayName}`,
 		});
 	};
 
@@ -33,14 +51,41 @@ export function ManageClub({ club }: ManageClubProps) {
 					</span>
 				</p>
 				<button
-					onClick={() => setClubStatus(club.id)}
+					onClick={setClubStatus}
 					className={`btn ${club.isActive ? 'btn-secondary' : 'btn-primary'}`}>
 					{club.isActive ? <Pause /> : <Play />}
-					{club.isActive ? 'Pause' : 'Start'} daily Heardles
+					{club.isActive ? 'Pause' : 'Activate'} club
 				</button>
 			</div>
 
-			<button className='btn btn-error self-end'>Delete club</button>
+			<button
+				className='btn btn-error self-end'
+				onClick={openModal}>
+				Delete club
+			</button>
+			<dialog
+				id='delete_club_modal'
+				className='modal modal-bottom sm:modal-middle'>
+				<div className='modal-box'>
+					<h3 className='font-bold text-lg'>Are you sure?</h3>
+					<p className='py-4'>
+						This will permanently delete the club and all statistics.
+					</p>
+
+					<div className='modal-action'>
+						<button
+							className='btn btn-error btn-outline'
+							onClick={handleDelete}>
+							Delete {club.displayName}
+						</button>
+					</div>
+				</div>
+				<form
+					method='dialog'
+					className='modal-backdrop'>
+					<button>close</button>
+				</form>
+			</dialog>
 		</div>
 	);
 }
