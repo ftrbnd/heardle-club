@@ -21,6 +21,21 @@ export function CustomToast(props: ToastProps) {
 	);
 }
 
+interface PromiseToast<T> {
+	promise: Promise<T>;
+	loadingText: string;
+	successText: string;
+	errorText: string;
+}
+
+export function customPromiseToast<T>(promise: PromiseToast<T>) {
+	return toast.promise(promise.promise, {
+		loading: promise.loadingText,
+		success: () => promise.successText,
+		error: promise.errorText,
+	});
+}
+
 export function customToast(props: ToastProps) {
 	return toast.custom(() => (
 		<CustomToast

@@ -1,15 +1,19 @@
 'use server';
 
+import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getSubdomainURL } from '@/lib/domains';
 import {
 	addUserToClub,
+	getClubById,
 	insertClub,
 	removeUserFromClub,
+	updateClubActiveStatus,
 } from '@repo/database/api';
 import {
 	insertClubSchema,
 	generateSecureRandomString,
 } from '@repo/database/postgres';
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 interface FormIds {
@@ -49,4 +53,15 @@ export async function leaveClub(userId?: string, clubId?: string) {
 	if (!userId || !clubId) return null;
 
 	await removeUserFromClub(userId, clubId);
+}
+
+export async function setClubActiveStatus(clubId: string, isActive: boolean) {
+	const club = await getClubById(clubId);
+	const user = await getCurrentUser();
+	if (club?.ownerId !== user?.id) return null;
+
+	const newClub = await updateClubActiveStatus(clubId, isActive);
+
+	revalidatePath(`/s/${newClub.subdomain}`);
+	return newClub;
 }

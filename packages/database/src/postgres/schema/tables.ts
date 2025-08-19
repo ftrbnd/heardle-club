@@ -1,4 +1,5 @@
 import {
+	boolean,
 	index,
 	integer,
 	pgTable,
@@ -18,6 +19,7 @@ export const clubs = pgTable(
 		subdomain: varchar({ length: 25 }).unique().notNull(),
 		displayName: varchar({ length: 50 }).notNull(),
 		heardleDay: integer().notNull().default(0),
+		isActive: boolean().default(false),
 		imageURL: text(),
 		ownerId: text()
 			.references(() => users.id)

@@ -126,3 +126,18 @@ export const getClubSongs = async (clubId?: string) => {
 
 	return songs;
 };
+
+export const updateClubActiveStatus = async (
+	clubId: string,
+	isActive: boolean
+) => {
+	const result = await db
+		.update(clubs)
+		.set({
+			isActive,
+		})
+		.where(eq(clubs.id, clubId))
+		.returning();
+
+	return result[0];
+};

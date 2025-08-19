@@ -1,4 +1,5 @@
 import { AddSongs } from '@/client/components/clubs/add-songs';
+import { ManageClub } from '@/client/components/clubs/manage-club';
 import { ClubSongs } from '@/server/components/clubs/club-songs';
 import { getClubSongs } from '@repo/database/api';
 import { SelectClub } from '@repo/database/postgres';
@@ -39,6 +40,16 @@ export async function Dashboard({ club }: DashboardProps) {
 			/>
 			<div className='tab-content border-base-300 bg-base-100 md:p-10'>
 				<AddSongs club={club} />
+			</div>
+
+			<input
+				type='radio'
+				name='club_dashboard'
+				className='tab'
+				aria-label='Manage'
+			/>
+			<div className='tab-content border-base-300 bg-base-100 p-2 md:p-10'>
+				<ManageClub club={club} />
 			</div>
 		</div>
 	);
