@@ -18,14 +18,11 @@ export async function resetAllClubs() {
 
 	for (const club of clubs) {
 		try {
-			await resetClub(club.id);
+			await Club.setDailySong(club.id);
 		} catch (error) {
-			if (error instanceof Error) console.log(error.message);
+			if (error instanceof Error)
+				console.log('Failed to set daily song:', error);
 			continue;
 		}
 	}
-}
-
-async function resetClub(clubId: string) {
-	await Club.setDailySong(clubId);
 }

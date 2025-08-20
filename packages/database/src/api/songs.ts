@@ -47,7 +47,10 @@ export const getClubDailySong = async (clubId: string) => {
 	const data = await redis.json.get(`daily:${clubId}`);
 	const daily = z
 		.object({
-			song: selectBaseSongSchema,
+			song: selectBaseSongSchema.omit({
+				updatedAt: true,
+				createdAt: true,
+			}),
 			url: z.string(),
 		})
 		.parse(data);

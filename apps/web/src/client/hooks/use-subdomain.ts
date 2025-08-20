@@ -2,6 +2,7 @@
 
 import {
 	clientGetClubBySubdomain,
+	clientGetClubDailySong,
 	clientGetClubSongs,
 } from '@/app/api/clubs/services';
 import { protocol, rootDomain, rootURL } from '@/lib/domains';
@@ -23,6 +24,12 @@ export function useSubdomain() {
 		staleTime: 0,
 	});
 
+	const { data: daily } = useQuery({
+		queryKey: ['subdomain', 'club', 'daily', subdomain],
+		queryFn: () => clientGetClubDailySong(club?.id),
+		staleTime: 0,
+	});
+
 	useEffect(() => {
 		const href = window.location.href;
 
@@ -37,5 +44,5 @@ export function useSubdomain() {
 		}
 	}, []);
 
-	return { subdomain, club, songs };
+	return { subdomain, club, songs, daily };
 }

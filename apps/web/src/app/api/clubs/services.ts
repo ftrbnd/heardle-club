@@ -28,3 +28,12 @@ export async function clientGetClubBySubdomain(subdomain: string) {
 	const club = await clubFetch<SelectClub>(`?subdomain=${subdomain}`);
 	return club;
 }
+
+export async function clientGetClubDailySong(clubId?: string) {
+	if (!clubId) return null;
+
+	const daily = await clubFetch<{ song: SelectBaseSong; url: string }>(
+		`/${clubId}/songs/daily`
+	);
+	return daily;
+}

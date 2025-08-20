@@ -1,3 +1,14 @@
+'use client';
+
+import AudioPlayer from '@/client/components/audio-player';
+import { useSubdomain } from '@/client/hooks/use-subdomain';
+
 export default function Page() {
-	return <div className='flex-1'>play</div>;
+	const { daily } = useSubdomain();
+
+	return (
+		<div className='flex-1'>
+			<AudioPlayer url={daily?.url} />
+		</div>
+	);
 }
