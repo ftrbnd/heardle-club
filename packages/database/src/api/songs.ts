@@ -1,5 +1,10 @@
-import { z } from 'zod';
-import { db, InsertBaseSong } from '../postgres';
+import { z } from 'zod/v4';
+import {
+	db,
+	InsertBaseSong,
+	SelectBaseSong,
+	selectBaseSongSchema,
+} from '../postgres';
 import { baseSongs } from '../postgres/schema/tables';
 import { redis } from '../redis';
 import { eq, sql } from 'drizzle-orm';
@@ -24,6 +29,30 @@ export const getRandomSong = async (clubId: string) => {
 		.limit(1);
 
 	return result.length > 0 ? result[0] : null;
+};
+
+export const setClubDailySong = async (
+	clubId: string,
+	song: SelectBaseSong,
+	url: string
+) => {
+	await redis.json.set(`daily:${clubId}`, '$', {
+		song,
+		url,
+	});
+	console.log('Uploaded daily song data to Redis');
+};
+
+export const getClubDailySong = async (clubId: string) => {
+	const data = await redis.json.get(`daily:${clubId}`);
+	const daily = z
+		.object({
+			song: selectBaseSongSchema,
+			url: z.string(),
+		})
+		.parse(data);
+
+	return daily;
 };
 
 const clubDownloadStatusKey = (clubId: string) =>

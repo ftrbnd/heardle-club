@@ -10,11 +10,19 @@ import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
 import {
 	setDownloadStatus,
 	clearDownloadStatus,
-	uploadFile,
+	uploadClubSongFile,
 	insertClubSong,
 	getRandomSong,
 	downloadSong,
+	uploadDailySongFile,
+	setClubDailySong,
+	getClubById,
 } from '@repo/database/api';
+import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
+import ffmpeg from 'fluent-ffmpeg';
+import { promises } from 'fs';
+
+ffmpeg.setFfmpegPath(ffmpegPath);
 
 type TrackWithAlbum =
 	| Omit<Track, 'external_ids' | 'popularity'>
@@ -39,7 +47,11 @@ async function downloadMultipleTracks(
 				ytVideo.video_id,
 				fileName
 			);
-			const { path } = await uploadFile(audioFilePath, clubId, track.id);
+			const { path } = await uploadClubSongFile(
+				audioFilePath,
+				clubId,
+				track.id
+			);
 
 			await insertClubSong({
 				id: generateSecureRandomString(),
@@ -75,6 +87,32 @@ async function getRandomStartTime(duration: number): Promise<number> {
 		randomStartTime + 6 > duration ? duration - 6 : randomStartTime; // set ceiling
 
 	return randomStartTime;
+}
+
+/**
+ * Trim the song audio file to 6 seconds
+ * @param path
+ */
+async function trimSong(
+	path: string,
+	startTime: number,
+	finalPath: string
+): Promise<string> {
+	const [clubId, dailyFolder, _fileName] = finalPath.split('/');
+	await promises.mkdir(`${clubId}/${dailyFolder}`, { recursive: true });
+
+	return new Promise((resolve, reject) => {
+		ffmpeg(path)
+			.setStartTime(startTime)
+			.setDuration(6)
+			.on('end', async () => {
+				resolve(finalPath);
+			})
+			.on('error', (err: unknown) => {
+				reject(err);
+			})
+			.save(finalPath);
+	});
 }
 
 export abstract class Club {
@@ -116,10 +154,19 @@ export abstract class Club {
 		if (!song) throw new Error('Club has no songs');
 
 		const startTime = await getRandomStartTime(song.duration);
-		console.log({ song: song.title, startTime });
 
 		const path = await downloadSong(song.audio);
-		console.log({ path });
+
+		const club = await getClubById(clubId);
+		if (!club) throw new Error('Club not found');
+		const dayNum = club.heardleDay;
+
+		const finalPath = `${clubId}/daily/${clubId}_day_${dayNum}.mp3`;
+		await trimSong(path, startTime, finalPath);
+
+		const { signedUrl } = await uploadDailySongFile(finalPath, clubId);
+
+		await setClubDailySong(clubId, song, signedUrl);
 
 		return song;
 	}
