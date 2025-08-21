@@ -44,12 +44,20 @@ export default async function SubdomainPage({ params }: PageParams) {
 						{club.isActive ? 'Active' : 'Inactive'}
 					</div>
 					{songs.length > 0 ? (
-						<Link
-							className='btn btn-primary'
-							href='/play'
-							prefetch={false}>
-							Play
-						</Link>
+						club.isActive ? (
+							<Link
+								className='btn btn-primary'
+								href='/play'
+								prefetch={false}>
+								Play
+							</Link>
+						) : (
+							<button
+								className='btn btn-primary'
+								disabled>
+								Play
+							</button>
+						)
 					) : isOwner ? (
 						<Link
 							href='/dashboard'

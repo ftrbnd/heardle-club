@@ -22,7 +22,19 @@ export async function Dashboard({ club }: DashboardProps) {
 			/>
 			<div className='tab-content border-base-300 bg-base-100 md:p-10'>
 				{songs.length > 0 ? (
-					<ClubSongs songs={songs} />
+					<>
+						{!club.isActive && (
+							<div
+								role='alert'
+								className='alert alert-warning alert-soft'>
+								<span>
+									Select the <span className='font-bold'>Manage</span> tab and
+									activate the club to get started!
+								</span>
+							</div>
+						)}
+						<ClubSongs songs={songs} />
+					</>
 				) : (
 					<div
 						role='alert'
