@@ -30,7 +30,7 @@ export function ArtistAlbums({ albums, isPending }: ArtistAlbumsProps) {
 							<Image
 								src={
 									album.images.find((image) => image)?.url ??
-									'./artist_placeholder.jpg'
+									'/artist_placeholder.jpg'
 								}
 								alt={album.name}
 								height={50}

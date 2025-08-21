@@ -39,3 +39,8 @@ export const insertUser = async (
 		account: accountResult[0],
 	};
 };
+
+type UpdateUserValues = Omit<InsertUser, 'id' | 'email'>;
+export const updateUser = async (userId: string, values: UpdateUserValues) => {
+	await db.update(users).set(values).where(eq(users.id, userId)).returning();
+};

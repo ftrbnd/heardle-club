@@ -1,7 +1,9 @@
+import { generateSecureRandomString } from '../postgres';
 import { supabase } from '../supabase';
 import { promises, readFileSync, unlinkSync } from 'fs';
 
 const SONGS_BUCKET = 'club.songs' as const;
+const AVATARS_BUCKET = 'user.avatars' as const;
 
 export const uploadClubSongFile = async (
 	path: string,
@@ -68,4 +70,26 @@ export const downloadSong = async (path: string) => {
 	await promises.writeFile(path, buffer);
 
 	return path;
+};
+
+export const uploadUserAvatar = async (userId: string, image: File) => {
+	const imageType = image.type.split('/')[1];
+	// guarantees image isn't cached
+	const imagePath = `${userId}/${generateSecureRandomString()}.${imageType}`;
+
+	// TODO: delete previous avatars
+
+	const { error: uploadError } = await supabase.storage
+		.from(AVATARS_BUCKET)
+		.upload(imagePath, image, {
+			contentType: image.type,
+			upsert: true,
+		});
+	if (uploadError) throw uploadError;
+
+	const { data: urlData } = supabase.storage
+		.from(AVATARS_BUCKET)
+		.getPublicUrl(imagePath); // expires in 48 hours
+
+	return urlData;
 };

@@ -9,6 +9,8 @@ import {
 	insertClub,
 	removeUserFromClub,
 	updateClubActiveStatus,
+	updateUser,
+	uploadUserAvatar,
 } from '@repo/database/api';
 import {
 	insertClubSchema,
@@ -16,6 +18,11 @@ import {
 } from '@repo/database/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+
+type ActionState = {
+	error?: string;
+	success?: boolean;
+};
 
 interface FormIds {
 	artistId: string;
@@ -76,4 +83,65 @@ export async function removeClub(clubId: string) {
 
 	await deleteClub(clubId);
 	revalidatePath(`/s/${club.subdomain}`);
+}
+
+export async function updateAccountDetails(
+	_prevState: ActionState,
+	formData: FormData
+): Promise<ActionState> {
+	const user = await getCurrentUser();
+	if (!user)
+		return {
+			error: 'Unauthorized',
+		};
+
+	const rawFormData = {
+		displayName: formData.get('displayName'),
+		avatar: formData.get('avatar'),
+	};
+
+	if (
+		rawFormData.displayName &&
+		typeof rawFormData.displayName === 'string' &&
+		rawFormData.displayName !== '' &&
+		rawFormData.displayName !== user.displayName
+	) {
+		await updateUser(user.id, {
+			displayName: rawFormData.displayName,
+		});
+	}
+
+	if (
+		rawFormData.avatar &&
+		rawFormData.avatar instanceof File &&
+		rawFormData.avatar.size > 0
+	) {
+		if (
+			rawFormData.avatar.type !== 'image/png' &&
+			rawFormData.avatar.type !== 'image/jpeg'
+		) {
+			return {
+				error: 'Upload either a PNG or JPEG image',
+			};
+		}
+
+		try {
+			const { publicUrl } = await uploadUserAvatar(user.id, rawFormData.avatar);
+			await updateUser(user.id, {
+				imageURL: publicUrl,
+			});
+		} catch (error) {
+			if (error instanceof Error) {
+				return {
+					error: error.message,
+				};
+			}
+		}
+	}
+
+	revalidatePath('/account/details');
+
+	return {
+		success: true,
+	};
 }
