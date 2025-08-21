@@ -7,6 +7,7 @@ import {
 	deleteClub,
 	getClubById,
 	insertClub,
+	removeUserAvatars,
 	removeUserFromClub,
 	updateClubActiveStatus,
 	updateUser,
@@ -126,6 +127,7 @@ export async function updateAccountDetails(
 		}
 
 		try {
+			await removeUserAvatars(user.id);
 			const { publicUrl } = await uploadUserAvatar(user.id, rawFormData.avatar);
 			await updateUser(user.id, {
 				imageURL: publicUrl,
@@ -144,4 +146,21 @@ export async function updateAccountDetails(
 	return {
 		success: true,
 	};
+}
+
+export async function deleteUserAvatar(): Promise<ActionState> {
+	const user = await getCurrentUser();
+	if (!user)
+		return {
+			error: 'Unauthorized',
+		};
+
+	await removeUserAvatars(user.id);
+	await updateUser(user.id, {
+		imageURL: null,
+	});
+
+	revalidatePath('/account/details');
+
+	return { success: true };
 }

@@ -2,7 +2,7 @@
 
 import { User } from '@/app/api/auth/_user';
 import { customToast } from '@/client/components/toast';
-import { updateAccountDetails } from '@/server/actions/db';
+import { deleteUserAvatar, updateAccountDetails } from '@/server/actions/db';
 import { UserAvatar } from '@/server/components/account/avatar';
 import { useActionState, useEffect } from 'react';
 
@@ -15,25 +15,32 @@ export function AccountDetails({ user }: AccountDetailsProps) {
 		updateAccountDetails,
 		{ error: undefined, success: false }
 	);
+	const [deleteState, deleteFormAction, deleteActionIsPending] = useActionState(
+		deleteUserAvatar,
+		{ error: undefined, success: false }
+	);
 
 	useEffect(() => {
-		if (actionIsPending) {
+		if (actionIsPending || deleteActionIsPending) {
 			customToast({
 				message: 'Updating profile...',
 				type: 'loading',
 			});
-		} else if (state.error) {
+		} else if (state.error || deleteState.error) {
+			const [err] = [state.error, deleteState.error].filter(
+				(err) => err !== undefined
+			);
 			customToast({
-				message: state.error,
+				message: err,
 				type: 'error',
 			});
-		} else if (state.success) {
+		} else if (state.success || deleteState.success) {
 			customToast({
 				message: 'Updated profile!',
 				type: 'success',
 			});
 		}
-	}, [state, actionIsPending]);
+	}, [state, actionIsPending, deleteState, deleteActionIsPending]);
 
 	return (
 		<div className='place-self-center card lg:card-side bg-base-100 shadow-sm md:mx-16'>
@@ -69,7 +76,15 @@ export function AccountDetails({ user }: AccountDetailsProps) {
 
 					<div className='card-actions justify-end'>
 						<button
-							disabled={actionIsPending}
+							disabled={
+								deleteActionIsPending || actionIsPending || !user.imageURL
+							}
+							formAction={deleteFormAction}
+							className='btn btn-soft btn-error'>
+							Delete avatar
+						</button>
+						<button
+							disabled={actionIsPending || deleteActionIsPending}
 							className='btn btn-primary'
 							type='submit'>
 							Save

@@ -77,8 +77,6 @@ export const uploadUserAvatar = async (userId: string, image: File) => {
 	// guarantees image isn't cached
 	const imagePath = `${userId}/${generateSecureRandomString()}.${imageType}`;
 
-	// TODO: delete previous avatars
-
 	const { error: uploadError } = await supabase.storage
 		.from(AVATARS_BUCKET)
 		.upload(imagePath, image, {
@@ -92,4 +90,20 @@ export const uploadUserAvatar = async (userId: string, image: File) => {
 		.getPublicUrl(imagePath); // expires in 48 hours
 
 	return urlData;
+};
+
+export const removeUserAvatars = async (userId: string) => {
+	const { data: folder, error } = await supabase.storage
+		.from(AVATARS_BUCKET)
+		.list(userId);
+	if (error) throw error;
+	if (!folder) return;
+
+	if (folder.length === 0) return;
+
+	const paths = folder.map((file) => `${userId}/${file.name}`);
+	const { error: removeError } = await supabase.storage
+		.from(AVATARS_BUCKET)
+		.remove(paths);
+	if (removeError) throw removeError;
 };
