@@ -2,13 +2,19 @@ import { AlbumTracks } from '@/client/components/clubs/album-tracks';
 import { AlbumSkeleton } from '@/client/components/skeletons/album-skeleton';
 import { SimplifiedAlbum } from '@spotify/web-api-ts-sdk';
 import Image from 'next/image';
+import { Dispatch, SetStateAction } from 'react';
 
 interface ArtistAlbumsProps {
 	albums?: SimplifiedAlbum[];
 	isPending: boolean;
+	setSelectedAmt: Dispatch<SetStateAction<number>>;
 }
 
-export function ArtistAlbums({ albums, isPending }: ArtistAlbumsProps) {
+export function ArtistAlbums({
+	albums,
+	isPending,
+	setSelectedAmt,
+}: ArtistAlbumsProps) {
 	return (
 		<div className='w-full join join-vertical bg-base-100'>
 			{!albums || isPending ? (
@@ -42,7 +48,10 @@ export function ArtistAlbums({ albums, isPending }: ArtistAlbumsProps) {
 							</p>
 						</div>
 						<div className='collapse-content text-sm'>
-							<AlbumTracks album={album} />
+							<AlbumTracks
+								album={album}
+								setSelectedAmt={setSelectedAmt}
+							/>
 						</div>
 					</div>
 				))

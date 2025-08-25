@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
 			new URL(`${supabaseUrl}/**`),
 		],
 	},
+	experimental: {
+		serverActions: {
+			bodySizeLimit: '2mb',
+		},
+	},
 };
 
 export default nextConfig;

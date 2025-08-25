@@ -164,3 +164,36 @@ export async function deleteUserAvatar(): Promise<ActionState> {
 
 	return { success: true };
 }
+
+export async function uploadSongFiles(
+	clubId: string,
+	_prevState: ActionState,
+	formData: FormData
+): Promise<ActionState> {
+	if (!formData)
+		return {
+			error: 'Submit at least one song.',
+		};
+
+	const user = await getCurrentUser();
+	if (!user)
+		return {
+			error: 'Unauthorized',
+		};
+
+	const club = await getClubById(clubId);
+
+	const rawFormData = {
+		title: formData.get('title'),
+		artist: formData.get('artist'),
+		album: formData.get('album'),
+		audioFiles: formData.get('audio_files'),
+	};
+	console.log(rawFormData);
+
+	revalidatePath(`/s/${club?.subdomain}`);
+
+	return {
+		success: true,
+	};
+}

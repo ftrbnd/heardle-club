@@ -3,15 +3,18 @@
 import { clientGetClubDownloadStatus } from '@/app/api/clubs/services';
 import { clientGetArtistAlbums } from '@/app/api/spotify/client.services';
 import { ArtistAlbums } from '@/client/components/clubs/artist-albums';
+import { UploadModal } from '@/client/components/clubs/upload-modal';
 import { customToast } from '@/client/components/toast';
 import { submitClubSongs } from '@/server/actions/backend';
 import { Search } from '@/server/components/icons/search';
 import { Upload } from '@/server/components/icons/upload';
 import { SelectClub } from '@repo/database/postgres';
 import { useQuery } from '@tanstack/react-query';
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 
 export function AddSongs({ club }: { club: SelectClub }) {
+	const [selectedAmt, setSelectedAmt] = useState(0);
+
 	const { data: albums, isPending } = useQuery({
 		queryKey: ['artist', 'albums', club.artistId],
 		queryFn: () => clientGetArtistAlbums(club.artistId),
@@ -62,9 +65,7 @@ export function AddSongs({ club }: { club: SelectClub }) {
 	}, [actionIsPending, state, downloadStatus]);
 
 	return (
-		<form
-			action={formAction}
-			className='p-2 flex flex-col w-full gap-4 items-center'>
+		<div className='p-2 flex flex-col w-full gap-4 items-center'>
 			<div className='flex w-full gap-2 items-center justify-between'>
 				<label className='input'>
 					<Search />
@@ -72,20 +73,31 @@ export function AddSongs({ club }: { club: SelectClub }) {
 						type='search'
 						placeholder='Search'
 					/>
+					{/* TODO: filter songs by search */}
 				</label>
-				<button
-					type='submit'
-					disabled={actionIsPending}
-					className='btn btn-primary self-start'>
-					<Upload />
-					Add songs
-				</button>
+
+				<div className='flex items-center'>
+					<UploadModal club={club} />
+
+					<button
+						type='submit'
+						disabled={actionIsPending || selectedAmt === 0}
+						className='btn btn-primary self-start'>
+						<Upload />
+						Add songs
+					</button>
+				</div>
 			</div>
 
-			<ArtistAlbums
-				albums={albums}
-				isPending={isPending}
-			/>
-		</form>
+			<form
+				action={formAction}
+				className='w-full'>
+				<ArtistAlbums
+					albums={albums}
+					isPending={isPending}
+					setSelectedAmt={setSelectedAmt}
+				/>
+			</form>
+		</div>
 	);
 }

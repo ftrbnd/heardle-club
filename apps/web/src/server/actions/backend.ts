@@ -19,6 +19,11 @@ export async function submitClubSongs(
 	prevState: ActionState,
 	formData: FormData
 ): Promise<ActionState> {
+	if (!formData)
+		return {
+			error: 'Submit at least one song.',
+		};
+
 	const token = await getSessionToken();
 	if (!token)
 		return {

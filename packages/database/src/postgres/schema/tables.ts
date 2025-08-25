@@ -75,8 +75,8 @@ export const sourceEnum = pgEnum('source', ['file_upload', 'youtube_download']);
 
 export const baseSongs = pgTable('base_songs', {
 	id: text().primaryKey(),
-	trackId: text().notNull(),
 	clubId: text().notNull(),
+	trackId: text(), // Spotify track ID; nullable in case of user-uploaded files
 	title: text().notNull(),
 	artist: varchar({ length: 50 }).array().notNull(),
 	album: varchar({ length: 100 }),
