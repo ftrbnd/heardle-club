@@ -3,33 +3,52 @@ import { Auth } from '@/modules/auth/service';
 import { deleteSession, validateSessionToken } from '@/modules/auth/session';
 import { rootDomain, rootURL } from '@/utils/domains';
 import { getUserById } from '@repo/database/api';
-import { Elysia, status, t } from 'elysia';
+import { Elysia, status } from 'elysia';
 
-export const auth = new Elysia({ prefix: '/auth' })
-	.macro({
-		currentSession: () => ({
-			async resolve({ cookie }) {
-				const token = cookie.session_token.value;
-				if (!token) return { session: null };
+export const authService = new Elysia({ name: 'auth_service' }).macro({
+	validateCurrentSession: {
+		resolve: async ({ headers, status }) => {
+			const authHeader = headers['authorization'];
+			if (!authHeader) return status(401);
 
-				const session = await validateSessionToken(token);
-				return { session };
-			},
-		}),
-	})
-	.get(
-		'/me',
-		async ({ headers }) => {
-			const bearerToken = headers.authorization;
-			const token = bearerToken.split(' ')[1];
+			const token = authHeader.startsWith('Bearer ')
+				? authHeader.slice(7)
+				: null;
+			if (!token) return status(401);
 
 			const session = await validateSessionToken(token);
-			const user = await getUserById(session?.userId);
+			if (!session) return status(401);
 
+			const user = await getUserById(session.userId);
+			if (!user) return status(401);
+
+			return { session, user };
+		},
+	},
+});
+
+export const auth = new Elysia({ prefix: '/auth' })
+	.use(authService)
+	.get(
+		'/me',
+		async ({ user }) => {
 			return { user };
 		},
 		{
-			headers: AuthModel.authHeaders,
+			validateCurrentSession: true,
+		}
+	)
+	.get(
+		'/logout',
+		async ({ session }) => {
+			await deleteSession(session.id);
+
+			return new Response(null, {
+				status: 204,
+			});
+		},
+		{
+			validateCurrentSession: true,
 		}
 	)
 	.get(
@@ -116,26 +135,5 @@ export const auth = new Elysia({ prefix: '/auth' })
 			response: {
 				401: AuthModel.unauthorized,
 			},
-			currentSession: true,
 		}
-	)
-	.get(
-		'/logout',
-		async ({ headers }) => {
-			const bearerToken = headers.authorization;
-			const token = bearerToken.split(' ')[1];
-
-			const session = await validateSessionToken(token);
-			if (session) await deleteSession(session.id);
-
-			return new Response(null, {
-				status: 204,
-			});
-		},
-		{
-			headers: AuthModel.authHeaders,
-		}
-	)
-	.onError(({ error }) => {
-		console.log(error);
-	});
+	);

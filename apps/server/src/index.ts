@@ -10,6 +10,9 @@ import { serverPort } from '@/utils/domains';
 import cors from '@elysiajs/cors';
 
 const app = new Elysia({ adapter: node() })
+	.onError(({ path, error }) => {
+		console.log({ path, error });
+	})
 	.get('/', () => 'Hello Elysia')
 	.use(
 		cors({

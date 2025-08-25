@@ -2,11 +2,11 @@
 
 import { clientGetClubDownloadStatus } from '@/app/api/clubs/services';
 import { clientGetArtistAlbums } from '@/app/api/spotify/client.services';
-import { AddSongsButton } from '@/client/components/clubs/add-songs-button';
 import { ArtistAlbums } from '@/client/components/clubs/artist-albums';
 import { customToast } from '@/client/components/toast';
 import { submitClubSongs } from '@/server/actions/backend';
 import { Search } from '@/server/components/icons/search';
+import { Upload } from '@/server/components/icons/upload';
 import { SelectClub } from '@repo/database/postgres';
 import { useQuery } from '@tanstack/react-query';
 import { useActionState, useEffect } from 'react';
@@ -73,7 +73,13 @@ export function AddSongs({ club }: { club: SelectClub }) {
 						placeholder='Search'
 					/>
 				</label>
-				<AddSongsButton />
+				<button
+					type='submit'
+					disabled={actionIsPending}
+					className='btn btn-primary self-start'>
+					<Upload />
+					Add songs
+				</button>
 			</div>
 
 			<ArtistAlbums

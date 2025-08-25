@@ -9,6 +9,9 @@ export async function GET(
 	if (!id)
 		return NextResponse.json({ error: 'Club ID is required' }, { status: 400 });
 
-	const { song, url } = await getClubDailySong(id);
+	const response = await getClubDailySong(id);
+	if (!response) return NextResponse.json({ song: null, url: null });
+
+	const { song, url } = response;
 	return NextResponse.json({ song, url });
 }

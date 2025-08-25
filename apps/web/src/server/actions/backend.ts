@@ -1,7 +1,7 @@
 'use server';
 
 import { serverURL } from '@/lib/domains';
-import { getCurrentUser } from '@/app/api/auth/server.services';
+import { getSessionToken } from '@/app/api/auth/server.services';
 import {
 	getClubById,
 	getClubSongs,
@@ -19,10 +19,11 @@ export async function submitClubSongs(
 	prevState: ActionState,
 	formData: FormData
 ): Promise<ActionState> {
-	const user = await getCurrentUser();
-	if (!user) {
-		return { error: 'Unauthorized' };
-	}
+	const token = await getSessionToken();
+	if (!token)
+		return {
+			error: 'Unauthorized',
+		};
 
 	const trackIds = [
 		...formData
@@ -48,16 +49,21 @@ export async function submitClubSongs(
 	// TODO: set redis status
 	await setDownloadStatus(clubId, 0, trackIdsWithoutDuplicates.length);
 
-	await fetch(`${serverURL}/clubs/${clubId}`, {
+	const res = await fetch(`${serverURL}/clubs/${clubId}/download`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
 		},
 		body: JSON.stringify({
-			userId: user.id,
 			trackIds: trackIdsWithoutDuplicates,
 		}),
 	});
+	if (!res.ok) {
+		return {
+			error: res.statusText,
+		};
+	}
 
 	const club = await getClubById(clubId);
 	revalidatePath(`/s/${club?.subdomain}`);

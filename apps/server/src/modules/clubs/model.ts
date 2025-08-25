@@ -21,7 +21,6 @@ export namespace ClubModel {
 	export type CreateClubInvalid = typeof createClubInvalid.static;
 
 	export const initializeClubSongsBody = t.Object({
-		userId: t.String(),
 		trackIds: t.Array(t.String()),
 	});
 	export type InitializeClubSongsBody = typeof initializeClubSongsBody.static;

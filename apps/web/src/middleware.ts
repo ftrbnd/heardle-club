@@ -50,7 +50,11 @@ export async function middleware(request: NextRequest) {
 	const subdomain = extractSubdomain(request);
 
 	if (subdomain) {
-		if (pathname === '/login' || pathname.startsWith('/account')) {
+		if (
+			pathname === '/login' ||
+			pathname === '/logout' ||
+			pathname.startsWith('/account')
+		) {
 			return NextResponse.redirect(`${rootURL}${pathname}`);
 		}
 

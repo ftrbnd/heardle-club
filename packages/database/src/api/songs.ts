@@ -53,6 +53,7 @@ export const getClubDailySong = async (clubId: string) => {
 			}),
 			url: z.string(),
 		})
+		.nullable()
 		.parse(data);
 
 	return daily;

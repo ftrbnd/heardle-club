@@ -26,6 +26,7 @@ const defaultClubs: InsertClub[] = [
 		subdomain: 'themarias',
 		id: '001',
 		ownerId: defaultUsers[0].id,
+		isActive: true,
 	},
 	{
 		artistId: '3l0CmX0FuQjFxr8SK7Vqag',

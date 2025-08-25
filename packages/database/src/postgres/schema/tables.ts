@@ -2,6 +2,7 @@ import {
 	boolean,
 	index,
 	integer,
+	pgEnum,
 	pgTable,
 	primaryKey,
 	text,
@@ -70,16 +71,19 @@ export const usersToClubsRelations = relations(usersToClubs, ({ one }) => ({
 	}),
 }));
 
+export const sourceEnum = pgEnum('source', ['file_upload', 'youtube_download']);
+
 export const baseSongs = pgTable('base_songs', {
 	id: text().primaryKey(),
 	trackId: text().notNull(),
+	clubId: text().notNull(),
 	title: text().notNull(),
 	artist: varchar({ length: 50 }).array().notNull(),
 	album: varchar({ length: 100 }),
 	image: text(),
 	audio: text().notNull(),
 	duration: integer().notNull(),
-	clubId: text().notNull(),
+	source: sourceEnum(),
 	...timestamps,
 });
 

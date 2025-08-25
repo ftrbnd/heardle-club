@@ -2,11 +2,6 @@ import { oauthProvider } from '@/modules/auth/providers.config';
 import { t } from 'elysia';
 
 export namespace AuthModel {
-	export const authHeaders = t.Object({
-		authorization: t.String(),
-	});
-	export type AuthHeaders = typeof authHeaders.static;
-
 	export const loginProviderParams = t.Object({
 		provider: oauthProvider,
 	});

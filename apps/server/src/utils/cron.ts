@@ -21,7 +21,9 @@ export async function resetAllClubs() {
 			await Club.setDailySong(club.id);
 		} catch (error) {
 			if (error instanceof Error)
-				console.log('Failed to set daily song:', error);
+				if (error.message === 'Club has no songs')
+					console.log(`${club.displayName} has no songs yet`);
+				else console.log('Failed to set daily song:', error);
 			continue;
 		}
 	}

@@ -56,13 +56,14 @@ async function downloadMultipleTracks(
 			await insertClubSong({
 				id: generateSecureRandomString(),
 				trackId: track.id,
+				clubId,
 				title: track.name,
 				artist: track.artists.map((artist) => artist.name),
 				album: track.album.name,
 				image: track.album.images.find((img) => img)?.url,
 				audio: path,
 				duration: ytVideo.duration.seconds,
-				clubId,
+				source: 'youtube_download',
 			});
 
 			count++;
