@@ -1,0 +1,1 @@
+ALTER TABLE "base_songs" ALTER COLUMN "track_id" DROP NOT NULL;

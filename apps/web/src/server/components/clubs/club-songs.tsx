@@ -1,3 +1,4 @@
+import { Music } from '@/server/components/icons/music';
 import { Trash } from '@/server/components/icons/trash';
 import { SelectBaseSong } from '@repo/database/postgres';
 import Image from 'next/image';
@@ -10,13 +11,17 @@ export function ClubSongs({ songs }: { songs: SelectBaseSong[] }) {
 					key={song.id}
 					className='list-row'>
 					<div>
-						<Image
-							className='size-10 rounded-box'
-							src={song.image ?? 'TODO:'}
-							alt={song.title}
-							height={100}
-							width={100}
-						/>
+						{song.image ? (
+							<Image
+								className='size-10 rounded-box'
+								src={song.image}
+								alt={song.title}
+								height={100}
+								width={100}
+							/>
+						) : (
+							<Music className='size-10 rounded-box' />
+						)}
 					</div>
 					<div>
 						<div>{song.title}</div>

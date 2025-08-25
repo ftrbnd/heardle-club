@@ -7,15 +7,18 @@ import {
 	deleteClub,
 	getClubById,
 	insertClub,
+	insertClubSong,
 	removeUserAvatars,
 	removeUserFromClub,
 	updateClubActiveStatus,
 	updateUser,
+	uploadCustomClubSongFile,
 	uploadUserAvatar,
 } from '@repo/database/api';
 import {
 	insertClubSchema,
 	generateSecureRandomString,
+	insertBaseSongSchema,
 } from '@repo/database/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -187,13 +190,80 @@ export async function uploadSongFiles(
 		title: formData.get('title'),
 		artist: formData.get('artist'),
 		album: formData.get('album'),
-		audioFiles: formData.get('audio_files'),
+		audioFile: formData.get('audio_file'),
 	};
 	console.log(rawFormData);
+
+	const { data: songDetails, error } = insertBaseSongSchema
+		.pick({
+			title: true,
+			artist: true,
+			album: true,
+		})
+		.safeParse({
+			title: rawFormData.title || null,
+			artist: [rawFormData.artist || null],
+			album: rawFormData.album || null,
+		});
+	if (error)
+		return {
+			error: 'Provide valid song details.',
+		};
+
+	// UPLOAD FILE TO SUPABASE
+	if (
+		rawFormData.audioFile &&
+		rawFormData.audioFile instanceof File &&
+		rawFormData.audioFile.size > 0
+	) {
+		if (
+			rawFormData.audioFile.type !== 'audio/mpeg' &&
+			rawFormData.audioFile.type !== 'audio/mp3'
+		) {
+			return {
+				error: 'Only MP3 files are allowed.',
+			};
+		}
+
+		try {
+			const fileName = `${sanitizeString(songDetails.title)}.mp3`;
+			const { publicUrl } = await uploadCustomClubSongFile(
+				rawFormData.audioFile,
+				clubId,
+				fileName
+			);
+			// TODO: GET DURATION
+			const duration = 0;
+
+			await insertClubSong({
+				id: generateSecureRandomString(),
+				clubId,
+				title: songDetails.title,
+				artist: songDetails.artist,
+				album: songDetails.album,
+				audio: publicUrl,
+				duration,
+				source: 'file_upload',
+			});
+		} catch (error) {
+			if (error instanceof Error)
+				return {
+					error: error.message,
+				};
+		}
+	}
 
 	revalidatePath(`/s/${club?.subdomain}`);
 
 	return {
 		success: true,
 	};
+}
+
+function sanitizeString(str: string) {
+	return str
+		.replaceAll('/', '_')
+		.replaceAll(' ', '_')
+		.replaceAll(/\W/g, '')
+		.toLowerCase();
 }

@@ -47,7 +47,7 @@ async function downloadMultipleTracks(
 				ytVideo.video_id,
 				fileName
 			);
-			const { path } = await uploadClubSongFile(
+			const { publicUrl } = await uploadClubSongFile(
 				audioFilePath,
 				clubId,
 				track.id
@@ -61,7 +61,7 @@ async function downloadMultipleTracks(
 				artist: track.artists.map((artist) => artist.name),
 				album: track.album.name,
 				image: track.album.images.find((img) => img)?.url,
-				audio: path,
+				audio: publicUrl,
 				duration: ytVideo.duration.seconds,
 				source: 'youtube_download',
 			});

@@ -73,16 +73,17 @@ export function UploadForm({ club }: UploadFormProps) {
 				<input
 					type='file'
 					className='file-input'
-					name='audio_files'
+					name='audio_file'
 					accept='audio/mp3'
 				/>
-				<label className='label'>Max size 2MB</label>
+				<label className='label'>Max size 5MB</label>
 			</fieldset>
 
 			<button
-				className='btn'
+				disabled={actionIsPending}
+				className='btn btn-primary'
 				type='submit'>
-				Upload
+				Submit
 			</button>
 		</form>
 	);

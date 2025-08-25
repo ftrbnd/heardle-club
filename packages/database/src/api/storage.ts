@@ -22,13 +22,40 @@ export const uploadClubSongFile = async (
 			upsert: true,
 		});
 	if (error) throw error;
-
 	console.log(`Uploaded ${data.fullPath} to Supabase`);
+
+	const { data: urlData } = supabase.storage
+		.from(SONGS_BUCKET)
+		.getPublicUrl(`${clubId}/${path}`);
 
 	unlinkSync(path);
 	console.log(`Deleted ${path} file locally`);
 
-	return data;
+	return urlData;
+};
+
+export const uploadCustomClubSongFile = async (
+	file: File,
+	clubId: string,
+	name: string
+) => {
+	const { data, error } = await supabase.storage
+		.from(SONGS_BUCKET)
+		.upload(`${clubId}/${name}`, file, {
+			contentType: 'audio/mp3',
+			metadata: {
+				isCustom: true,
+			},
+			upsert: true,
+		});
+	if (error) throw error;
+	console.log(`Uploaded ${data.fullPath} to Supabase`);
+
+	const { data: urlData } = supabase.storage
+		.from(SONGS_BUCKET)
+		.getPublicUrl(`${clubId}/${name}`);
+
+	return urlData;
 };
 
 export const uploadDailySongFile = async (path: string, clubId: string) => {
@@ -87,7 +114,7 @@ export const uploadUserAvatar = async (userId: string, image: File) => {
 
 	const { data: urlData } = supabase.storage
 		.from(AVATARS_BUCKET)
-		.getPublicUrl(imagePath); // expires in 48 hours
+		.getPublicUrl(imagePath);
 
 	return urlData;
 };
