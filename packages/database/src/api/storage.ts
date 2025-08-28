@@ -1,4 +1,8 @@
-import { generateSecureRandomString } from '../postgres';
+import {
+	generateSecureRandomString,
+	sanitizeString,
+	SelectBaseSong,
+} from '../postgres';
 import { supabase } from '../supabase';
 import { promises, readFileSync, unlinkSync } from 'fs';
 
@@ -132,5 +136,12 @@ export const removeUserAvatars = async (userId: string) => {
 	const { error: removeError } = await supabase.storage
 		.from(AVATARS_BUCKET)
 		.remove(paths);
+	if (removeError) throw removeError;
+};
+
+export const removeClubSongFile = async (song: SelectBaseSong) => {
+	const { error: removeError } = await supabase.storage
+		.from(SONGS_BUCKET)
+		.remove([`${song.clubId}/${sanitizeString(song.title)}.mp3`]);
 	if (removeError) throw removeError;
 };

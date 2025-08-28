@@ -9,6 +9,7 @@ import {
 	getClubById,
 	insertClub,
 	insertClubSong,
+	removeClubSongFile,
 	removeUserAvatars,
 	removeUserFromClub,
 	updateClubActiveStatus,
@@ -21,6 +22,7 @@ import {
 	generateSecureRandomString,
 	insertBaseSongSchema,
 	SelectBaseSong,
+	sanitizeString,
 } from '@repo/database/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -267,14 +269,6 @@ export async function uploadSongFiles(
 	};
 }
 
-function sanitizeString(str: string) {
-	return str
-		.replaceAll('/', '_')
-		.replaceAll(' ', '_')
-		.replaceAll(/\W/g, '')
-		.toLowerCase();
-}
-
 export async function deleteSong(song: SelectBaseSong): Promise<ActionState> {
 	const user = await getCurrentUser();
 	if (!user)
@@ -294,8 +288,15 @@ export async function deleteSong(song: SelectBaseSong): Promise<ActionState> {
 			error: 'Unauthorized',
 		};
 
-	await deleteClubSong(song.id);
-
+	try {
+		await deleteClubSong(song.id);
+		await removeClubSongFile(song);
+	} catch (error) {
+		if (error instanceof Error)
+			return {
+				error: error.message,
+			};
+	}
 	revalidatePath(`/s/${club.subdomain}`);
 
 	return {

@@ -26,3 +26,11 @@ export function generateSecureRandomString(): string {
 	}
 	return id;
 }
+
+export function sanitizeString(str: string) {
+	return str
+		.replaceAll('/', '_')
+		.replaceAll(' ', '_')
+		.replaceAll(/\W/g, '')
+		.toLowerCase();
+}

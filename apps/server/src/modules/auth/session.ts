@@ -6,7 +6,10 @@ import {
 	deleteSession as deleteSessionFromDb,
 	updateSession,
 } from '@repo/database/api';
-import { InsertSession } from '@repo/database/postgres';
+import {
+	generateSecureRandomString,
+	InsertSession,
+} from '@repo/database/postgres';
 
 interface SessionWithToken extends InsertSession {
 	token: string;
@@ -15,19 +18,6 @@ interface SessionWithToken extends InsertSession {
 export const inactivityTimeoutSeconds = 60 * 60 * 24 * 10; // 10 days
 export const activityCheckIntervalSeconds = 60 * 60; // 1 hour
 export const SESSION_TOKEN_COOKIE = 'session_token' as const;
-
-export function generateSecureRandomString(): string {
-	const alphabet = 'abcdefghijklmnpqrstuvwxyz23456789';
-
-	const bytes = new Uint8Array(24);
-	crypto.getRandomValues(bytes);
-
-	let id = '';
-	for (let i = 0; i < bytes.length; i++) {
-		id += alphabet[bytes[i] >> 3];
-	}
-	return id;
-}
 
 export function generateSessionToken() {
 	const id = generateSecureRandomString();

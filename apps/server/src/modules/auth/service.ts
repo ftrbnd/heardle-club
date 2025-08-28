@@ -15,8 +15,10 @@ import {
 	createSession,
 	inactivityTimeoutSeconds,
 } from '@/modules/auth/session';
-import { generateSecureRandomString } from '@/utils/random';
-import { SelectUser } from '@repo/database/postgres';
+import {
+	generateSecureRandomString,
+	SelectUser,
+} from '@repo/database/postgres';
 
 export abstract class Auth {
 	static async createAuthorizationURL({

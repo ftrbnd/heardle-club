@@ -1,9 +1,9 @@
-import { sanitizeString } from '@/utils/random';
 import type { ClubModel } from './model';
 import { spotify } from '@/utils/spotify';
 import { generateClient, searchVideo, downloadAudio } from '@/utils/yt';
 import {
 	generateSecureRandomString,
+	sanitizeString,
 	SelectClub,
 } from '@repo/database/postgres';
 import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
