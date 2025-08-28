@@ -17,7 +17,9 @@ export function NavbarItems({ club }: NavbarItemsProps) {
 	if (club)
 		return (
 			<Link href={rootURL}>
-				<h2 className='btn btn-ghost text-lg'>Heardle Club</h2>
+				<h2 className='btn btn-ghost px-0 md:px-4 text-sm md:text-lg'>
+					Heardle Club
+				</h2>
 			</Link>
 		);
 

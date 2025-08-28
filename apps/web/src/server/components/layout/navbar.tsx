@@ -10,14 +10,18 @@ export async function Navbar({ club }: { club?: SelectClub | null }) {
 	const user = await getCurrentUser();
 
 	return (
-		<nav className='navbar bg-base-100 shadow-sm sticky top-0 z-50'>
+		<nav className='navbar bg-base-100 shadow-sm sticky top-0 z-52'>
 			<Link
 				href='/'
 				className='flex-1'>
-				<div className='btn btn-ghost'>
-					<h1 className='text-xl'>{title}</h1>
+				<div className='btn btn-ghost px-0 md:px-4'>
+					<h1 className='text-lg md:text-xl line-clamp-1 text-start'>
+						{title}
+					</h1>
 					{club && (
-						<div className='badge badge-primary'>Day {club.heardleDay}</div>
+						<div className='badge badge-primary badge-xs md:badge-md'>
+							Day {club.heardleDay}
+						</div>
 					)}
 				</div>
 			</Link>
@@ -25,14 +29,14 @@ export async function Navbar({ club }: { club?: SelectClub | null }) {
 				<NavbarItems club={club} />
 				<div className='dropdown dropdown-end'>
 					<div
-						className='btn btn-ghost '
+						className='btn btn-ghost btn-xs md:btn-md'
 						tabIndex={0}
 						role='button'>
 						{user && (
 							<p className='hidden md:block md:text-lg'>{user.displayName}</p>
 						)}
 						<div className='avatar'>
-							<div className='w-10 rounded-full'>
+							<div className='w-8 md:w-10 rounded-full'>
 								<UserAvatar user={user} />
 							</div>
 						</div>
@@ -40,7 +44,7 @@ export async function Navbar({ club }: { club?: SelectClub | null }) {
 
 					<ul
 						tabIndex={0}
-						className='menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow'>
+						className='menu menu-sm dropdown-content bg-base-100 rounded-box z-52 mt-3 w-52 p-2 shadow'>
 						<li>
 							<a>About</a>
 						</li>

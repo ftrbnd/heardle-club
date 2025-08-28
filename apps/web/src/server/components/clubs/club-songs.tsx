@@ -1,5 +1,5 @@
+import { ManageSong } from '@/client/components/clubs/manage-song';
 import { Music } from '@/server/components/icons/music';
-import { Trash } from '@/server/components/icons/trash';
 import { SelectBaseSong } from '@repo/database/postgres';
 import Image from 'next/image';
 
@@ -23,15 +23,13 @@ export function ClubSongs({ songs }: { songs: SelectBaseSong[] }) {
 							<Music className='size-10 rounded-box' />
 						)}
 					</div>
-					<div>
-						<div>{song.title}</div>
-						<div className='text-xs uppercase font-semibold opacity-60'>
+					<div className='flex flex-col'>
+						<p>{song.title}</p>
+						<p className='text-xs uppercase font-semibold opacity-60'>
 							{song.album}
-						</div>
+						</p>
 					</div>
-					<button className='btn btn-square btn-ghost'>
-						<Trash />
-					</button>
+					<ManageSong song={song} />
 				</li>
 			))}
 		</ul>
