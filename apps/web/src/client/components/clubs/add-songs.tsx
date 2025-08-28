@@ -77,7 +77,12 @@ export function AddSongs({ club }: { club: SelectClub }) {
 				</label>
 
 				<div className='flex items-center'>
-					<UploadModal club={club} />
+					<UploadModal
+						modalId={`club_${club.id}_upload_modal`}
+						club={club}
+						btnLabel='Upload'
+						formTitle='Upload a custom file'
+					/>
 				</div>
 			</div>
 

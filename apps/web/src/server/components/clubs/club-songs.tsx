@@ -1,9 +1,13 @@
 import { ManageSong } from '@/client/components/clubs/manage-song';
 import { Music } from '@/server/components/icons/music';
-import { SelectBaseSong } from '@repo/database/postgres';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
 import Image from 'next/image';
 
-export function ClubSongs({ songs }: { songs: SelectBaseSong[] }) {
+interface ClubSongsProps {
+	club: SelectClub;
+	songs: SelectBaseSong[];
+}
+export function ClubSongs({ club, songs }: ClubSongsProps) {
 	return (
 		<ul className='list bg-base-100 rounded-box shadow-md'>
 			{songs.map((song) => (
@@ -29,7 +33,10 @@ export function ClubSongs({ songs }: { songs: SelectBaseSong[] }) {
 							{song.album}
 						</p>
 					</div>
-					<ManageSong song={song} />
+					<ManageSong
+						club={club}
+						song={song}
+					/>
 				</li>
 			))}
 		</ul>

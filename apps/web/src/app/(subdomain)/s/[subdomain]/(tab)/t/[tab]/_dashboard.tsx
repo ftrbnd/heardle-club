@@ -33,7 +33,10 @@ export async function Dashboard({ club }: DashboardProps) {
 								</span>
 							</div>
 						)}
-						<ClubSongs songs={songs} />
+						<ClubSongs
+							club={club}
+							songs={songs}
+						/>
 					</>
 				) : (
 					<div

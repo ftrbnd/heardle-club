@@ -63,7 +63,7 @@ export function UploadForm({ club, onSuccess }: UploadFormProps) {
 		<form
 			action={formAction}
 			className='flex flex-col items-center'>
-			<fieldset className='fieldset bg-base-200 border-base-300 rounded-box w-full border p-4'>
+			<fieldset className='fieldset flex flex-col bg-base-200 border-base-300 rounded-box w-full border p-4'>
 				<legend className='fieldset-legend'>Song details</legend>
 
 				<label className='label'>Title</label>

@@ -1,26 +1,41 @@
 'use client';
 
 import { UploadForm } from '@/client/components/clubs/upload-form';
+import { cn } from '@/lib/cn';
 import { FileAudio } from '@/server/components/icons/file-audio';
 import { SelectClub } from '@repo/database/postgres';
 import { MouseEvent } from 'react';
 
 interface UploadModalProps {
+	modalId: string;
 	club: SelectClub;
+	btnLabel: string;
+	btnClassName?: string;
+	formTitle: string;
 }
 
-export function UploadModal({ club }: UploadModalProps) {
+/* TODO: add type: 'upload' | 'replace' prop
+	fill in form fields if replacing
+	adjust uploadAction if replacing
+*/
+export function UploadModal({
+	modalId,
+	club,
+	btnLabel,
+	btnClassName,
+	formTitle,
+}: UploadModalProps) {
 	const openModal = (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 
-		const modal = document.getElementById('upload_modal') as HTMLDialogElement;
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
 		if (!modal) return;
 
 		modal.showModal();
 	};
 
 	const closeModal = () => {
-		const modal = document.getElementById('upload_modal') as HTMLDialogElement;
+		const modal = document.getElementById(modalId) as HTMLDialogElement;
 		if (!modal) return;
 
 		if (modal.open) modal.close();
@@ -29,16 +44,16 @@ export function UploadModal({ club }: UploadModalProps) {
 	return (
 		<div>
 			<button
-				className='btn btn-accent'
+				className={cn('btn btn-accent', btnClassName)}
 				onClick={openModal}>
 				<FileAudio />
-				Upload
+				{btnLabel}
 			</button>
 			<dialog
-				id='upload_modal'
+				id={modalId}
 				className='modal modal-bottom sm:modal-middle'>
 				<div className='modal-box'>
-					<h3 className='font-bold text-lg'>Upload a custom file</h3>
+					<h3 className='font-bold text-lg'>{formTitle}</h3>
 					<UploadForm
 						club={club}
 						onSuccess={closeModal}

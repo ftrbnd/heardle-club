@@ -1,17 +1,18 @@
 'use client';
 
+import { UploadModal } from '@/client/components/clubs/upload-modal';
 import { customToast } from '@/client/components/toast';
 import { deleteSong } from '@/server/actions/db';
-import { FileUp } from '@/server/components/icons/file-up';
 import { Trash } from '@/server/components/icons/trash';
-import { SelectBaseSong } from '@repo/database/postgres';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
 import { useActionState, useEffect } from 'react';
 
 interface ManageSongProps {
+	club: SelectClub;
 	song: SelectBaseSong;
 }
 
-export function ManageSong({ song }: ManageSongProps) {
+export function ManageSong({ club, song }: ManageSongProps) {
 	const deleteWithSong = deleteSong.bind(null, song);
 
 	const [deleteState, deleteAction, deleteActionIsPending] = useActionState(
@@ -43,12 +44,13 @@ export function ManageSong({ song }: ManageSongProps) {
 
 	return (
 		<form className='join'>
-			<button
-				disabled={deleteActionIsPending}
-				className='btn btn-secondary join-item'>
-				<FileUp />
-				Replace
-			</button>
+			<UploadModal
+				modalId={`replace_${song.id}_modal`}
+				club={club}
+				btnLabel='Replace'
+				btnClassName='btn-secondary'
+				formTitle={`Replace audio for ${song.title}`}
+			/>
 			<button
 				// TODO: add modal
 				disabled={deleteActionIsPending}
