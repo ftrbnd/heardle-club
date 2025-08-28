@@ -4,6 +4,7 @@ import { clientGetAlbumTracks } from '@/app/api/spotify/client.services';
 import { TrackSkeleton } from '@/client/components/skeletons/track-skeleton';
 import { useSubdomain } from '@/client/hooks/use-subdomain';
 import { cn } from '@/lib/cn';
+import { durationFormatted } from '@/lib/util';
 import { SimplifiedAlbum, SimplifiedTrack } from '@spotify/web-api-ts-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { Dispatch, SetStateAction } from 'react';
@@ -20,13 +21,6 @@ export function AlbumTracks({ album, setSelectedAmt }: AlbumTracksProps) {
 	});
 
 	const { songs } = useSubdomain();
-
-	const durationFormatted = (duration_ms: number) => {
-		const seconds = Math.floor(duration_ms / 1000);
-		const minutes = Math.floor(seconds / 60);
-		const remainingSeconds = Math.floor(seconds % 60);
-		return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-	};
 
 	const clubAlreadyHasSong = (track: SimplifiedTrack) =>
 		songs?.some((song) => song.trackId === track.id) ?? false;

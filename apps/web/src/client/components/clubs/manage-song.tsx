@@ -2,17 +2,25 @@
 
 import { UploadModal } from '@/client/components/clubs/upload-modal';
 import { customToast } from '@/client/components/toast';
+import { cn } from '@/lib/cn';
 import { deleteSong } from '@/server/actions/db';
 import { Trash } from '@/server/components/icons/trash';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
-import { useActionState, useEffect } from 'react';
+import { ComponentProps, useActionState, useEffect } from 'react';
 
-interface ManageSongProps {
+interface ManageSongProps extends ComponentProps<'div'> {
 	club: SelectClub;
 	song: SelectBaseSong;
+	orientation: 'horizontal' | 'vertical';
 }
 
-export function ManageSong({ club, song }: ManageSongProps) {
+export function ManageSong({
+	club,
+	song,
+	className,
+	orientation,
+	...props
+}: ManageSongProps) {
 	const deleteWithSong = deleteSong.bind(null, song);
 
 	const [deleteState, deleteAction, deleteActionIsPending] = useActionState(
@@ -43,21 +51,34 @@ export function ManageSong({ club, song }: ManageSongProps) {
 	}, [deleteActionIsPending, deleteState.error, deleteState.success]);
 
 	return (
-		<div className='join'>
+		<div
+			className={cn(
+				'join ',
+				orientation === 'vertical' ? 'join-vertical' : 'join-horizontal',
+				className
+			)}
+			{...props}>
 			<UploadModal
 				modalId={`replace_${song.id}_modal`}
 				club={club}
 				btnLabel='Replace'
-				btnClassName='btn-secondary'
+				btnClassName={cn(
+					'btn-secondary join-item',
+					orientation === 'vertical' && 'btn-soft'
+				)}
 				formTitle={`Replace audio for ${song.title}`}
 				replaceOptions={{ song }}
+				orientation={orientation}
 			/>
 			<form action={deleteAction}>
 				<button
 					// TODO: add modal
 					type='submit'
 					disabled={deleteActionIsPending}
-					className='btn btn-error join-item'>
+					className={cn(
+						'btn btn-error join-item max-sm:w-full',
+						orientation === 'vertical' && 'btn-soft'
+					)}>
 					<Trash />
 					Delete
 				</button>

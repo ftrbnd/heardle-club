@@ -5,6 +5,7 @@ import { cn } from '@/lib/cn';
 import { FileAudio } from '@/server/components/icons/file-audio';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
 import { MouseEvent } from 'react';
+import { createPortal } from 'react-dom';
 
 interface UploadModalProps {
 	modalId: string;
@@ -15,12 +16,9 @@ interface UploadModalProps {
 	replaceOptions?: {
 		song: SelectBaseSong;
 	};
+	orientation: 'horizontal' | 'vertical';
 }
 
-/* TODO: add type: 'upload' | 'replace' prop
-	fill in form fields if replacing
-	adjust uploadAction if replacing
-*/
 export function UploadModal({
 	modalId,
 	club,
@@ -46,30 +44,33 @@ export function UploadModal({
 	};
 
 	return (
-		<div>
+		<>
 			<button
-				className={cn('btn btn-accent', btnClassName)}
+				className={cn('btn', btnClassName)}
 				onClick={openModal}>
 				<FileAudio />
 				{btnLabel}
 			</button>
-			<dialog
-				id={modalId}
-				className='modal modal-bottom sm:modal-middle'>
-				<div className='modal-box'>
-					<h3 className='font-bold text-lg'>{formTitle}</h3>
-					<UploadForm
-						club={club}
-						songBeingReplaced={replaceOptions?.song}
-						onSuccess={closeModal}
-					/>
-				</div>
-				<form
-					method='dialog'
-					className='modal-backdrop'>
-					<button>Close</button>
-				</form>
-			</dialog>
-		</div>
+			{createPortal(
+				<dialog
+					id={modalId}
+					className='modal modal-bottom sm:modal-middle'>
+					<div className='modal-box'>
+						<h3 className='font-bold text-lg'>{formTitle}</h3>
+						<UploadForm
+							club={club}
+							songBeingReplaced={replaceOptions?.song}
+							onSuccess={closeModal}
+						/>
+					</div>
+					<form
+						method='dialog'
+						className='modal-backdrop'>
+						<button>Close</button>
+					</form>
+				</dialog>,
+				document?.body
+			)}
+		</>
 	);
 }
