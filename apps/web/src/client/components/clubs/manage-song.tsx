@@ -43,22 +43,25 @@ export function ManageSong({ club, song }: ManageSongProps) {
 	}, [deleteActionIsPending, deleteState.error, deleteState.success]);
 
 	return (
-		<form className='join'>
+		<div className='join'>
 			<UploadModal
 				modalId={`replace_${song.id}_modal`}
 				club={club}
 				btnLabel='Replace'
 				btnClassName='btn-secondary'
 				formTitle={`Replace audio for ${song.title}`}
+				replaceOptions={{ song }}
 			/>
-			<button
-				// TODO: add modal
-				disabled={deleteActionIsPending}
-				formAction={deleteAction}
-				className='btn btn-error join-item'>
-				<Trash />
-				Delete
-			</button>
-		</form>
+			<form action={deleteAction}>
+				<button
+					// TODO: add modal
+					type='submit'
+					disabled={deleteActionIsPending}
+					className='btn btn-error join-item'>
+					<Trash />
+					Delete
+				</button>
+			</form>
+		</div>
 	);
 }

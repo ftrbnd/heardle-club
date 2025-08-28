@@ -1,21 +1,27 @@
 'use client';
 
 import { customToast } from '@/client/components/toast';
-import { uploadSongFiles } from '@/server/actions/db';
-import { SelectClub } from '@repo/database/postgres';
+import { uploadSongFile } from '@/server/actions/db';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
 import { ChangeEvent, useActionState, useEffect, useState } from 'react';
 
 interface UploadFormProps {
 	club: SelectClub;
+	songBeingReplaced?: SelectBaseSong;
 	onSuccess: () => void;
 }
 
-export function UploadForm({ club, onSuccess }: UploadFormProps) {
+export function UploadForm({
+	club,
+	songBeingReplaced,
+	onSuccess,
+}: UploadFormProps) {
 	const [audioDuration, setAudioDuration] = useState(0);
 
-	const uploadWithClubId = uploadSongFiles.bind(null, {
+	const uploadWithClubId = uploadSongFile.bind(null, {
 		clubId: club.id,
 		duration: Math.floor(audioDuration),
+		originalSong: songBeingReplaced,
 	});
 	const [state, formAction, actionIsPending] = useActionState(
 		uploadWithClubId,
@@ -62,31 +68,33 @@ export function UploadForm({ club, onSuccess }: UploadFormProps) {
 	return (
 		<form
 			action={formAction}
-			className='flex flex-col items-center'>
-			<fieldset className='fieldset flex flex-col bg-base-200 border-base-300 rounded-box w-full border p-4'>
-				<legend className='fieldset-legend'>Song details</legend>
+			className='flex flex-col items-center gap-2'>
+			{!songBeingReplaced && (
+				<fieldset className='fieldset flex flex-col bg-base-200 border-base-300 rounded-box w-full border p-4'>
+					<legend className='fieldset-legend'>Song details</legend>
 
-				<label className='label'>Title</label>
-				<input
-					type='text'
-					className='input w-full'
-					name='title'
-				/>
+					<label className='label'>Title</label>
+					<input
+						type='text'
+						className='input w-full'
+						name='title'
+					/>
 
-				<label className='label'>Artist</label>
-				<input
-					type='text'
-					className='input w-full'
-					name='artist'
-				/>
+					<label className='label'>Artist</label>
+					<input
+						type='text'
+						className='input w-full'
+						name='artist'
+					/>
 
-				<label className='label'>Album</label>
-				<input
-					type='text'
-					className='input w-full'
-					name='album'
-				/>
-			</fieldset>
+					<label className='label'>Album</label>
+					<input
+						type='text'
+						className='input w-full'
+						name='album'
+					/>
+				</fieldset>
+			)}
 
 			<fieldset className='fieldset'>
 				<legend className='fieldset-legend'>Pick a file</legend>

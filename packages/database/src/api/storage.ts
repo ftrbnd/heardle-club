@@ -15,10 +15,11 @@ export const uploadClubSongFile = async (
 	trackId: string
 ) => {
 	const fileBuffer = readFileSync(path);
+	const filePath = `${clubId}/${path}`;
 
 	const { data, error } = await supabase.storage
 		.from(SONGS_BUCKET)
-		.upload(`${clubId}/${path}`, fileBuffer, {
+		.upload(filePath, fileBuffer, {
 			contentType: 'audio/mp3',
 			metadata: {
 				trackId,
@@ -30,7 +31,7 @@ export const uploadClubSongFile = async (
 
 	const { data: urlData } = supabase.storage
 		.from(SONGS_BUCKET)
-		.getPublicUrl(`${clubId}/${path}`);
+		.getPublicUrl(filePath);
 
 	unlinkSync(path);
 	console.log(`Deleted ${path} file locally`);
@@ -43,9 +44,11 @@ export const uploadCustomClubSongFile = async (
 	clubId: string,
 	name: string
 ) => {
+	const path = `${clubId}/${name}`;
+
 	const { data, error } = await supabase.storage
 		.from(SONGS_BUCKET)
-		.upload(`${clubId}/${name}`, file, {
+		.upload(path, file, {
 			contentType: 'audio/mp3',
 			metadata: {
 				isCustom: true,
@@ -57,7 +60,7 @@ export const uploadCustomClubSongFile = async (
 
 	const { data: urlData } = supabase.storage
 		.from(SONGS_BUCKET)
-		.getPublicUrl(`${clubId}/${name}`);
+		.getPublicUrl(path);
 
 	return urlData;
 };
@@ -144,4 +147,26 @@ export const removeClubSongFile = async (song: SelectBaseSong) => {
 		.from(SONGS_BUCKET)
 		.remove([`${song.clubId}/${sanitizeString(song.title)}.mp3`]);
 	if (removeError) throw removeError;
+};
+
+export const upsertSongFile = async (file: File, song: SelectBaseSong) => {
+	const path = `${song.clubId}/${sanitizeString(song.title)}.mp3`;
+
+	const { data, error } = await supabase.storage
+		.from(SONGS_BUCKET)
+		.upload(path, file, {
+			contentType: 'audio/mp3',
+			upsert: true,
+			metadata: {
+				trackId: song.trackId,
+			},
+		});
+	if (error) throw error;
+	console.log(`Replaced ${song.title} (${data.fullPath}) audio in Supabase`);
+
+	const { data: urlData } = supabase.storage
+		.from(SONGS_BUCKET)
+		.getPublicUrl(path);
+
+	return urlData;
 };

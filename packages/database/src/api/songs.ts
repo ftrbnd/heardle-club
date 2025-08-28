@@ -89,3 +89,11 @@ export const insertClubSong = async (newSong: InsertBaseSong) => {
 export const deleteClubSong = async (songId: string) => {
 	await db.delete(baseSongs).where(eq(baseSongs.id, songId));
 };
+
+type UpdateClubSongAudio = Pick<InsertBaseSong, 'id' | 'audio' | 'duration'>;
+export const updateClubSongAudio = async (values: UpdateClubSongAudio) => {
+	await db
+		.update(baseSongs)
+		.set({ ...values, source: 'file_upload' })
+		.where(eq(baseSongs.id, values.id));
+};

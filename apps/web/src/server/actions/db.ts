@@ -13,9 +13,11 @@ import {
 	removeUserAvatars,
 	removeUserFromClub,
 	updateClubActiveStatus,
+	updateClubSongAudio,
 	updateUser,
 	uploadCustomClubSongFile,
 	uploadUserAvatar,
+	upsertSongFile,
 } from '@repo/database/api';
 import {
 	insertClubSchema,
@@ -172,12 +174,13 @@ export async function deleteUserAvatar(): Promise<ActionState> {
 	return { success: true };
 }
 
-interface UploadSongFilesBody {
+interface UploadSongFileBody {
 	clubId: string;
 	duration: number;
+	originalSong?: SelectBaseSong;
 }
-export async function uploadSongFiles(
-	{ clubId, duration }: UploadSongFilesBody,
+export async function uploadSongFile(
+	{ clubId, duration, originalSong }: UploadSongFileBody,
 	_prevState: ActionState,
 	formData: FormData
 ): Promise<ActionState> {
@@ -216,7 +219,7 @@ export async function uploadSongFiles(
 			artist: [rawFormData.artist || null],
 			album: rawFormData.album || null,
 		});
-	if (error)
+	if (error && !originalSong)
 		return {
 			error: 'Provide valid song details.',
 		};
@@ -237,36 +240,60 @@ export async function uploadSongFiles(
 		}
 
 		try {
-			const fileName = `${sanitizeString(songDetails.title)}.mp3`;
-			const { publicUrl } = await uploadCustomClubSongFile(
-				rawFormData.audioFile,
-				clubId,
-				fileName
-			);
+			if (originalSong) {
+				const { publicUrl } = await upsertSongFile(
+					rawFormData.audioFile,
+					originalSong
+				);
+				await updateClubSongAudio({
+					id: originalSong.id,
+					audio: publicUrl,
+					duration,
+				});
+			} else {
+				if (!songDetails)
+					return {
+						error: 'Provide valid song details.',
+					};
 
-			await insertClubSong({
-				id: generateSecureRandomString(),
-				clubId,
-				title: songDetails.title,
-				artist: songDetails.artist,
-				album: songDetails.album,
-				audio: publicUrl,
-				duration,
-				source: 'file_upload',
-			});
+				const fileName = `${sanitizeString(songDetails.title)}.mp3`;
+				const { publicUrl } = await uploadCustomClubSongFile(
+					rawFormData.audioFile,
+					clubId,
+					fileName
+				);
+
+				await insertClubSong({
+					id: generateSecureRandomString(),
+					clubId,
+					title: songDetails.title,
+					artist: songDetails.artist,
+					album: songDetails.album,
+					audio: publicUrl,
+					duration,
+					source: 'file_upload',
+				});
+			}
+
+			revalidatePath(`/s/${club.subdomain}`);
+
+			return {
+				success: true,
+			};
 		} catch (error) {
 			if (error instanceof Error)
 				return {
 					error: error.message,
 				};
+			return {
+				error: 'Something went wrong.',
+			};
 		}
+	} else {
+		return {
+			error: 'An audio file is required.',
+		};
 	}
-
-	revalidatePath(`/s/${club.subdomain}`);
-
-	return {
-		success: true,
-	};
 }
 
 export async function deleteSong(song: SelectBaseSong): Promise<ActionState> {

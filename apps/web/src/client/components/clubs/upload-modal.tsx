@@ -3,15 +3,18 @@
 import { UploadForm } from '@/client/components/clubs/upload-form';
 import { cn } from '@/lib/cn';
 import { FileAudio } from '@/server/components/icons/file-audio';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
 import { MouseEvent } from 'react';
 
 interface UploadModalProps {
 	modalId: string;
-	club: SelectClub;
 	btnLabel: string;
 	btnClassName?: string;
 	formTitle: string;
+	club: SelectClub;
+	replaceOptions?: {
+		song: SelectBaseSong;
+	};
 }
 
 /* TODO: add type: 'upload' | 'replace' prop
@@ -24,6 +27,7 @@ export function UploadModal({
 	btnLabel,
 	btnClassName,
 	formTitle,
+	replaceOptions,
 }: UploadModalProps) {
 	const openModal = (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -56,6 +60,7 @@ export function UploadModal({
 					<h3 className='font-bold text-lg'>{formTitle}</h3>
 					<UploadForm
 						club={club}
+						songBeingReplaced={replaceOptions?.song}
 						onSuccess={closeModal}
 					/>
 				</div>
