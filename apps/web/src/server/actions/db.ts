@@ -5,6 +5,7 @@ import { getSubdomainURL } from '@/lib/domains';
 import {
 	addUserToClub,
 	deleteClub,
+	deleteClubSong,
 	getClubById,
 	insertClub,
 	insertClubSong,
@@ -19,6 +20,7 @@ import {
 	insertClubSchema,
 	generateSecureRandomString,
 	insertBaseSongSchema,
+	SelectBaseSong,
 } from '@repo/database/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -189,6 +191,10 @@ export async function uploadSongFiles(
 		};
 
 	const club = await getClubById(clubId);
+	if (!club)
+		return {
+			error: 'Your current club was not found',
+		};
 
 	const rawFormData = {
 		title: formData.get('title'),
@@ -254,7 +260,7 @@ export async function uploadSongFiles(
 		}
 	}
 
-	revalidatePath(`/s/${club?.subdomain}`);
+	revalidatePath(`/s/${club.subdomain}`);
 
 	return {
 		success: true,
@@ -267,4 +273,32 @@ function sanitizeString(str: string) {
 		.replaceAll(' ', '_')
 		.replaceAll(/\W/g, '')
 		.toLowerCase();
+}
+
+export async function deleteSong(song: SelectBaseSong): Promise<ActionState> {
+	const user = await getCurrentUser();
+	if (!user)
+		return {
+			error: 'Unauthorized',
+		};
+
+	const club = await getClubById(song.clubId);
+	if (!club)
+		return {
+			error: 'The club for this song was not found',
+		};
+
+	const isOwner = user.id === club.ownerId;
+	if (!isOwner)
+		return {
+			error: 'Unauthorized',
+		};
+
+	await deleteClubSong(song.id);
+
+	revalidatePath(`/s/${club.subdomain}`);
+
+	return {
+		success: true,
+	};
 }

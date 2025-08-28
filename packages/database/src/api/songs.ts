@@ -85,3 +85,7 @@ export const insertClubSong = async (newSong: InsertBaseSong) => {
 	const response = await db.insert(baseSongs).values(newSong).returning();
 	return response.length > 0 ? response[0] : null;
 };
+
+export const deleteClubSong = async (songId: string) => {
+	await db.delete(baseSongs).where(eq(baseSongs.id, songId));
+};
