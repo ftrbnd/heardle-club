@@ -3,15 +3,20 @@
 import { customToast } from '@/client/components/toast';
 import { uploadSongFiles } from '@/server/actions/db';
 import { SelectClub } from '@repo/database/postgres';
-import { useActionState, useEffect } from 'react';
+import { ChangeEvent, useActionState, useEffect, useState } from 'react';
 
 interface UploadFormProps {
 	club: SelectClub;
+	onSuccess: () => void;
 }
 
-export function UploadForm({ club }: UploadFormProps) {
-	const uploadWithClubId = uploadSongFiles.bind(null, club.id);
+export function UploadForm({ club, onSuccess }: UploadFormProps) {
+	const [audioDuration, setAudioDuration] = useState(0);
 
+	const uploadWithClubId = uploadSongFiles.bind(null, {
+		clubId: club.id,
+		duration: Math.floor(audioDuration),
+	});
 	const [state, formAction, actionIsPending] = useActionState(
 		uploadWithClubId,
 		{
@@ -19,6 +24,20 @@ export function UploadForm({ club }: UploadFormProps) {
 			success: false,
 		}
 	);
+
+	const handleAudioChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files ? e.target.files[0] : null;
+		if (file) {
+			const audio = new Audio();
+			audio.src = URL.createObjectURL(file);
+
+			audio.addEventListener('loadedmetadata', () => {
+				setAudioDuration(audio.duration);
+
+				URL.revokeObjectURL(audio.src);
+			});
+		}
+	};
 
 	useEffect(() => {
 		if (actionIsPending) {
@@ -32,12 +51,13 @@ export function UploadForm({ club }: UploadFormProps) {
 				type: 'error',
 			});
 		} else if (state.success) {
+			onSuccess();
 			customToast({
 				message: 'File uploaded successfully!',
 				type: 'success',
 			});
 		}
-	}, [actionIsPending, state.error, state.success]);
+	}, [actionIsPending, onSuccess, state.error, state.success]);
 
 	return (
 		<form
@@ -75,6 +95,7 @@ export function UploadForm({ club }: UploadFormProps) {
 					className='file-input'
 					name='audio_file'
 					accept='audio/mp3'
+					onChange={handleAudioChange}
 				/>
 				<label className='label'>Max size 5MB</label>
 			</fieldset>

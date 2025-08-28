@@ -168,8 +168,12 @@ export async function deleteUserAvatar(): Promise<ActionState> {
 	return { success: true };
 }
 
+interface UploadSongFilesBody {
+	clubId: string;
+	duration: number;
+}
 export async function uploadSongFiles(
-	clubId: string,
+	{ clubId, duration }: UploadSongFilesBody,
 	_prevState: ActionState,
 	formData: FormData
 ): Promise<ActionState> {
@@ -192,7 +196,6 @@ export async function uploadSongFiles(
 		album: formData.get('album'),
 		audioFile: formData.get('audio_file'),
 	};
-	console.log(rawFormData);
 
 	const { data: songDetails, error } = insertBaseSongSchema
 		.pick({
@@ -232,8 +235,6 @@ export async function uploadSongFiles(
 				clubId,
 				fileName
 			);
-			// TODO: GET DURATION
-			const duration = 0;
 
 			await insertClubSong({
 				id: generateSecureRandomString(),

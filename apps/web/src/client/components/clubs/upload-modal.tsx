@@ -19,10 +19,17 @@ export function UploadModal({ club }: UploadModalProps) {
 		modal.showModal();
 	};
 
+	const closeModal = () => {
+		const modal = document.getElementById('upload_modal') as HTMLDialogElement;
+		if (!modal) return;
+
+		if (modal.open) modal.close();
+	};
+
 	return (
 		<div>
 			<button
-				className='btn'
+				className='btn btn-accent'
 				onClick={openModal}>
 				<FileAudio />
 				Upload
@@ -32,7 +39,10 @@ export function UploadModal({ club }: UploadModalProps) {
 				className='modal modal-bottom sm:modal-middle'>
 				<div className='modal-box'>
 					<h3 className='font-bold text-lg'>Upload a custom file</h3>
-					<UploadForm club={club} />
+					<UploadForm
+						club={club}
+						onSuccess={closeModal}
+					/>
 				</div>
 				<form
 					method='dialog'

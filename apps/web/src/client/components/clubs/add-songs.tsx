@@ -78,20 +78,19 @@ export function AddSongs({ club }: { club: SelectClub }) {
 
 				<div className='flex items-center'>
 					<UploadModal club={club} />
-
-					<button
-						type='submit'
-						disabled={actionIsPending || selectedAmt === 0}
-						className='btn btn-primary self-start'>
-						<Upload />
-						Add songs
-					</button>
 				</div>
 			</div>
 
 			<form
 				action={formAction}
-				className='w-full'>
+				className='w-full flex flex-col'>
+				<button
+					type='submit'
+					disabled={actionIsPending || selectedAmt === 0}
+					className='btn btn-primary self-end'>
+					<Upload />
+					Add songs
+				</button>
 				<ArtistAlbums
 					albums={albums}
 					isPending={isPending}
