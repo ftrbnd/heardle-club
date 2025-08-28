@@ -100,6 +100,9 @@ const defaultClubs: InsertClub[] = [
 	},
 ];
 
+const SONGS_BUCKET = 'club.songs' as const;
+const AVATARS_BUCKET = 'user.avatars' as const;
+
 async function main() {
 	await reset(db, schema);
 	console.log('✔️  Reset database');
@@ -137,11 +140,37 @@ async function main() {
 	await p.exec();
 	console.log('✔️  Seeded REDIS database');
 
-	const { data: buckets } = await supabase.storage.listBuckets();
-	if (buckets) {
-		for (const bucket of buckets) {
-			await supabase.storage.emptyBucket(bucket.id);
-			await supabase.storage.deleteBucket(bucket.id);
+	const { data: songsBucket } = await supabase.storage
+		.from(SONGS_BUCKET)
+		.list();
+	const { data: avatarsBucket } = await supabase.storage
+		.from(AVATARS_BUCKET)
+		.list();
+
+	if (songsBucket) {
+		for (const clubFolder of songsBucket) {
+			const { data: clubSongs } = await supabase.storage
+				.from(SONGS_BUCKET)
+				.list(clubFolder.name);
+			if (clubSongs) {
+				const songs = clubSongs.map(
+					(file) => `${clubFolder.name}/${file.name}`
+				);
+				await supabase.storage.from(SONGS_BUCKET).remove(songs);
+			}
+		}
+	}
+	if (avatarsBucket) {
+		for (const userFolder of avatarsBucket) {
+			const { data: userAvatars } = await supabase.storage
+				.from(AVATARS_BUCKET)
+				.list(userFolder.name);
+			if (userAvatars) {
+				const avatars = userAvatars.map(
+					(file) => `${userFolder.name}/${file.name}`
+				);
+				await supabase.storage.from(AVATARS_BUCKET).remove(avatars);
+			}
 		}
 	}
 	console.log('✔️  Reset Supabase database');
