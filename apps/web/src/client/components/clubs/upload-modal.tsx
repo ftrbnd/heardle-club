@@ -69,6 +69,7 @@ export function UploadModal({
 						<button>Close</button>
 					</form>
 				</dialog>,
+				// TODO: fix hydration error
 				document?.body
 			)}
 		</>

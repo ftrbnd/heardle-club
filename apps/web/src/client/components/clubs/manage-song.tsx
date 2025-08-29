@@ -1,6 +1,7 @@
 'use client';
 
 import { UploadModal } from '@/client/components/clubs/upload-modal';
+import { SongAudio } from '@/client/components/song-audio';
 import { customToast } from '@/client/components/toast';
 import { cn } from '@/lib/cn';
 import { deleteSong } from '@/server/actions/db';
@@ -58,14 +59,13 @@ export function ManageSong({
 				className
 			)}
 			{...props}>
+			<SongAudio song={song} />
+
 			<UploadModal
 				modalId={`replace_${song.id}_modal`}
 				club={club}
 				btnLabel='Replace'
-				btnClassName={cn(
-					'btn-secondary join-item',
-					orientation === 'vertical' && 'btn-soft'
-				)}
+				btnClassName={cn('btn-secondary btn-soft join-item')}
 				formTitle={`Replace audio for ${song.title}`}
 				replaceOptions={{ song }}
 				orientation={orientation}
@@ -75,10 +75,7 @@ export function ManageSong({
 					// TODO: add modal
 					type='submit'
 					disabled={deleteActionIsPending}
-					className={cn(
-						'btn btn-error join-item max-sm:w-full',
-						orientation === 'vertical' && 'btn-soft'
-					)}>
+					className={cn('btn btn-soft btn-error join-item max-sm:w-full')}>
 					<Trash />
 					Delete
 				</button>
