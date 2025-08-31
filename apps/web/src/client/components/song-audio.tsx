@@ -6,7 +6,7 @@ import { durationFormatted } from '@/lib/util';
 import { Pause } from '@/server/components/icons/pause';
 import { Play } from '@/server/components/icons/play';
 import { SelectBaseSong } from '@repo/database/postgres';
-import { ComponentProps, useEffect, useRef, useState } from 'react';
+import { ComponentProps, useRef, useState } from 'react';
 
 interface SongAudioProps extends ComponentProps<'div'> {
 	song: SelectBaseSong;
@@ -16,24 +16,18 @@ export function SongAudio({ song, className, ...props }: SongAudioProps) {
 	const [second, setSecond] = useState(0);
 	const [icon, setIcon] = useState<'play' | 'pause'>('play');
 	const audioRef = useRef<HTMLAudioElement>(null);
+	if (audioRef.current) audioRef.current.volume = 0.5;
 
-	useEffect(() => {
-		const handleTimeUpdate = () => {
-			if (audioRef.current) {
-				setSecond(audioRef.current.currentTime);
+	const handleTimeUpdate = () => {
+		if (audioRef.current) {
+			setSecond(audioRef.current.currentTime);
+
+			if (audioRef.current.ended) {
+				setIcon('play');
+				audioRef.current.fastSeek(0);
 			}
-		};
-
-		const currentAudio = audioRef.current;
-		if (currentAudio) currentAudio.volume = 0.5;
-		currentAudio?.addEventListener('timeupdate', handleTimeUpdate);
-
-		return () => {
-			if (currentAudio) {
-				currentAudio.removeEventListener('timeupdate', handleTimeUpdate);
-			}
-		};
-	});
+		}
+	};
 
 	const pauseSong = () => {
 		if (audioRef.current) {
@@ -50,7 +44,6 @@ export function SongAudio({ song, className, ...props }: SongAudioProps) {
 	};
 
 	const togglePlayer = async () => {
-		console.log('toggle');
 		try {
 			if (icon === 'play') await playSong();
 			else pauseSong();
@@ -62,12 +55,21 @@ export function SongAudio({ song, className, ...props }: SongAudioProps) {
 		}
 	};
 
+	const setPlaybackRate = async (playbackRate: number) => {
+		if (audioRef.current) {
+			audioRef.current.playbackRate = playbackRate;
+		}
+	};
+
 	return (
 		<div
 			onClick={togglePlayer}
+			onMouseDown={() => setPlaybackRate(2)}
+			onMouseUp={() => setPlaybackRate(1)}
 			className={cn('btn btn-soft btn-primary join-item', className)}
 			{...props}>
 			<audio
+				onTimeUpdate={handleTimeUpdate}
 				ref={audioRef}
 				className='hidden'
 				src={song.audio}
