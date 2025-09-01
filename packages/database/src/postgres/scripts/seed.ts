@@ -1,136 +1,98 @@
 import 'dotenv/config';
-import { reset } from 'drizzle-seed';
-import { db, InsertClub, InsertUser, schema } from '..';
+
+import { reset, seed } from 'drizzle-seed';
+import { db, schema, SelectClub, SelectUserClubsRelation } from '..';
 import { clubs, usersToClubs } from '../schema/tables';
 import { redis } from '../../redis';
 import { users } from '../schema/auth';
-import { supabase } from '../../supabase';
-
-const defaultUsers: InsertUser[] = [
-	{
-		id: '001',
-		email: 'giosalas25@gmail.com',
-		displayName: 'giosalad',
-	},
-	{
-		id: '002',
-		email: 'fakeuser@test.com',
-		displayName: 'Fake User',
-	},
-];
-
-const defaultClubs: InsertClub[] = [
-	{
-		artistId: '2sSGPbdZJkaSE2AbcGOACx',
-		displayName: 'The Marías',
-		subdomain: 'themarias',
-		id: '001',
-		ownerId: defaultUsers[0].id,
-		isActive: true,
-	},
-	{
-		artistId: '3l0CmX0FuQjFxr8SK7Vqag',
-		displayName: 'Clairo',
-		subdomain: 'clairo',
-		id: '002',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '5069JTmv5ZDyPeZaCCXiCg',
-		displayName: 'wave to earth',
-		subdomain: 'wavetoearth',
-		id: '003',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '4q3ewBCX7sLwd24euuV69X',
-		displayName: 'Bad Bunny',
-		subdomain: 'badbunny',
-		id: '004',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '3Sz7ZnJQBIHsXLUSo0OQtM',
-		displayName: 'Mac DeMarco',
-		subdomain: 'macdemarco',
-		id: '005',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '3zmfs9cQwzJl575W1ZYXeT',
-		displayName: 'Men I Trust',
-		subdomain: 'menitrust',
-		id: '006',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '1t20wYnTiAT0Bs7H1hv9Wt',
-		displayName: 'EDEN',
-		subdomain: 'eden',
-		id: '007',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '163tK9Wjr9P9DmM0AVK7lm',
-		displayName: 'Lorde',
-		subdomain: 'lorde',
-		id: '008',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '07D1Bjaof0NFlU32KXiqUP',
-		displayName: 'Lucy Dacus',
-		subdomain: 'lucydacus',
-		id: '009',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '0NIPkIjTV8mB795yEIiPYL',
-		displayName: 'Wallows',
-		subdomain: 'wallows',
-		id: '010',
-		ownerId: defaultUsers[0].id,
-	},
-	{
-		artistId: '1oPRcJUkloHaRLYx0olBLJ',
-		displayName: 'Magdalena Bay',
-		subdomain: 'magdalenabay',
-		id: '011',
-		ownerId: defaultUsers[1].id,
-	},
-];
-
-const SONGS_BUCKET = 'club.songs' as const;
-const AVATARS_BUCKET = 'user.avatars' as const;
+import {
+	AVATARS_BUCKET,
+	defaultClub,
+	defaultClubs,
+	defaultUser,
+	SONGS_BUCKET,
+} from './data';
+import { emptyBucket } from './util';
+import { eq, not } from 'drizzle-orm';
 
 async function main() {
 	await reset(db, schema);
-	console.log('✔️  Reset database');
+	console.log('✔️  Reset POSTGRES database');
 
-	const insertedUsers = await db.insert(users).values(defaultUsers).returning();
-	const insertedClubs = await db.insert(clubs).values(defaultClubs).returning();
+	// seed 20 random users
+	await seed(db, { users }, { count: 50 }).refine((f) => ({
+		users: {
+			columns: {
+				id: f.string({
+					isUnique: true,
+				}),
+				email: f.email(),
+				displayName: f.fullName(),
+				imageURL: f.default({
+					defaultValue: null,
+				}),
+			},
+		},
+	}));
 
-	const relations = insertedClubs.map((club) => {
-		if (club.id === '011')
-			return {
-				clubId: club.id,
-				userId: defaultUsers[1].id,
-			};
+	const seededUsers = await db.select().from(users);
+	const userClubRelations: SelectUserClubsRelation[] = []; // owner and club relation
 
-		return {
+	// assign the 10 default clubs an owner
+	for (let i = 0; i < defaultClubs.length; i++) {
+		const club = defaultClubs[i];
+
+		const [newClub] = await db
+			.insert(clubs)
+			.values({
+				...club,
+				ownerId: seededUsers[i].id,
+			})
+			.returning();
+
+		userClubRelations.push({ clubId: newClub.id, userId: newClub.ownerId });
+	}
+
+	// seed my default user and club to own
+	const [insertedDefaultUser] = await db
+		.insert(users)
+		.values(defaultUser)
+		.returning();
+	const [insertedDefaultClub] = await db
+		.insert(clubs)
+		.values(defaultClub)
+		.returning();
+	const defaultRelation = {
+		clubId: insertedDefaultClub.id,
+		userId: insertedDefaultUser.id,
+	};
+
+	// seed owner and club relations
+	await db
+		.insert(usersToClubs)
+		.values([...userClubRelations, defaultRelation])
+		.returning();
+
+	const allClubs = await db.select().from(clubs);
+	for (const club of allClubs) {
+		const usersToAdd = await db
+			.select()
+			.from(users)
+			.where(not(eq(users.id, club.ownerId)))
+			.limit(5);
+		const newRelations = usersToAdd.map((user) => ({
+			userId: user.id,
 			clubId: club.id,
-			userId: defaultUsers[0].id,
-		};
-	});
-	const result = await db.insert(usersToClubs).values(relations).returning();
+		}));
 
-	console.log(
-		`✔️  Seeded POSTGRES database with ${insertedUsers.length} user${insertedUsers.length === 1 ? '' : 's'}, ${insertedClubs.length} club${insertedClubs.length === 1 ? '' : 's'}, and ${result.length} users-to-clubs relations`
-	);
+		await db.insert(usersToClubs).values(newRelations);
+	}
+
+	console.log(`✔️  Seeded POSTGRES database`);
 
 	const p = redis.multi();
 
-	for (const club of insertedClubs) {
+	for (const club of [...defaultClubs, insertedDefaultClub]) {
 		p.set(`subdomain:${club.subdomain}`, {
 			artistId: club.artistId,
 			displayName: club.displayName,
@@ -140,40 +102,9 @@ async function main() {
 	await p.exec();
 	console.log('✔️  Seeded REDIS database');
 
-	const { data: songsBucket } = await supabase.storage
-		.from(SONGS_BUCKET)
-		.list();
-	const { data: avatarsBucket } = await supabase.storage
-		.from(AVATARS_BUCKET)
-		.list();
-
-	if (songsBucket) {
-		for (const clubFolder of songsBucket) {
-			const { data: clubSongs } = await supabase.storage
-				.from(SONGS_BUCKET)
-				.list(clubFolder.name);
-			if (clubSongs) {
-				const songs = clubSongs.map(
-					(file) => `${clubFolder.name}/${file.name}`
-				);
-				await supabase.storage.from(SONGS_BUCKET).remove(songs);
-			}
-		}
-	}
-	if (avatarsBucket) {
-		for (const userFolder of avatarsBucket) {
-			const { data: userAvatars } = await supabase.storage
-				.from(AVATARS_BUCKET)
-				.list(userFolder.name);
-			if (userAvatars) {
-				const avatars = userAvatars.map(
-					(file) => `${userFolder.name}/${file.name}`
-				);
-				await supabase.storage.from(AVATARS_BUCKET).remove(avatars);
-			}
-		}
-	}
-	console.log('✔️  Reset Supabase database');
+	await emptyBucket(SONGS_BUCKET);
+	await emptyBucket(AVATARS_BUCKET);
+	console.log('✔️  Reset Supabase storage');
 }
 
 main();

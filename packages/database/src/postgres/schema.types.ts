@@ -1,4 +1,4 @@
-import { baseSongs, clubs, statistics } from './schema/tables';
+import { baseSongs, clubs, statistics, usersToClubs } from './schema/tables';
 import { oauthAccounts, sessions, users } from './schema/auth';
 
 export type SelectClub = typeof clubs.$inferSelect;
@@ -18,3 +18,6 @@ export type InsertOAuthAccount = typeof oauthAccounts.$inferInsert;
 
 export type SelectSession = typeof sessions.$inferSelect;
 export type InsertSession = typeof sessions.$inferInsert;
+
+export type SelectUserClubsRelation = typeof usersToClubs.$inferSelect;
+export type InsertUserClubRelation = typeof usersToClubs.$inferInsert;
