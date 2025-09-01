@@ -17,6 +17,6 @@ export function UserAvatar({ user, className, ...props }: UserAvatarProps) {
 			width={100}
 		/>
 	) : (
-		<UserIcon className='self-start w-full h-full' />
+		<UserIcon className={cn('self-start w-full h-full', className)} />
 	);
 }

@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@/app/api/auth/server.services';
 import { JoinClub } from '@/client/components/clubs/join-club';
+import { UserAvatar } from '@/server/components/account/avatar';
 import { Crown } from '@/server/components/icons/crown';
 import { SelectClub, SelectUser } from '@repo/database/postgres';
 
@@ -10,6 +11,10 @@ interface ClubMembersProps {
 
 export async function ClubMembers({ club, members }: ClubMembersProps) {
 	const user = await getCurrentUser();
+	const membersWithoutOwner = members.filter(
+		(member) => member.id !== club.ownerId
+	);
+	const owner = members.find((member) => member.id === club.ownerId);
 
 	return (
 		<>
@@ -20,14 +25,18 @@ export async function ClubMembers({ club, members }: ClubMembersProps) {
 
 			{members.length === 0 && <li className='text-xs'>No members yet.</li>}
 
-			{members.map((member) => (
-				<li key={member.id}>
-					<a className='flex'>
-						{/* {TODO: avatar} */}
-						{member.displayName}
-						{member.id === club.ownerId && <Crown />}
-					</a>
-				</li>
+			{owner && (
+				<ClubMember
+					club={club}
+					member={owner}
+				/>
+			)}
+			{membersWithoutOwner.map((member) => (
+				<ClubMember
+					key={member.id}
+					club={club}
+					member={member}
+				/>
 			))}
 
 			<div className='mt-6'>
@@ -38,5 +47,26 @@ export async function ClubMembers({ club, members }: ClubMembersProps) {
 				/>
 			</div>
 		</>
+	);
+}
+
+function ClubMember({
+	member,
+	club,
+}: {
+	member: SelectUser;
+	club: SelectClub;
+}) {
+	return (
+		<li>
+			<a className='flex'>
+				<UserAvatar
+					user={member}
+					className='size-6 rounded-full'
+				/>
+				{member.displayName}
+				{member.id === club.ownerId && <Crown />}
+			</a>
+		</li>
 	);
 }
