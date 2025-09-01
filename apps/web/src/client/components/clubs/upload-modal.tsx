@@ -1,12 +1,12 @@
 'use client';
 
 import { UploadForm } from '@/client/components/clubs/upload-form';
+import { Portal } from '@/client/components/portal';
 import { cn } from '@/lib/cn';
 import { FileAudio } from '@/server/components/icons/file-audio';
 import { SquarePen } from '@/server/components/icons/square-pen';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
 import { MouseEvent } from 'react';
-import { createPortal } from 'react-dom';
 
 interface UploadModalProps {
 	modalId: string;
@@ -52,7 +52,7 @@ export function UploadModal({
 				{btnLabel === 'Edit' ? <SquarePen /> : <FileAudio />}
 				{btnLabel}
 			</button>
-			{createPortal(
+			<Portal selector='portal-container'>
 				<dialog
 					id={modalId}
 					className='modal modal-bottom sm:modal-middle'>
@@ -69,10 +69,8 @@ export function UploadModal({
 						className='modal-backdrop'>
 						<button>Close</button>
 					</form>
-				</dialog>,
-				// TODO: fix hydration error
-				document?.body
-			)}
+				</dialog>
+			</Portal>
 		</>
 	);
 }

@@ -29,6 +29,7 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen w-full`}>
 				<Providers>
+					<div id='portal-container'></div>
 					{children}
 					<Footer />
 				</Providers>
