@@ -3,17 +3,18 @@
 import { UploadForm } from '@/client/components/clubs/upload-form';
 import { cn } from '@/lib/cn';
 import { FileAudio } from '@/server/components/icons/file-audio';
+import { SquarePen } from '@/server/components/icons/square-pen';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
 import { MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 
 interface UploadModalProps {
 	modalId: string;
-	btnLabel: string;
+	btnLabel: 'Edit' | 'Upload';
 	btnClassName?: string;
 	formTitle: string;
 	club: SelectClub;
-	replaceOptions?: {
+	editOptions?: {
 		song: SelectBaseSong;
 	};
 	orientation: 'horizontal' | 'vertical';
@@ -25,7 +26,7 @@ export function UploadModal({
 	btnLabel,
 	btnClassName,
 	formTitle,
-	replaceOptions,
+	editOptions,
 }: UploadModalProps) {
 	const openModal = (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -48,7 +49,7 @@ export function UploadModal({
 			<button
 				className={cn('btn', btnClassName)}
 				onClick={openModal}>
-				<FileAudio />
+				{btnLabel === 'Edit' ? <SquarePen /> : <FileAudio />}
 				{btnLabel}
 			</button>
 			{createPortal(
@@ -59,7 +60,7 @@ export function UploadModal({
 						<h3 className='font-bold text-lg'>{formTitle}</h3>
 						<UploadForm
 							club={club}
-							songBeingReplaced={replaceOptions?.song}
+							songBeingEdited={editOptions?.song}
 							onSuccess={closeModal}
 						/>
 					</div>

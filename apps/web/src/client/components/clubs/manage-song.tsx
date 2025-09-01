@@ -62,12 +62,12 @@ export function ManageSong({
 			<SongAudio song={song} />
 
 			<UploadModal
-				modalId={`replace_${song.id}_modal`}
+				modalId={`edit_${song.id}_modal`}
 				club={club}
-				btnLabel='Replace'
+				btnLabel='Edit'
 				btnClassName={cn('btn-secondary btn-soft join-item')}
-				formTitle={`Replace audio for ${song.title}`}
-				replaceOptions={{ song }}
+				formTitle={`Edit ${song.title}`}
+				editOptions={{ song }}
 				orientation={orientation}
 			/>
 			<form action={deleteAction}>

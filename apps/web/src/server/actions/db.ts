@@ -14,6 +14,7 @@ import {
 	removeUserFromClub,
 	updateClubActiveStatus,
 	updateClubSongAudio,
+	updateClubSongDuration,
 	updateUser,
 	uploadCustomClubSongFile,
 	uploadUserAvatar,
@@ -141,6 +142,12 @@ export async function updateAccountDetails(
 			await updateUser(user.id, {
 				imageURL: publicUrl,
 			});
+
+			revalidatePath('/account/details');
+
+			return {
+				success: true,
+			};
 		} catch (error) {
 			if (error instanceof Error) {
 				return {
@@ -150,10 +157,8 @@ export async function updateAccountDetails(
 		}
 	}
 
-	revalidatePath('/account/details');
-
 	return {
-		success: true,
+		error: 'Something went wrong.',
 	};
 }
 
@@ -318,15 +323,77 @@ export async function deleteSong(song: SelectBaseSong): Promise<ActionState> {
 	try {
 		await deleteClubSong(song.id);
 		await removeClubSongFile(song);
+
+		revalidatePath(`/s/${club.subdomain}`);
+
+		return {
+			success: true,
+		};
 	} catch (error) {
 		if (error instanceof Error)
 			return {
 				error: error.message,
 			};
 	}
-	revalidatePath(`/s/${club.subdomain}`);
 
 	return {
-		success: true,
+		error: 'Something went wrong.',
+	};
+}
+
+interface EditSongBody {
+	song?: SelectBaseSong;
+	duration: number;
+}
+export async function updateSongDuration({
+	song,
+	duration,
+}: EditSongBody): Promise<ActionState> {
+	if (!song)
+		return {
+			error: 'Please provide a song.',
+		};
+
+	const user = await getCurrentUser();
+	if (!user)
+		return {
+			error: 'Unauthorized',
+		};
+
+	const { data, error } = insertBaseSongSchema
+		.pick({
+			duration: true,
+		})
+		.safeParse({ duration });
+	if (error)
+		return {
+			error: error.message,
+		};
+
+	const club = await getClubById(song.clubId);
+	if (!club)
+		return {
+			error: 'The club for this song was not found',
+		};
+
+	if (data) {
+		try {
+			await updateClubSongDuration(song.id, data.duration);
+
+			revalidatePath(`/s/${club.subdomain}`);
+
+			return {
+				success: true,
+			};
+		} catch (error) {
+			if (error instanceof Error)
+				return {
+					error: error.message,
+				};
+		}
+	}
+
+	return {
+		error: 'Something went wrong.',
 	};
 }

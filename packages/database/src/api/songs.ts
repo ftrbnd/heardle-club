@@ -97,3 +97,15 @@ export const updateClubSongAudio = async (values: UpdateClubSongAudio) => {
 		.set({ ...values, source: 'file_upload' })
 		.where(eq(baseSongs.id, values.id));
 };
+
+export const updateClubSongDuration = async (
+	songId: string,
+	duration: number
+) => {
+	await db
+		.update(baseSongs)
+		.set({
+			duration,
+		})
+		.where(eq(baseSongs.id, songId));
+};
