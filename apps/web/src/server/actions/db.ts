@@ -26,6 +26,7 @@ import {
 	insertBaseSongSchema,
 	SelectBaseSong,
 	sanitizeString,
+	SelectClub,
 } from '@repo/database/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -61,11 +62,41 @@ export async function createClub(
 	redirect(subdomain);
 }
 
-export async function joinClub(userId?: string, clubId?: string) {
-	if (!userId || !clubId) return null;
+interface JoinClubBody {
+	userId?: string;
+	club?: SelectClub;
+}
+export async function joinClub({
+	userId,
+	club,
+}: JoinClubBody): Promise<ActionState> {
+	if (!userId)
+		return {
+			error: 'Sign in to join a club.',
+		};
+	if (!club)
+		return {
+			error: 'Club not found...',
+		};
 
-	const result = await addUserToClub(userId, clubId);
-	return result;
+	try {
+		await addUserToClub(userId, club.id);
+
+		revalidatePath(`/s/${club.subdomain}`);
+
+		return {
+			success: true,
+		};
+	} catch (error) {
+		if (error instanceof Error)
+			return {
+				error: error.message,
+			};
+	}
+
+	return {
+		error: 'Something went wrong.',
+	};
 }
 
 export async function leaveClub(userId?: string, clubId?: string) {

@@ -17,7 +17,6 @@ interface UploadModalProps {
 	editOptions?: {
 		song: SelectBaseSong;
 	};
-	orientation: 'horizontal' | 'vertical';
 }
 
 export function UploadModal({
