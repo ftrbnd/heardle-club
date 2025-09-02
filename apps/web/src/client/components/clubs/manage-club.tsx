@@ -1,11 +1,10 @@
 'use client';
 
-import { customToast } from '@/client/components/toast';
+import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { removeClub, setClubActiveStatus } from '@/server/actions/db';
 import { Pause } from '@/server/components/icons/pause';
 import { Play } from '@/server/components/icons/play';
 import { SelectClub } from '@repo/database/postgres';
-import { useActionState, useEffect } from 'react';
 
 interface ManageClubProps {
 	club: SelectClub;
@@ -13,58 +12,22 @@ interface ManageClubProps {
 
 export function ManageClub({ club }: ManageClubProps) {
 	const removeClubWithId = removeClub.bind(null, club.id);
-
-	const [deleteState, deleteFormAction, deleteActionIsPending] = useActionState(
-		removeClubWithId,
-		{
-			error: undefined,
-			success: false,
-		}
-	);
+	const { formAction: deleteFormAction } = useToastActionState({
+		action: removeClubWithId,
+		pendingMessage: `Deleting ${club.displayName}...`,
+		successMessage: `Successfully deleted ${club.displayName}!`,
+	});
 
 	const setClubStatusWithId = setClubActiveStatus.bind(
 		null,
 		club.id,
 		club.isActive ? false : true
 	);
-	const [statusState, statusFormAction, statusActionIsPending] = useActionState(
-		setClubStatusWithId,
-		{
-			error: undefined,
-			success: false,
-		}
-	);
-
-	useEffect(() => {
-		if (deleteActionIsPending || statusActionIsPending) {
-			customToast({
-				message: deleteActionIsPending
-					? `Deleting ${club.displayName}...`
-					: `Setting club to ${club.isActive ? 'inactive' : 'active'}...`,
-				type: 'loading',
-			});
-		} else if (deleteState.error || statusState.error) {
-			customToast({
-				message: deleteState.error || statusState.error || 'Error',
-				type: 'error',
-			});
-		} else if (deleteState.success || statusState.success) {
-			customToast({
-				message: deleteState.success
-					? `Successfully deleted ${club.displayName}!`
-					: `Set club to ${club.isActive ? 'active' : 'inactive'}`,
-				type: 'success',
-			});
-		}
-	}, [
-		deleteActionIsPending,
-		deleteState,
-		club.displayName,
-		club.isActive,
-		statusActionIsPending,
-		statusState.error,
-		statusState.success,
-	]);
+	const { formAction: statusFormAction } = useToastActionState({
+		action: setClubStatusWithId,
+		pendingMessage: `Setting club to ${club.isActive ? 'inactive' : 'active'}...`,
+		successMessage: `Set club to ${club.isActive ? 'active' : 'inactive'}`,
+	});
 
 	const openModal = () => {
 		const modal = document.getElementById(

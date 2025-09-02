@@ -1,9 +1,8 @@
 'use client';
 
-import { customToast } from '@/client/components/toast';
+import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { createClub } from '@/server/actions/db';
 import { Artist } from '@spotify/web-api-ts-sdk';
-import { useActionState, useEffect } from 'react';
 
 interface NewClubFormProps {
 	artist: Artist;
@@ -11,35 +10,14 @@ interface NewClubFormProps {
 }
 
 export function NewClubForm({ artist, clubAlreadyExists }: NewClubFormProps) {
-	const formDisabled = clubAlreadyExists;
 	const createClubWithArtistId = createClub.bind(null, artist.id);
 
-	const [state, formAction, actionIsPending] = useActionState(
-		createClubWithArtistId,
-		{
-			error: undefined,
-			success: false,
-		}
-	);
+	const { formAction, actionIsPending } = useToastActionState({
+		action: createClubWithArtistId,
+		pendingMessage: 'Creating club...',
+	});
 
-	useEffect(() => {
-		if (actionIsPending) {
-			customToast({
-				message: 'Creating club...',
-				type: 'loading',
-			});
-		} else if (state.error) {
-			customToast({
-				message: state.error,
-				type: 'error',
-			});
-		} else if (state.success) {
-			customToast({
-				message: 'Successfully created your club!',
-				type: 'success',
-			});
-		}
-	}, [actionIsPending, state]);
+	const formDisabled = clubAlreadyExists || actionIsPending;
 
 	return (
 		<form

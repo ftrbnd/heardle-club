@@ -1,9 +1,9 @@
 'use client';
 
-import { customToast } from '@/client/components/toast';
+import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { updateSongDuration, uploadSongFile } from '@/server/actions/db';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
-import { ChangeEvent, useActionState, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 interface UploadFormProps {
 	club: SelectClub;
@@ -25,24 +25,29 @@ export function UploadForm({
 		duration: Math.floor(audioDuration),
 		originalSong: songBeingEdited,
 	});
-	const [uploadState, uploadFormAction, uploadActionIsPending] = useActionState(
-		uploadWithClubId,
-		{
-			error: undefined,
-			success: false,
-		}
-	);
+	const {
+		formAction: uploadFormAction,
+		actionIsPending: uploadActionIsPending,
+		state: uploadState,
+	} = useToastActionState({
+		action: uploadWithClubId,
+		pendingMessage: 'Uploading file...',
+		successMessage: 'File uploaded successfully!',
+	});
 
 	const updateWithSong = updateSongDuration.bind(null, {
 		song: songBeingEdited,
 		duration: audioDuration,
 	});
-
-	const [durationState, durationFormAction, durationActionIsPending] =
-		useActionState(updateWithSong, {
-			error: undefined,
-			success: false,
-		});
+	const {
+		formAction: durationFormAction,
+		actionIsPending: durationActionIsPending,
+		state: durationState,
+	} = useToastActionState({
+		action: updateWithSong,
+		pendingMessage: 'Saving...',
+		successMessage: 'Duration updated',
+	});
 
 	const handleAudioChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files ? e.target.files[0] : null;
@@ -59,34 +64,10 @@ export function UploadForm({
 	};
 
 	useEffect(() => {
-		if (uploadActionIsPending || durationActionIsPending) {
-			customToast({
-				message: uploadActionIsPending ? 'Uploading file...' : 'Saving...',
-				type: 'loading',
-			});
-		} else if (uploadState.error || durationState.error) {
-			customToast({
-				message: uploadState.error || durationState.error || 'Error',
-				type: 'error',
-			});
-		} else if (uploadState.success || durationState.success) {
+		if (uploadState.success || durationState.success) {
 			onSuccess();
-			customToast({
-				message: uploadState.success
-					? 'File uploaded successfully!'
-					: 'Duration updated',
-				type: 'success',
-			});
 		}
-	}, [
-		uploadActionIsPending,
-		onSuccess,
-		uploadState.error,
-		uploadState.success,
-		durationActionIsPending,
-		durationState.error,
-		durationState.success,
-	]);
+	}, [uploadState.success, durationState.success, onSuccess]);
 
 	return (
 		<div className='flex flex-col items-center gap-2'>

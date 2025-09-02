@@ -2,12 +2,12 @@
 
 import { UploadModal } from '@/client/components/clubs/upload-modal';
 import { SongAudio } from '@/client/components/song-audio';
-import { customToast } from '@/client/components/toast';
+import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { cn } from '@/lib/cn';
 import { deleteSong } from '@/server/actions/db';
 import { Trash } from '@/server/components/icons/trash';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
-import { ComponentProps, useActionState, useEffect } from 'react';
+import { ComponentProps } from 'react';
 
 interface ManageSongProps extends ComponentProps<'div'> {
 	club: SelectClub;
@@ -23,33 +23,11 @@ export function ManageSong({
 	...props
 }: ManageSongProps) {
 	const deleteWithSong = deleteSong.bind(null, song);
-
-	const [deleteState, deleteAction, deleteActionIsPending] = useActionState(
-		deleteWithSong,
-		{
-			error: undefined,
-			success: false,
-		}
-	);
-
-	useEffect(() => {
-		if (deleteActionIsPending) {
-			customToast({
-				message: 'Deleting song...',
-				type: 'loading',
-			});
-		} else if (deleteState.error) {
-			customToast({
-				message: deleteState.error,
-				type: 'error',
-			});
-		} else if (deleteState.success) {
-			customToast({
-				message: 'Song deleted successfully!',
-				type: 'success',
-			});
-		}
-	}, [deleteActionIsPending, deleteState.error, deleteState.success]);
+	const { formAction, actionIsPending } = useToastActionState({
+		action: deleteWithSong,
+		pendingMessage: `Deleting ${song.title}...`,
+		successMessage: `Deleted ${song.title}`,
+	});
 
 	return (
 		<div
@@ -68,13 +46,12 @@ export function ManageSong({
 				btnClassName={cn('btn-secondary btn-soft join-item')}
 				formTitle={`Edit ${song.title}`}
 				editOptions={{ song }}
-				orientation={orientation}
 			/>
-			<form action={deleteAction}>
+			<form action={formAction}>
 				<button
 					// TODO: add modal
 					type='submit'
-					disabled={deleteActionIsPending}
+					disabled={actionIsPending}
 					className={cn('btn btn-soft btn-error join-item max-sm:w-full')}>
 					<Trash />
 					Delete

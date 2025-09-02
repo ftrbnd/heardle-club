@@ -2,9 +2,9 @@
 
 import { joinClub } from '@/server/actions/db';
 import { SelectClub } from '@repo/database/postgres';
-import { customToast } from '@/client/components/toast';
 import { User } from '@/app/api/auth/_user';
-import { ComponentProps, useActionState, useEffect } from 'react';
+import { ComponentProps } from 'react';
+import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 
 interface JoinClubProps extends ComponentProps<'form'> {
 	club: SelectClub;
@@ -16,24 +16,10 @@ export function JoinClub({ club, user, className, ...props }: JoinClubProps) {
 		userId: user?.id,
 		club,
 	});
-	const [state, formAction, actionIsPending] = useActionState(joinWithIds, {
-		error: undefined,
-		success: false,
+	const { formAction, actionIsPending } = useToastActionState({
+		action: joinWithIds,
+		successMessage: `Welcome to ${club.displayName}!`,
 	});
-
-	useEffect(() => {
-		if (state.error) {
-			customToast({
-				message: state.error,
-				type: 'error',
-			});
-		} else if (state.success) {
-			customToast({
-				message: `Welcome to ${club.displayName}!`,
-				type: 'success',
-			});
-		}
-	}, [actionIsPending, state, club.displayName]);
 
 	return (
 		<form
