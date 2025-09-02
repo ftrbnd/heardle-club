@@ -29,7 +29,7 @@ export function LeaveClub({ club, user, className, ...props }: LeaveClubProps) {
 			<button
 				type='submit'
 				disabled={!user || actionIsPending}
-				className='btn btn-error btn-block'>
+				className='btn btn-soft btn-error btn-block'>
 				Leave {club.displayName}
 			</button>
 		</form>

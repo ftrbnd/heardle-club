@@ -216,9 +216,23 @@ export async function updateAccountDetails(
 		rawFormData.displayName !== '' &&
 		rawFormData.displayName !== user.displayName
 	) {
-		await updateUser(user.id, {
-			displayName: rawFormData.displayName,
-		});
+		try {
+			await updateUser(user.id, {
+				displayName: rawFormData.displayName,
+			});
+
+			revalidatePath('/account/details');
+
+			return {
+				success: true,
+			};
+		} catch (error) {
+			if (error instanceof Error) {
+				return {
+					error: error.message,
+				};
+			}
+		}
 	}
 
 	if (

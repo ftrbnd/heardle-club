@@ -25,9 +25,9 @@ export function useToastActionState({
 	});
 
 	useEffect(() => {
-		if (actionIsPending) {
+		if (actionIsPending && pendingMessage) {
 			customToast({
-				message: pendingMessage ?? 'Loading...',
+				message: pendingMessage,
 				type: 'loading',
 			});
 		} else if (state.error) {
@@ -35,9 +35,9 @@ export function useToastActionState({
 				message: state.error,
 				type: 'error',
 			});
-		} else if (state.success) {
+		} else if (state.success && successMessage) {
 			customToast({
-				message: successMessage ?? 'Success!',
+				message: successMessage,
 				type: 'success',
 			});
 		}
