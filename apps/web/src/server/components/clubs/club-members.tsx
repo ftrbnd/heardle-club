@@ -62,6 +62,7 @@ function ClubMember({
 			<a className='flex'>
 				<UserAvatar
 					user={member}
+					imageSize={24}
 					className='size-6 rounded-full'
 				/>
 				{member.displayName}

@@ -48,6 +48,7 @@ export function AccountDetails({ user }: AccountDetailsProps) {
 				<UserAvatar
 					user={user}
 					className='rounded-md'
+					imageSize={256}
 				/>
 			</figure>
 			<div className='card-body'>
