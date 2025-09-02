@@ -36,30 +36,42 @@ type ActionState = {
 	success?: boolean;
 };
 
-interface FormIds {
-	artistId: string;
-	ownerId?: string;
-}
-
 export async function createClub(
-	{ artistId, ownerId }: FormIds,
+	artistId: string,
+	_prevState: ActionState,
 	formData: FormData
-) {
+): Promise<ActionState> {
+	const user = await getCurrentUser();
+	if (!user) return { error: 'Unauthorized' };
+
 	const rawFormData = {
+		id: generateSecureRandomString(),
+		artistId,
+		ownerId: user.id,
 		subdomain: formData.get('subdomain'),
 		displayName: formData.get('displayName'),
 		// TODO: support image uploading
 		//  imageURL: formData.get('image'),
-		id: generateSecureRandomString(),
-		artistId,
-		ownerId,
 	};
 
-	const validatedFields = insertClubSchema.parse(rawFormData);
-	const newClub = await insertClub(validatedFields);
+	const { data, error } = insertClubSchema.safeParse(rawFormData);
+	if (error) return { error: error.message };
 
-	const subdomain = getSubdomainURL(newClub.subdomain);
-	redirect(subdomain);
+	try {
+		const newClub = await insertClub(data);
+
+		const subdomain = getSubdomainURL(newClub.subdomain);
+		redirect(subdomain);
+	} catch (error) {
+		if (error instanceof Error)
+			return {
+				error: error.message,
+			};
+	}
+
+	return {
+		error: 'Something went wrong.',
+	};
 }
 
 interface JoinLeaveClubBody {
@@ -132,26 +144,55 @@ export async function leaveClub({
 	};
 }
 
-export async function setClubActiveStatus(clubId: string, isActive: boolean) {
+export async function setClubActiveStatus(
+	clubId: string,
+	isActive: boolean
+): Promise<ActionState> {
 	const club = await getClubById(clubId);
+	if (!club) return { error: 'Club not found' };
 	const user = await getCurrentUser();
-	if (club?.ownerId !== user?.id) return null;
+	if (!user) return { error: 'Unauthorized' };
+	if (club.ownerId !== user.id) return { error: 'Unauthorized' };
 
-	const newClub = await updateClubActiveStatus(clubId, isActive);
+	try {
+		const newClub = await updateClubActiveStatus(clubId, isActive);
+		revalidatePath(`/s/${newClub.subdomain}`);
 
-	revalidatePath(`/s/${newClub.subdomain}`);
-	return newClub;
+		return { success: true };
+	} catch (error) {
+		if (error instanceof Error)
+			return {
+				error: error.message,
+			};
+	}
+
+	return {
+		error: 'Something went wrong.',
+	};
 }
 
-export async function removeClub(clubId: string) {
+export async function removeClub(clubId: string): Promise<ActionState> {
 	const club = await getClubById(clubId);
-	if (!club) return null;
+	if (!club) return { error: 'Club not found' };
 	const user = await getCurrentUser();
-	if (!user) return null;
-	if (club.ownerId !== user.id) return null;
+	if (!user) return { error: 'Unauthorized' };
+	if (club.ownerId !== user.id) return { error: 'Unauthorized' };
 
-	await deleteClub(clubId);
-	revalidatePath(`/s/${club.subdomain}`);
+	try {
+		await deleteClub(clubId);
+		revalidatePath(`/s/${club.subdomain}`);
+
+		return { success: true };
+	} catch (error) {
+		if (error instanceof Error)
+			return {
+				error: error.message,
+			};
+	}
+
+	return {
+		error: 'Something went wrong.',
+	};
 }
 
 export async function updateAccountDetails(

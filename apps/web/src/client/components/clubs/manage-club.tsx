@@ -1,27 +1,70 @@
 'use client';
 
-import { customPromiseToast } from '@/client/components/toast';
+import { customToast } from '@/client/components/toast';
 import { removeClub, setClubActiveStatus } from '@/server/actions/db';
 import { Pause } from '@/server/components/icons/pause';
 import { Play } from '@/server/components/icons/play';
 import { SelectClub } from '@repo/database/postgres';
+import { useActionState, useEffect } from 'react';
 
 interface ManageClubProps {
 	club: SelectClub;
 }
 
 export function ManageClub({ club }: ManageClubProps) {
-	const setClubStatus = async () => {
-		const newStatus = club.isActive ? 'inactive' : 'active';
-		const isActive = club.isActive ? false : true;
+	const removeClubWithId = removeClub.bind(null, club.id);
 
-		customPromiseToast({
-			promise: setClubActiveStatus(club.id, isActive),
-			loadingText: `Setting club to ${newStatus}...`,
-			successText: `Set club to ${newStatus}`,
-			errorText: `Failed to set club to ${newStatus}`,
-		});
-	};
+	const [deleteState, deleteFormAction, deleteActionIsPending] = useActionState(
+		removeClubWithId,
+		{
+			error: undefined,
+			success: false,
+		}
+	);
+
+	const setClubStatusWithId = setClubActiveStatus.bind(
+		null,
+		club.id,
+		club.isActive ? false : true
+	);
+	const [statusState, statusFormAction, statusActionIsPending] = useActionState(
+		setClubStatusWithId,
+		{
+			error: undefined,
+			success: false,
+		}
+	);
+
+	useEffect(() => {
+		if (deleteActionIsPending || statusActionIsPending) {
+			customToast({
+				message: deleteActionIsPending
+					? `Deleting ${club.displayName}...`
+					: `Setting club to ${club.isActive ? 'inactive' : 'active'}...`,
+				type: 'loading',
+			});
+		} else if (deleteState.error || statusState.error) {
+			customToast({
+				message: deleteState.error || statusState.error || 'Error',
+				type: 'error',
+			});
+		} else if (deleteState.success || statusState.success) {
+			customToast({
+				message: deleteState.success
+					? `Successfully deleted ${club.displayName}!`
+					: `Set club to ${club.isActive ? 'active' : 'inactive'}`,
+				type: 'success',
+			});
+		}
+	}, [
+		deleteActionIsPending,
+		deleteState,
+		club.displayName,
+		club.isActive,
+		statusActionIsPending,
+		statusState.error,
+		statusState.success,
+	]);
 
 	const openModal = () => {
 		const modal = document.getElementById(
@@ -30,15 +73,6 @@ export function ManageClub({ club }: ManageClubProps) {
 		if (!modal) return;
 
 		modal.showModal();
-	};
-
-	const handleDelete = async () => {
-		customPromiseToast({
-			promise: removeClub(club.id),
-			loadingText: `Deleting ${club.displayName}...`,
-			successText: `Successfully deleted ${club.displayName}`,
-			errorText: `Failed to delete ${club.displayName}`,
-		});
 	};
 
 	return (
@@ -50,12 +84,14 @@ export function ManageClub({ club }: ManageClubProps) {
 						{club.isActive ? 'active' : 'inactive'}.
 					</span>
 				</p>
-				<button
-					onClick={setClubStatus}
-					className={`btn ${club.isActive ? 'btn-secondary' : 'btn-primary'}`}>
-					{club.isActive ? <Pause /> : <Play />}
-					{club.isActive ? 'Pause' : 'Activate'} club
-				</button>
+				<form action={statusFormAction}>
+					<button
+						type='submit'
+						className={`btn ${club.isActive ? 'btn-secondary' : 'btn-primary'}`}>
+						{club.isActive ? <Pause /> : <Play />}
+						{club.isActive ? 'Pause' : 'Activate'} club
+					</button>
+				</form>
 			</div>
 
 			<button
@@ -73,11 +109,13 @@ export function ManageClub({ club }: ManageClubProps) {
 					</p>
 
 					<div className='modal-action'>
-						<button
-							className='btn btn-error btn-outline'
-							onClick={handleDelete}>
-							Delete {club.displayName}
-						</button>
+						<form action={deleteFormAction}>
+							<button
+								type='submit'
+								className='btn btn-error btn-outline'>
+								Delete {club.displayName}
+							</button>
+						</form>
 					</div>
 				</div>
 				<form
