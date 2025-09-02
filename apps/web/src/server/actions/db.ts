@@ -62,14 +62,14 @@ export async function createClub(
 	redirect(subdomain);
 }
 
-interface JoinClubBody {
+interface JoinLeaveClubBody {
 	userId?: string;
 	club?: SelectClub;
 }
 export async function joinClub({
 	userId,
 	club,
-}: JoinClubBody): Promise<ActionState> {
+}: JoinLeaveClubBody): Promise<ActionState> {
 	if (!userId)
 		return {
 			error: 'Sign in to join a club.',
@@ -99,10 +99,37 @@ export async function joinClub({
 	};
 }
 
-export async function leaveClub(userId?: string, clubId?: string) {
-	if (!userId || !clubId) return null;
+export async function leaveClub({
+	userId,
+	club,
+}: JoinLeaveClubBody): Promise<ActionState> {
+	if (!userId)
+		return {
+			error: 'Sign in to leave a club.',
+		};
+	if (!club)
+		return {
+			error: 'Club not found...',
+		};
 
-	await removeUserFromClub(userId, clubId);
+	try {
+		await removeUserFromClub(userId, club.id);
+
+		revalidatePath(`/s/${club.subdomain}`);
+
+		return {
+			success: true,
+		};
+	} catch (error) {
+		if (error instanceof Error)
+			return {
+				error: error.message,
+			};
+	}
+
+	return {
+		error: 'Something went wrong.',
+	};
 }
 
 export async function setClubActiveStatus(clubId: string, isActive: boolean) {

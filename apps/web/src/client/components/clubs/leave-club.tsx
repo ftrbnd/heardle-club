@@ -1,22 +1,22 @@
 'use client';
 
-import { joinClub } from '@/server/actions/db';
+import { leaveClub } from '@/server/actions/db';
 import { SelectClub } from '@repo/database/postgres';
 import { customToast } from '@/client/components/toast';
 import { User } from '@/app/api/auth/_user';
 import { ComponentProps, useActionState, useEffect } from 'react';
 
-interface JoinClubProps extends ComponentProps<'form'> {
+interface LeaveClubProps extends ComponentProps<'form'> {
 	club: SelectClub;
 	user: User | null;
 }
 
-export function JoinClub({ club, user, className, ...props }: JoinClubProps) {
-	const joinWithIds = joinClub.bind(null, {
+export function LeaveClub({ club, user, className, ...props }: LeaveClubProps) {
+	const leaveWithIds = leaveClub.bind(null, {
 		userId: user?.id,
 		club,
 	});
-	const [state, formAction, actionIsPending] = useActionState(joinWithIds, {
+	const [state, formAction, actionIsPending] = useActionState(leaveWithIds, {
 		error: undefined,
 		success: false,
 	});
@@ -29,7 +29,7 @@ export function JoinClub({ club, user, className, ...props }: JoinClubProps) {
 			});
 		} else if (state.success) {
 			customToast({
-				message: `Welcome to ${club.displayName}!`,
+				message: `You left ${club.displayName}!`,
 				type: 'success',
 			});
 		}
@@ -43,8 +43,8 @@ export function JoinClub({ club, user, className, ...props }: JoinClubProps) {
 			<button
 				type='submit'
 				disabled={!user || actionIsPending}
-				className='btn btn-primary btn-block'>
-				Join {club.displayName}
+				className='btn btn-error btn-block'>
+				Leave {club.displayName}
 			</button>
 		</form>
 	);

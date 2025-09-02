@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@/app/api/auth/server.services';
 import { JoinClub } from '@/client/components/clubs/join-club';
+import { LeaveClub } from '@/client/components/clubs/leave-club';
 import { UserAvatar } from '@/server/components/account/avatar';
 import { Crown } from '@/server/components/icons/crown';
 import { SelectClub, SelectUser } from '@repo/database/postgres';
@@ -15,6 +16,8 @@ export async function ClubMembers({ club, members }: ClubMembersProps) {
 		(member) => member.id !== club.ownerId
 	);
 	const owner = members.find((member) => member.id === club.ownerId);
+
+	const alreadyJoined = members.some((m) => m.id === user?.id);
 
 	return (
 		<>
@@ -39,12 +42,20 @@ export async function ClubMembers({ club, members }: ClubMembersProps) {
 				/>
 			))}
 
-			<div className='mt-6'>
-				<JoinClub
-					club={club}
-					user={user}
-					members={members}
-				/>
+			<div className='mt-6 flex-1 justify-self-end flex'>
+				{alreadyJoined ? (
+					<LeaveClub
+						club={club}
+						user={user}
+						className='self-end w-full'
+					/>
+				) : (
+					<JoinClub
+						club={club}
+						user={user}
+						className='self-end w-full'
+					/>
+				)}
 			</div>
 		</>
 	);
