@@ -2,7 +2,11 @@
 
 import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getSubdomainURL } from '@/lib/domains';
-import { createServerAction } from '@/server/actions/action-state';
+import { createServerAction } from '@/server/actions/create-server-action';
+import {
+	updateAccountSchema,
+	uploadSongSchema,
+} from '@/server/actions/form-data';
 import {
 	addUserToClub,
 	deleteClub,
@@ -29,8 +33,8 @@ import {
 	sanitizeString,
 	SelectClub,
 } from '@repo/database/postgres';
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { z } from 'zod/v4';
 
 type ActionState = {
 	error?: string;
@@ -61,7 +65,7 @@ export async function createClub(
 			};
 
 			const { data: clubData, error } = insertClubSchema.safeParse(rawFormData);
-			if (error || !clubData) return { error: error.message };
+			if (error || !clubData) return { error: z.prettifyError(error) };
 
 			return { data: clubData };
 		},
@@ -119,7 +123,7 @@ export async function setClubActiveStatus(
 	clubId: string,
 	isActive: boolean
 ): Promise<ActionState> {
-	return createServerAction({
+	return await createServerAction({
 		requiredParams: { clubId, isActive },
 		validationFn: async () => {
 			const club = await getClubById(clubId);
@@ -144,7 +148,7 @@ export async function setClubActiveStatus(
 }
 
 export async function removeClub(clubId: string): Promise<ActionState> {
-	return createServerAction({
+	return await createServerAction({
 		requiredParams: { clubId },
 		validationFn: async () => {
 			const club = await getClubById(clubId);
@@ -169,168 +173,132 @@ export async function updateAccountDetails(
 	_prevState: ActionState,
 	formData: FormData
 ): Promise<ActionState> {
-	const user = await getCurrentUser();
-	if (!user)
-		return {
-			error: 'Unauthorized',
-		};
-
-	const rawFormData = {
-		displayName: formData.get('displayName'),
-		avatar: formData.get('avatar'),
-	};
-
-	if (
-		rawFormData.displayName &&
-		typeof rawFormData.displayName === 'string' &&
-		rawFormData.displayName !== '' &&
-		rawFormData.displayName !== user.displayName
-	) {
-		try {
-			await updateUser(user.id, {
-				displayName: rawFormData.displayName,
-			});
-
-			revalidatePath('/account/details');
-
-			return {
-				success: true,
-			};
-		} catch (error) {
-			if (error instanceof Error) {
+	return await createServerAction({
+		validationFn: async () => {
+			const user = await getCurrentUser();
+			if (!user)
 				return {
-					error: error.message,
+					error: 'Unauthorized',
 				};
-			}
-		}
-	}
 
-	if (
-		rawFormData.avatar &&
-		rawFormData.avatar instanceof File &&
-		rawFormData.avatar.size > 0
-	) {
-		if (
-			rawFormData.avatar.type !== 'image/png' &&
-			rawFormData.avatar.type !== 'image/jpeg'
-		) {
-			return {
-				error: 'Upload either a PNG or JPEG image',
+			const rawFormData = {
+				displayName: formData.get('displayName'),
+				avatar: formData.get('avatar'),
 			};
-		}
-
-		try {
-			await removeUserAvatars(user.id);
-			const { publicUrl } = await uploadUserAvatar(user.id, rawFormData.avatar);
-			await updateUser(user.id, {
-				imageURL: publicUrl,
-			});
-
-			revalidatePath('/account/details');
-
-			return {
-				success: true,
-			};
-		} catch (error) {
-			if (error instanceof Error) {
+			const { data: form, error } = updateAccountSchema.safeParse(rawFormData);
+			if (error)
 				return {
-					error: error.message,
+					error: z.prettifyError(error),
 				};
-			}
-		}
-	}
 
-	return {
-		error: 'Something went wrong.',
-	};
+			return { data: { form, user } };
+		},
+		actionFn: async (data) => {
+			if (!data) throw new Error('Account details required');
+
+			if (
+				data.form.displayName &&
+				data.form.displayName !== data.user.displayName
+			) {
+				await updateUser(data.user.id, {
+					displayName: data.form.displayName,
+				});
+			}
+
+			if (data.form.avatar) {
+				await removeUserAvatars(data.user.id);
+				const { publicUrl } = await uploadUserAvatar(
+					data.user.id,
+					data.form.avatar
+				);
+				await updateUser(data.user.id, {
+					imageURL: publicUrl,
+				});
+			}
+
+			return { pathToRevalidate: '/account/details' };
+		},
+	});
 }
 
 export async function deleteUserAvatar(): Promise<ActionState> {
-	const user = await getCurrentUser();
-	if (!user)
-		return {
-			error: 'Unauthorized',
-		};
+	return await createServerAction({
+		validationFn: async () => {
+			const user = await getCurrentUser();
+			if (!user)
+				return {
+					error: 'Unauthorized',
+				};
 
-	await removeUserAvatars(user.id);
-	await updateUser(user.id, {
-		imageURL: null,
+			return { data: user };
+		},
+		actionFn: async (data) => {
+			if (!data) throw new Error('Unauthorized');
+
+			await removeUserAvatars(data.id);
+			await updateUser(data.id, {
+				imageURL: null,
+			});
+
+			return { pathToRevalidate: '/account/details' };
+		},
 	});
-
-	revalidatePath('/account/details');
-
-	return { success: true };
 }
 
 interface UploadSongFileBody {
 	clubId: string;
 	duration: number;
-	originalSong?: SelectBaseSong;
+	originalSong?: SelectBaseSong; // a song's audio source is being updated
 }
 export async function uploadSongFile(
 	{ clubId, duration, originalSong }: UploadSongFileBody,
 	_prevState: ActionState,
 	formData: FormData
 ): Promise<ActionState> {
-	if (!formData)
-		return {
-			error: 'Submit at least one song.',
-		};
+	return await createServerAction({
+		requiredParams: { clubId, duration, originalSong },
+		validationFn: async () => {
+			const user = await getCurrentUser();
+			if (!user)
+				return {
+					error: 'Unauthorized',
+				};
 
-	const user = await getCurrentUser();
-	if (!user)
-		return {
-			error: 'Unauthorized',
-		};
+			const club = await getClubById(clubId);
+			if (!club)
+				return {
+					error: 'Your current club was not found',
+				};
 
-	const club = await getClubById(clubId);
-	if (!club)
-		return {
-			error: 'Your current club was not found',
-		};
-
-	const rawFormData = {
-		title: formData.get('title'),
-		artist: formData.get('artist'),
-		album: formData.get('album'),
-		audioFile: formData.get('audio_file'),
-	};
-
-	const { data: songDetails, error } = insertBaseSongSchema
-		.pick({
-			title: true,
-			artist: true,
-			album: true,
-		})
-		.safeParse({
-			title: rawFormData.title || null,
-			artist: [rawFormData.artist || null],
-			album: rawFormData.album || null,
-		});
-	if (error && !originalSong)
-		return {
-			error: 'Provide valid song details.',
-		};
-
-	// UPLOAD FILE TO SUPABASE
-	if (
-		rawFormData.audioFile &&
-		rawFormData.audioFile instanceof File &&
-		rawFormData.audioFile.size > 0
-	) {
-		if (
-			rawFormData.audioFile.type !== 'audio/mpeg' &&
-			rawFormData.audioFile.type !== 'audio/mp3'
-		) {
-			return {
-				error: 'Only MP3 files are allowed.',
+			const rawFormData = {
+				title: formData.get('title'),
+				artist: formData.get('artist'),
+				album: formData.get('album'),
+				audioFile: formData.get('audio_file'),
 			};
-		}
 
-		try {
+			const { data: songDetails, error } = uploadSongSchema.safeParse({
+				...formData,
+				artist: [rawFormData.artist],
+			});
+
+			if (error && !originalSong)
+				return {
+					error: z.prettifyError(error),
+				};
+
+			return { data: { songDetails, club } };
+		},
+		actionFn: async (data) => {
+			if (!data) throw new Error('Invalid song details');
+
+			const { songDetails, club } = data;
+			if (!songDetails || !songDetails?.audioFile)
+				throw new Error('Invalid song details');
+
 			if (originalSong) {
 				const { publicUrl } = await upsertSongFile(
-					rawFormData.audioFile,
+					songDetails.audioFile,
 					originalSong
 				);
 				await updateClubSongAudio({
@@ -339,21 +307,16 @@ export async function uploadSongFile(
 					duration,
 				});
 			} else {
-				if (!songDetails)
-					return {
-						error: 'Provide valid song details.',
-					};
-
 				const fileName = `${sanitizeString(songDetails.title)}.mp3`;
 				const { publicUrl } = await uploadCustomClubSongFile(
-					rawFormData.audioFile,
-					clubId,
+					songDetails.audioFile,
+					club.id,
 					fileName
 				);
 
 				await insertClubSong({
 					id: generateSecureRandomString(),
-					clubId,
+					clubId: club.id,
 					title: songDetails.title,
 					artist: songDetails.artist,
 					album: songDetails.album,
@@ -363,65 +326,44 @@ export async function uploadSongFile(
 				});
 			}
 
-			revalidatePath(`/s/${club.subdomain}`);
-
-			return {
-				success: true,
-			};
-		} catch (error) {
-			if (error instanceof Error)
-				return {
-					error: error.message,
-				};
-			return {
-				error: 'Something went wrong.',
-			};
-		}
-	} else {
-		return {
-			error: 'An audio file is required.',
-		};
-	}
+			return { pathToRevalidate: `/s/${club.subdomain}` };
+		},
+	});
 }
 
 export async function deleteSong(song: SelectBaseSong): Promise<ActionState> {
-	const user = await getCurrentUser();
-	if (!user)
-		return {
-			error: 'Unauthorized',
-		};
+	return await createServerAction({
+		requiredParams: { song },
+		validationFn: async () => {
+			const user = await getCurrentUser();
+			if (!user)
+				return {
+					error: 'Unauthorized',
+				};
 
-	const club = await getClubById(song.clubId);
-	if (!club)
-		return {
-			error: 'The club for this song was not found',
-		};
+			const club = await getClubById(song.clubId);
+			if (!club)
+				return {
+					error: 'The club for this song was not found',
+				};
 
-	const isOwner = user.id === club.ownerId;
-	if (!isOwner)
-		return {
-			error: 'Unauthorized',
-		};
+			const isOwner = user.id === club.ownerId;
+			if (!isOwner)
+				return {
+					error: 'Unauthorized',
+				};
 
-	try {
-		await deleteClubSong(song.id);
-		await removeClubSongFile(song);
+			return { data: { user, club } };
+		},
+		actionFn: async (data) => {
+			if (!data) throw new Error('Unauthorized');
 
-		revalidatePath(`/s/${club.subdomain}`);
+			await deleteClubSong(song.id);
+			await removeClubSongFile(song);
 
-		return {
-			success: true,
-		};
-	} catch (error) {
-		if (error instanceof Error)
-			return {
-				error: error.message,
-			};
-	}
-
-	return {
-		error: 'Something went wrong.',
-	};
+			return { pathToRevalidate: `/s/${data.club.subdomain}` };
+		},
+	});
 }
 
 interface EditSongBody {
@@ -432,51 +374,41 @@ export async function updateSongDuration({
 	song,
 	duration,
 }: EditSongBody): Promise<ActionState> {
-	if (!song)
-		return {
-			error: 'Please provide a song.',
-		};
+	return await createServerAction({
+		requiredParams: { song, duration },
+		validationFn: async (data) => {
+			if (!data || !data.song) throw new Error('Song and duration required');
 
-	const user = await getCurrentUser();
-	if (!user)
-		return {
-			error: 'Unauthorized',
-		};
-
-	const { data, error } = insertBaseSongSchema
-		.pick({
-			duration: true,
-		})
-		.safeParse({ duration });
-	if (error)
-		return {
-			error: error.message,
-		};
-
-	const club = await getClubById(song.clubId);
-	if (!club)
-		return {
-			error: 'The club for this song was not found',
-		};
-
-	if (data) {
-		try {
-			await updateClubSongDuration(song.id, data.duration);
-
-			revalidatePath(`/s/${club.subdomain}`);
-
-			return {
-				success: true,
-			};
-		} catch (error) {
-			if (error instanceof Error)
+			const user = await getCurrentUser();
+			if (!user)
 				return {
-					error: error.message,
+					error: 'Unauthorized',
 				};
-		}
-	}
 
-	return {
-		error: 'Something went wrong.',
-	};
+			const club = await getClubById(data.song.clubId);
+			if (!club)
+				return {
+					error: 'The club for this song was not found',
+				};
+
+			const { data: durationData, error } = insertBaseSongSchema
+				.pick({
+					duration: true,
+				})
+				.safeParse({ duration });
+			if (error)
+				return {
+					error: z.prettifyError(error),
+				};
+
+			return { data: { duration: durationData.duration, song, club } };
+		},
+		actionFn: async (data) => {
+			if (!data || !data.song) throw new Error('Song and duration required');
+
+			await updateClubSongDuration(data.song.id, data.duration);
+
+			return { pathToRevalidate: `/s/${data.club.subdomain}` };
+		},
+	});
 }
