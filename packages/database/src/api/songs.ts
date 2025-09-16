@@ -59,6 +59,17 @@ export const getClubDailySong = async (clubId: string) => {
 	return daily;
 };
 
+export const downloadStatusSchema = z
+	.object({
+		current: z.number(),
+		total: z.number(),
+	})
+	.default({
+		current: 0,
+		total: 0,
+	});
+export type DownloadStatus = z.infer<typeof downloadStatusSchema>;
+
 const clubDownloadStatusKey = (clubId: string) =>
 	`download_status:${clubId}` as const;
 
@@ -67,16 +78,19 @@ export const setDownloadStatus = async (
 	curAmt: number,
 	totalAmt: number
 ) => {
-	await redis.set(clubDownloadStatusKey(clubId), `${curAmt}/${totalAmt}`);
+	await redis.json.set(clubDownloadStatusKey(clubId), '$', {
+		current: curAmt,
+		total: totalAmt,
+	});
 };
 
 export const clearDownloadStatus = async (clubId: string) => {
-	await redis.del(clubDownloadStatusKey(clubId));
+	await redis.json.del(clubDownloadStatusKey(clubId));
 };
 
 export const getDownloadStatus = async (clubId: string) => {
-	const response = await redis.get(clubDownloadStatusKey(clubId));
-	const status = z.string().optional().nullable().parse(response);
+	const response = await redis.json.get(clubDownloadStatusKey(clubId));
+	const status = downloadStatusSchema.parse(response);
 
 	return status;
 };

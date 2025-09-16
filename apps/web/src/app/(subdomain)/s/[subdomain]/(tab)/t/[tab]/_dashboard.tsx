@@ -20,6 +20,7 @@ export async function Dashboard({ club }: DashboardProps) {
 				aria-label='Club songs'
 				defaultChecked
 			/>
+
 			<div className='tab-content border-base-300 bg-base-100 md:p-10'>
 				{songs.length > 0 ? (
 					<>

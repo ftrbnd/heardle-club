@@ -9,7 +9,6 @@ import {
 import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
 import {
 	setDownloadStatus,
-	clearDownloadStatus,
 	uploadClubSongFile,
 	insertClubSong,
 	getRandomSong,
@@ -74,8 +73,6 @@ async function downloadMultipleTracks(
 			continue;
 		}
 	}
-
-	await clearDownloadStatus(clubId);
 
 	console.log(`Successfully downloaded ${count}/${tracks.length} tracks`);
 	return count;

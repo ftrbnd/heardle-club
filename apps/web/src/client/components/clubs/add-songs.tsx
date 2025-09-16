@@ -3,6 +3,7 @@
 // import { clientGetClubDownloadStatus } from '@/app/api/clubs/services';
 import { clientGetArtistAlbums } from '@/app/api/spotify/client.services';
 import { ArtistAlbums } from '@/client/components/clubs/artist-albums';
+import { ClubDownloadStatus } from '@/client/components/clubs/club-download-status';
 import { UploadModal } from '@/client/components/clubs/upload-modal';
 import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { submitClubSongs } from '@/server/actions/backend';
@@ -36,6 +37,7 @@ export function AddSongs({ club }: { club: SelectClub }) {
 
 	return (
 		<div className='p-2 flex flex-col w-full gap-4 items-center'>
+			<ClubDownloadStatus club={club} />
 			<div className='flex w-full gap-2 items-center justify-between'>
 				<label className='input'>
 					<Search />
