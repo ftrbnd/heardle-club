@@ -11,11 +11,12 @@ export const updateAccountSchema = selectUserSchema
 	.extend({
 		avatar: z
 			.file({
+				error: 'Invalid file',
+			})
+			.max(2_000_000)
+			.mime(['image/png', 'image/jpeg', 'application/octet-stream'], {
 				error: 'Upload either a PNG or JPEG image',
 			})
-			.min(1)
-			.max(2_000_000)
-			.mime(['image/png', 'image/jpeg'])
 			.optional(),
 	});
 

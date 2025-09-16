@@ -1,20 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getCurrentUser } from '@/app/api/auth/server.services';
+import {
+	ActionState,
+	ServerActionParams,
+} from '@/server/actions/action-params';
 import { revalidatePath } from 'next/cache';
-
-export type ActionState<UData> = {
-	error?: string;
-	success?: boolean;
-	data?: UData | null;
-};
-
-interface ServerActionParams<TParams, UData> {
-	requiredParams?: TParams;
-	validationFn?: (params?: TParams) => Promise<ActionState<UData>>;
-	actionFn: (
-		data?: UData | null,
-		params?: TParams
-	) => Promise<{ pathToRevalidate?: string }>;
-}
 
 export const defaultState = {
 	error: undefined,
@@ -37,11 +27,27 @@ function validateParams<TParams extends Record<string, any>>(
 	return { success: true };
 }
 
-export async function createServerAction<TParams, UData>({
+export async function createServerAction<TParams, UData>(
+	params: ServerActionParams<TParams, UData, true>
+): Promise<ActionState<UData>>;
+export async function createServerAction<TParams, UData>(
+	params: ServerActionParams<TParams, UData, false>
+): Promise<ActionState<UData>>;
+export async function createServerAction<
+	TParams,
+	UData,
+	TSessionRequired extends boolean,
+>({
 	requiredParams,
+	sessionRequired,
 	validationFn,
 	actionFn,
-}: ServerActionParams<TParams, UData>): Promise<ActionState<UData>> {
+}: ServerActionParams<TParams, UData, TSessionRequired>): Promise<
+	ActionState<UData>
+> {
+	const user = sessionRequired ? await getCurrentUser() : null;
+	if (sessionRequired && !user) return { error: 'Unauthorized' };
+
 	// validate requiredParams
 	const { error: paramsError } = requiredParams
 		? validateParams(requiredParams)
@@ -50,12 +56,16 @@ export async function createServerAction<TParams, UData>({
 
 	// additional validation (formData, etc.)
 	const { error: validationError, data } = validationFn
-		? await validationFn(requiredParams)
+		? await validationFn(user as any, requiredParams)
 		: defaultState;
 	if (validationError) return { error: validationError };
 
 	try {
-		const { pathToRevalidate } = await actionFn(data, requiredParams);
+		const { pathToRevalidate } = await actionFn(
+			user as any,
+			data,
+			requiredParams
+		);
 
 		if (pathToRevalidate) revalidatePath(pathToRevalidate);
 

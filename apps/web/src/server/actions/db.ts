@@ -1,6 +1,5 @@
 'use server';
 
-import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getSubdomainURL } from '@/lib/domains';
 import { createServerAction } from '@/server/actions/create-server-action';
 import {
@@ -48,11 +47,9 @@ export async function createClub(
 ): Promise<ActionState> {
 	return await createServerAction({
 		requiredParams: { artistId },
-		validationFn: async (data) => {
+		sessionRequired: true,
+		validationFn: async (user, data) => {
 			if (!data) throw new Error('Artist ID is required');
-
-			const user = await getCurrentUser();
-			if (!user) return { error: 'Unauthorized' };
 
 			const rawFormData = {
 				id: generateSecureRandomString(),
@@ -69,7 +66,7 @@ export async function createClub(
 
 			return { data: clubData };
 		},
-		actionFn: async (data) => {
+		actionFn: async (_user, data) => {
 			if (!data) throw new Error('Club not found');
 			const newClub = await insertClub(data);
 
@@ -89,7 +86,7 @@ export async function joinClub({
 }: JoinLeaveClubBody): Promise<ActionState> {
 	return await createServerAction({
 		requiredParams: { userId, club },
-		actionFn: async (_data, params) => {
+		actionFn: async (_user, _data, params) => {
 			if (!params) throw new Error('Missing parameters.');
 			if (!params.userId) throw new Error('Unauthorized');
 			if (!params.club) throw new Error('Club not found.');
@@ -107,7 +104,7 @@ export async function leaveClub({
 }: JoinLeaveClubBody): Promise<ActionState> {
 	return await createServerAction({
 		requiredParams: { userId, club },
-		actionFn: async (_data, params) => {
+		actionFn: async (_user, _data, params) => {
 			if (!params) throw new Error('Missing parameters.');
 			if (!params.userId) throw new Error('Unauthorized');
 			if (!params.club) throw new Error('Club not found.');
@@ -125,16 +122,15 @@ export async function setClubActiveStatus(
 ): Promise<ActionState> {
 	return await createServerAction({
 		requiredParams: { clubId, isActive },
-		validationFn: async () => {
+		sessionRequired: true,
+		validationFn: async (user) => {
 			const club = await getClubById(clubId);
 			if (!club) return { error: 'Club not found' };
-			const user = await getCurrentUser();
-			if (!user) return { error: 'Unauthorized' };
 			if (club.ownerId !== user.id) return { error: 'Unauthorized' };
 
 			return { success: true };
 		},
-		actionFn: async (_data, params) => {
+		actionFn: async (_user, _data, params) => {
 			if (!params) throw new Error('Missing parameters.');
 
 			const newClub = await updateClubActiveStatus(
@@ -150,16 +146,15 @@ export async function setClubActiveStatus(
 export async function removeClub(clubId: string): Promise<ActionState> {
 	return await createServerAction({
 		requiredParams: { clubId },
-		validationFn: async () => {
+		sessionRequired: true,
+		validationFn: async (user) => {
 			const club = await getClubById(clubId);
 			if (!club) return { error: 'Club not found' };
-			const user = await getCurrentUser();
-			if (!user) return { error: 'Unauthorized' };
 			if (club.ownerId !== user.id) return { error: 'Unauthorized' };
 
 			return { success: true, data: club };
 		},
-		actionFn: async (data) => {
+		actionFn: async (_user, data) => {
 			if (!data) throw new Error('Club not found');
 
 			await deleteClub(data.id);
@@ -174,44 +169,37 @@ export async function updateAccountDetails(
 	formData: FormData
 ): Promise<ActionState> {
 	return await createServerAction({
+		sessionRequired: true,
 		validationFn: async () => {
-			const user = await getCurrentUser();
-			if (!user)
-				return {
-					error: 'Unauthorized',
-				};
-
 			const rawFormData = {
 				displayName: formData.get('displayName'),
 				avatar: formData.get('avatar'),
 			};
+
 			const { data: form, error } = updateAccountSchema.safeParse(rawFormData);
 			if (error)
 				return {
 					error: z.prettifyError(error),
 				};
 
-			return { data: { form, user } };
+			return { data: { form } };
 		},
-		actionFn: async (data) => {
+		actionFn: async (user, data) => {
 			if (!data) throw new Error('Account details required');
 
-			if (
-				data.form.displayName &&
-				data.form.displayName !== data.user.displayName
-			) {
-				await updateUser(data.user.id, {
+			if (data.form.displayName && data.form.displayName !== user.displayName) {
+				await updateUser(user.id, {
 					displayName: data.form.displayName,
 				});
 			}
 
-			if (data.form.avatar) {
-				await removeUserAvatars(data.user.id);
-				const { publicUrl } = await uploadUserAvatar(
-					data.user.id,
-					data.form.avatar
-				);
-				await updateUser(data.user.id, {
+			if (
+				data.form.avatar &&
+				data.form.avatar.type !== 'application/octet-stream'
+			) {
+				await removeUserAvatars(user.id);
+				const { publicUrl } = await uploadUserAvatar(user.id, data.form.avatar);
+				await updateUser(user.id, {
 					imageURL: publicUrl,
 				});
 			}
@@ -223,20 +211,10 @@ export async function updateAccountDetails(
 
 export async function deleteUserAvatar(): Promise<ActionState> {
 	return await createServerAction({
-		validationFn: async () => {
-			const user = await getCurrentUser();
-			if (!user)
-				return {
-					error: 'Unauthorized',
-				};
-
-			return { data: user };
-		},
-		actionFn: async (data) => {
-			if (!data) throw new Error('Unauthorized');
-
-			await removeUserAvatars(data.id);
-			await updateUser(data.id, {
+		sessionRequired: true,
+		actionFn: async (user) => {
+			await removeUserAvatars(user.id);
+			await updateUser(user.id, {
 				imageURL: null,
 			});
 
@@ -257,13 +235,8 @@ export async function uploadSongFile(
 ): Promise<ActionState> {
 	return await createServerAction({
 		requiredParams: { clubId, duration, originalSong },
+		sessionRequired: true,
 		validationFn: async () => {
-			const user = await getCurrentUser();
-			if (!user)
-				return {
-					error: 'Unauthorized',
-				};
-
 			const club = await getClubById(clubId);
 			if (!club)
 				return {
@@ -289,7 +262,7 @@ export async function uploadSongFile(
 
 			return { data: { songDetails, club } };
 		},
-		actionFn: async (data) => {
+		actionFn: async (_user, data) => {
 			if (!data) throw new Error('Invalid song details');
 
 			const { songDetails, club } = data;
@@ -334,13 +307,8 @@ export async function uploadSongFile(
 export async function deleteSong(song: SelectBaseSong): Promise<ActionState> {
 	return await createServerAction({
 		requiredParams: { song },
-		validationFn: async () => {
-			const user = await getCurrentUser();
-			if (!user)
-				return {
-					error: 'Unauthorized',
-				};
-
+		sessionRequired: true,
+		validationFn: async (user) => {
 			const club = await getClubById(song.clubId);
 			if (!club)
 				return {
@@ -353,13 +321,13 @@ export async function deleteSong(song: SelectBaseSong): Promise<ActionState> {
 					error: 'Unauthorized',
 				};
 
-			return { data: { user, club } };
+			return { data: { club } };
 		},
-		actionFn: async (data) => {
-			if (!data) throw new Error('Unauthorized');
+		actionFn: async (_user, data, params) => {
+			if (!data || !params) throw new Error('Unauthorized');
 
-			await deleteClubSong(song.id);
-			await removeClubSongFile(song);
+			await deleteClubSong(params.song.id);
+			await removeClubSongFile(params.song);
 
 			return { pathToRevalidate: `/s/${data.club.subdomain}` };
 		},
@@ -376,14 +344,9 @@ export async function updateSongDuration({
 }: EditSongBody): Promise<ActionState> {
 	return await createServerAction({
 		requiredParams: { song, duration },
-		validationFn: async (data) => {
+		sessionRequired: true,
+		validationFn: async (_user, data) => {
 			if (!data || !data.song) throw new Error('Song and duration required');
-
-			const user = await getCurrentUser();
-			if (!user)
-				return {
-					error: 'Unauthorized',
-				};
 
 			const club = await getClubById(data.song.clubId);
 			if (!club)
@@ -403,7 +366,7 @@ export async function updateSongDuration({
 
 			return { data: { duration: durationData.duration, song, club } };
 		},
-		actionFn: async (data) => {
+		actionFn: async (_user, data) => {
 			if (!data || !data.song) throw new Error('Song and duration required');
 
 			await updateClubSongDuration(data.song.id, data.duration);
