@@ -19,32 +19,42 @@ function validateParams<TParams extends Record<string, any>>(
 		const value = obj[key];
 
 		if (value === undefined || value === null)
-			return {
-				error: `${key} is required.`,
-			};
+			return { error: `${key} is required.` };
+		if (typeof value === 'string' && value === '')
+			return { error: `${key} is required.` };
 	}
 
 	return { success: true };
 }
 
 export async function createServerAction<TParams, UData>(
-	params: ServerActionParams<TParams, UData, true>
+	params: ServerActionParams<TParams, UData, true, true>
 ): Promise<ActionState<UData>>;
 export async function createServerAction<TParams, UData>(
-	params: ServerActionParams<TParams, UData, false>
+	params: ServerActionParams<TParams, UData, true, false>
+): Promise<ActionState<UData>>;
+export async function createServerAction<TParams, UData>(
+	params: ServerActionParams<TParams, UData, false, false>
+): Promise<ActionState<UData>>;
+export async function createServerAction<TParams, UData>(
+	params: ServerActionParams<TParams, UData, false, true>
 ): Promise<ActionState<UData>>;
 export async function createServerAction<
 	TParams,
 	UData,
 	TSessionRequired extends boolean,
+	TParamsRequired extends boolean,
 >({
 	requiredParams,
 	sessionRequired,
 	validationFn,
 	actionFn,
-}: ServerActionParams<TParams, UData, TSessionRequired>): Promise<
-	ActionState<UData>
-> {
+}: ServerActionParams<
+	TParams,
+	UData,
+	TSessionRequired,
+	TParamsRequired
+>): Promise<ActionState<UData>> {
 	const user = sessionRequired ? await getCurrentUser() : null;
 	if (sessionRequired && !user) return { error: 'Unauthorized' };
 
@@ -56,15 +66,15 @@ export async function createServerAction<
 
 	// additional validation (formData, etc.)
 	const { error: validationError, data } = validationFn
-		? await validationFn(user as any, requiredParams)
+		? await validationFn(user as any, requiredParams as any)
 		: defaultState;
 	if (validationError) return { error: validationError };
 
 	try {
 		const { pathToRevalidate } = await actionFn(
 			user as any,
-			data,
-			requiredParams
+			requiredParams as any,
+			data
 		);
 
 		if (pathToRevalidate) revalidatePath(pathToRevalidate);

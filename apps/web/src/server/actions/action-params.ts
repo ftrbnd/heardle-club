@@ -10,16 +10,17 @@ export interface ServerActionParams<
 	TParams,
 	UData,
 	TSessionRequired extends boolean = false,
+	TParamsRequired extends boolean = false,
 > {
 	requiredParams?: TParams;
 	sessionRequired?: TSessionRequired;
 	validationFn?: (
 		user: TSessionRequired extends true ? User : User | null,
-		params?: TParams
+		params: TParamsRequired extends true ? TParams : undefined
 	) => Promise<ActionState<UData>>;
 	actionFn: (
 		user: TSessionRequired extends true ? User : User | null,
-		data?: UData | null,
-		params?: TParams
+		params: TParamsRequired extends true ? TParams : undefined,
+		data?: UData | null
 	) => Promise<{ pathToRevalidate?: string }>;
 }

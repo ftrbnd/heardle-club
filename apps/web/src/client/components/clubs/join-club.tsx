@@ -13,7 +13,7 @@ interface JoinClubProps extends ComponentProps<'form'> {
 
 export function JoinClub({ club, user, className, ...props }: JoinClubProps) {
 	const joinWithIds = joinClub.bind(null, {
-		userId: user?.id,
+		userId: user?.id ?? '',
 		club,
 	});
 	const { formAction, actionIsPending } = useToastActionState({
