@@ -144,3 +144,15 @@ export const deleteClub = async (clubId: string) => {
 
 	await db.delete(clubs).where(eq(clubs.id, clubId));
 };
+
+export const updateClubDayNumber = async (
+	clubId: string,
+	newDayNum: number
+) => {
+	await db
+		.update(clubs)
+		.set({
+			heardleDay: newDayNum,
+		})
+		.where(eq(clubs.id, clubId));
+};

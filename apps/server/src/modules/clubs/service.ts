@@ -10,6 +10,7 @@ import {
 	insertClubSong,
 	getRandomSong,
 	getClubById,
+	updateClubDayNumber,
 } from '@repo/database/postgres/api';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
@@ -165,14 +166,15 @@ export abstract class Club {
 
 		const club = await getClubById(clubId);
 		if (!club) throw new Error('Club not found');
-		const dayNum = club.heardleDay;
+		const newDayNum = club.heardleDay + 1;
 
-		const finalPath = `${clubId}/daily/${clubId}_day_${dayNum}.mp3` as const;
+		const finalPath = `${clubId}/daily/${clubId}_day_${newDayNum}.mp3` as const;
 		await trimSong(path, startTime, finalPath);
 
 		const { signedUrl } = await supabase.uploadDailySongFile(finalPath);
 
 		await setClubDailySong(clubId, song, signedUrl);
+		await updateClubDayNumber(clubId, newDayNum);
 
 		return song;
 	}

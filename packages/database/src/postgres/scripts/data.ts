@@ -78,5 +78,6 @@ export const defaultClubs: Omit<InsertClub, 'ownerId'>[] = [
 	},
 ];
 
+export type StorageBucket = 'club.songs' | 'user.avatars';
 export const SONGS_BUCKET = 'club.songs' as const;
 export const AVATARS_BUCKET = 'user.avatars' as const;
