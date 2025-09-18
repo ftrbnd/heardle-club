@@ -14,11 +14,7 @@ import {
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import { promises } from 'fs';
-import {
-	downloadSong,
-	uploadClubSongFile,
-	uploadDailySongFile,
-} from '@repo/database/supabase/api';
+import * as supabase from '@repo/database/supabase/api';
 import { setClubDailySong, setDownloadStatus } from '@repo/database/redis/api';
 import { SelectClub } from '@repo/database/postgres/schema';
 
@@ -53,7 +49,7 @@ async function downloadMultipleTracks(
 				ytVideo.video_id,
 				fileName
 			);
-			const { publicUrl } = await uploadClubSongFile(
+			const { publicUrl } = await supabase.uploadClubSongFile(
 				audioFilePath,
 				clubId,
 				track.id
@@ -102,12 +98,11 @@ async function getRandomStartTime(duration: number): Promise<number> {
 
 /**
  * Trim the song audio file to 6 seconds
- * @param path
  */
 async function trimSong(
-	path: string,
+	path: `${string}/${string}.mp3`,
 	startTime: number,
-	finalPath: string
+	finalPath: `${string}/daily/${string}_day_${number}.mp3`
 ): Promise<string> {
 	const [clubId, dailyFolder, _fileName] = finalPath.split('/');
 	await promises.mkdir(`${clubId}/${dailyFolder}`, { recursive: true });
@@ -166,16 +161,16 @@ export abstract class Club {
 
 		const startTime = await getRandomStartTime(song.duration);
 
-		const path = await downloadSong(song.audio);
+		const path = await supabase.downloadSong(clubId, song);
 
 		const club = await getClubById(clubId);
 		if (!club) throw new Error('Club not found');
 		const dayNum = club.heardleDay;
 
-		const finalPath = `${clubId}/daily/${clubId}_day_${dayNum}.mp3`;
+		const finalPath = `${clubId}/daily/${clubId}_day_${dayNum}.mp3` as const;
 		await trimSong(path, startTime, finalPath);
 
-		const { signedUrl } = await uploadDailySongFile(finalPath, clubId);
+		const { signedUrl } = await supabase.uploadDailySongFile(finalPath);
 
 		await setClubDailySong(clubId, song, signedUrl);
 
