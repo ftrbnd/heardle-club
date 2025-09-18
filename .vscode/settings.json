@@ -4,5 +4,6 @@
 			"mode": "auto"
 		}
 	],
-	"cSpell.words": ["Elysia"]
+	"cSpell.words": ["Elysia"],
+	"typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -1,8 +1,10 @@
+import { rootDomain } from '@/lib/domains';
 import type { NextConfig } from 'next';
 
 const supabaseUrl = process.env.SUPABASE_URL!;
 
 const nextConfig: NextConfig = {
+	typedRoutes: true,
 	images: {
 		remotePatterns: [
 			new URL('https://i.scdn.co/image/**'),
@@ -15,7 +17,7 @@ const nextConfig: NextConfig = {
 			bodySizeLimit: '5mb',
 		},
 	},
-	allowedDevOrigins: ['giosalad-testing.com', '*.giosalad-testing.com'],
+	allowedDevOrigins: [rootDomain, `*.${rootDomain}`],
 };
 
 export default nextConfig;
