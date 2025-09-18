@@ -2,8 +2,8 @@
 
 import { leaveClub } from '@/server/actions/db';
 import { LogOut } from '@/server/components/icons/log-out';
-import { customToast } from '@/client/components/toast';
 import { SelectClub } from '@repo/database/postgres/schema';
+import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 
 export function LeaveClubButton({
 	userId,
@@ -12,33 +12,27 @@ export function LeaveClubButton({
 	userId?: string;
 	club: SelectClub;
 }) {
-	const handleClick = async () => {
-		try {
-			await leaveClub({ club, userId: userId ?? '' });
-
-			customToast({
-				type: 'success',
-				message: `You left ${club.displayName}`,
-			});
-		} catch (err) {
-			if (err && err instanceof Error) {
-				customToast({
-					type: 'error',
-					message: err.message,
-				});
-			}
-		}
-	};
+	const leaveWithIds = leaveClub.bind(null, {
+		userId: userId ?? '',
+		club,
+	});
+	const { formAction, actionIsPending } = useToastActionState({
+		action: leaveWithIds,
+		successMessage: `You left ${club.displayName}`,
+	});
 
 	return (
 		<div
 			className='tooltip tooltip-warning'
 			data-tip='Leave club'>
-			<button
-				className='btn btn-square btn-ghost'
-				onClick={handleClick}>
-				<LogOut />
-			</button>
+			<form action={formAction}>
+				<button
+					type='submit'
+					disabled={actionIsPending}
+					className='btn btn-square btn-ghost'>
+					<LogOut />
+				</button>
+			</form>
 		</div>
 	);
 }
