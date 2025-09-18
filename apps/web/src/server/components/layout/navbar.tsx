@@ -4,7 +4,7 @@ import { NavbarItems } from '@/client/components/navbar-items';
 import { cn } from '@/lib/cn';
 import { accountURL, loginURL } from '@/lib/domains';
 import { UserAvatar } from '@/server/components/account/avatar';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 import Link from 'next/link';
 import { CSSProperties } from 'react';
 

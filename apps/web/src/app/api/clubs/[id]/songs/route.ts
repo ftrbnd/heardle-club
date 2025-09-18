@@ -1,4 +1,4 @@
-import { getClubSongs } from '@repo/database/api';
+import { getClubSongs } from '@repo/database/postgres/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(

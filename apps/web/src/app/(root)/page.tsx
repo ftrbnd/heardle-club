@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/app/api/auth/server.services';
-import { getJoinedClubs, getTrendingClubs } from '@repo/database/api';
+import { getJoinedClubs, getTrendingClubs } from '@repo/database/postgres/api';
 import { ClubsCollection } from '@/server/components/clubs/collection';
 
 export default async function HomePage() {

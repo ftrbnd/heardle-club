@@ -2,7 +2,7 @@
 
 import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { updateSongDuration, uploadSongFile } from '@/server/actions/db';
-import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 interface UploadFormProps {

@@ -3,7 +3,7 @@ import { JoinClub } from '@/client/components/clubs/join-club';
 import { LeaveClub } from '@/client/components/clubs/leave-club';
 import { UserAvatar } from '@/server/components/account/avatar';
 import { Crown } from '@/server/components/icons/crown';
-import { SelectClub, SelectUser } from '@repo/database/postgres';
+import { SelectClub, SelectUser } from '@repo/database/postgres/schema';
 
 interface ClubMembersProps {
 	club: SelectClub;

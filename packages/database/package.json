@@ -10,17 +10,41 @@
 		"db:seed": "tsx ./src/postgres/scripts/seed.ts"
 	},
 	"exports": {
+		"./common": {
+			"types": "./src/common/index.ts",
+			"default": "./dist/common/index.js"
+		},
 		"./postgres": {
 			"types": "./src/postgres/index.ts",
 			"default": "./dist/postgres/index.js"
+		},
+		"./postgres/api": {
+			"types": "./src/postgres/api/index.ts",
+			"default": "./dist/postgres/api/index.js"
+		},
+		"./postgres/schema": {
+			"types": "./src/postgres/schema/index.ts",
+			"default": "./dist/postgres/schema/index.js"
 		},
 		"./redis": {
 			"types": "./src/redis/index.ts",
 			"default": "./dist/redis/index.js"
 		},
-		"./api": {
-			"types": "./src/api/index.ts",
-			"default": "./dist/api/index.js"
+		"./redis/api": {
+			"types": "./src/redis/api/index.ts",
+			"default": "./dist/redis/api/index.js"
+		},
+		"./redis/schema": {
+			"types": "./src/redis/schema.ts",
+			"default": "./dist/redis/schema.js"
+		},
+		"./supabase": {
+			"types": "./src/supabase/index.ts",
+			"default": "./dist/supabase/index.js"
+		},
+		"./supabase/api": {
+			"types": "./src/supabase/api/index.ts",
+			"default": "./dist/supabase/api/index.js"
 		}
 	},
 	"devDependencies": {

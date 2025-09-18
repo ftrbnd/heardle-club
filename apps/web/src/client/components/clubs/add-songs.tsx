@@ -9,7 +9,7 @@ import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { submitClubSongs } from '@/server/actions/backend';
 import { Search } from '@/server/components/icons/search';
 import { Upload } from '@/server/components/icons/upload';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 

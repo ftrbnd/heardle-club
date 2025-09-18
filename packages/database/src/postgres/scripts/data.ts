@@ -1,4 +1,4 @@
-import { InsertClub, InsertUser } from '../schema.types';
+import { InsertClub, InsertUser } from '../schema/types';
 
 export const defaultUser: InsertUser = {
 	id: '001',

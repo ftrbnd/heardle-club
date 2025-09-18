@@ -1,7 +1,7 @@
 'use client';
 
 import { joinClub } from '@/server/actions/db';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 import { User } from '@/app/api/auth/_user';
 import { ComponentProps } from 'react';
 import { useToastActionState } from '@/client/hooks/use-toast-action-state';

@@ -1,6 +1,6 @@
 import { t } from 'elysia';
 import { TypeBox } from '@sinclair/typemap';
-import { insertClubSchema } from '@repo/database/postgres';
+import { insertClubSchema } from '@repo/database/postgres/schema';
 
 export namespace ClubModel {
 	// Define a DTO for Elysia validation

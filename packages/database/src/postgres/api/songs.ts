@@ -1,0 +1,55 @@
+import { db } from '..';
+import { baseSongs } from '../schema/tables';
+import { eq, sql } from 'drizzle-orm';
+import { InsertBaseSong } from '../schema/types';
+
+export const getClubSongs = async (clubId?: string) => {
+	if (!clubId) return [];
+
+	const songs = await db
+		.select()
+		.from(baseSongs)
+		.where(eq(baseSongs.clubId, clubId));
+
+	return songs;
+};
+
+export const getRandomSong = async (clubId: string) => {
+	const result = await db
+		.select()
+		.from(baseSongs)
+		.where(eq(baseSongs.clubId, clubId))
+		.orderBy(sql`random()`)
+		.limit(1);
+
+	return result.length > 0 ? result[0] : null;
+};
+
+export const insertClubSong = async (newSong: InsertBaseSong) => {
+	const response = await db.insert(baseSongs).values(newSong).returning();
+	return response.length > 0 ? response[0] : null;
+};
+
+export const deleteClubSong = async (songId: string) => {
+	await db.delete(baseSongs).where(eq(baseSongs.id, songId));
+};
+
+type UpdateClubSongAudio = Pick<InsertBaseSong, 'id' | 'audio' | 'duration'>;
+export const updateClubSongAudio = async (values: UpdateClubSongAudio) => {
+	await db
+		.update(baseSongs)
+		.set({ ...values, source: 'file_upload' })
+		.where(eq(baseSongs.id, values.id));
+};
+
+export const updateClubSongDuration = async (
+	songId: string,
+	duration: number
+) => {
+	await db
+		.update(baseSongs)
+		.set({
+			duration,
+		})
+		.where(eq(baseSongs.id, songId));
+};

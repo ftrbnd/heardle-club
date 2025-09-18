@@ -1,8 +1,8 @@
 import { and, eq, sql } from 'drizzle-orm';
-import { db } from '../postgres';
-import { InsertClub } from '../postgres/schema.types';
-import { users } from '../postgres/schema/auth';
-import { clubs, usersToClubs } from '../postgres/schema/tables';
+import { db } from '..';
+import { InsertClub } from '../schema/types';
+import { users } from '../schema/auth';
+import { clubs, usersToClubs } from '../schema/tables';
 
 export const insertClub = async (newClub: InsertClub) => {
 	const [club] = await db.insert(clubs).values(newClub).returning();

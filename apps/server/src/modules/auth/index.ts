@@ -2,7 +2,7 @@ import { AuthModel } from '@/modules/auth/model';
 import { Auth } from '@/modules/auth/service';
 import { deleteSession, validateSessionToken } from '@/modules/auth/session';
 import { rootDomain, rootURL } from '@/utils/domains';
-import { getUserById } from '@repo/database/api';
+import { getUserById } from '@repo/database/postgres/api';
 import { Elysia, status } from 'elysia';
 
 export const authService = new Elysia({ name: 'auth_service' }).macro({

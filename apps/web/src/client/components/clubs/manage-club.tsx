@@ -4,7 +4,7 @@ import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { removeClub, setClubActiveStatus } from '@/server/actions/db';
 import { Pause } from '@/server/components/icons/pause';
 import { Play } from '@/server/components/icons/play';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 
 interface ManageClubProps {
 	club: SelectClub;

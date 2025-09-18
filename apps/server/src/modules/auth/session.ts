@@ -5,11 +5,9 @@ import {
 	selectSession,
 	deleteSession as deleteSessionFromDb,
 	updateSession,
-} from '@repo/database/api';
-import {
-	generateSecureRandomString,
-	InsertSession,
-} from '@repo/database/postgres';
+} from '@repo/database/postgres/api';
+import { generateSecureRandomString } from '@repo/database/common';
+import { InsertSession } from '@repo/database/postgres/schema';
 
 interface SessionWithToken extends InsertSession {
 	token: string;

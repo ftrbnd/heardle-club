@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 import { durationFormatted } from '@/lib/util';
 import { Pause } from '@/server/components/icons/pause';
 import { Play } from '@/server/components/icons/play';
-import { SelectBaseSong } from '@repo/database/postgres';
+import { SelectBaseSong } from '@repo/database/postgres/schema';
 import { ComponentProps, useRef, useState } from 'react';
 
 interface SongAudioProps extends ComponentProps<'div'> {

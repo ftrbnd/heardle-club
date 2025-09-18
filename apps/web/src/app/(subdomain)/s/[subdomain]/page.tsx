@@ -6,7 +6,7 @@ import {
 	getClubBySubdomain,
 	getClubSongs,
 	getUsersFromClub,
-} from '@repo/database/api';
+} from '@repo/database/postgres/api';
 import Link from 'next/link';
 
 interface PageParams {

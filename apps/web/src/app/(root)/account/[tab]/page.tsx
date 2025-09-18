@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/app/api/auth/server.services';
 import { AccountDetails } from '@/server/components/account/details';
 import { ClubsCollection } from '@/server/components/clubs/collection';
 import { loginURL } from '@/lib/domains';
-import { getJoinedClubs } from '@repo/database/api';
+import { getJoinedClubs } from '@repo/database/postgres/api';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 

@@ -6,7 +6,7 @@ import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { cn } from '@/lib/cn';
 import { deleteSong } from '@/server/actions/db';
 import { Trash } from '@/server/components/icons/trash';
-import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 import { ComponentProps } from 'react';
 
 interface ManageSongProps extends ComponentProps<'div'> {

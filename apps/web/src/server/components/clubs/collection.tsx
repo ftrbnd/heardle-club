@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/app/api/auth/server.services';
 import { FindClub } from '@/client/components/clubs/find-club';
 import { ClubPreview } from '@/server/components/clubs/preview';
 import { loginURL } from '@/lib/domains';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 import Link from 'next/link';
 
 interface ClubsCollectionParams {

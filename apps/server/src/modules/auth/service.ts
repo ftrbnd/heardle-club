@@ -10,15 +10,13 @@ import {
 	addOAuthAccount,
 	getUserByEmail,
 	insertUser,
-} from '@repo/database/api';
+} from '@repo/database/postgres/api';
 import {
 	createSession,
 	inactivityTimeoutSeconds,
 } from '@/modules/auth/session';
-import {
-	generateSecureRandomString,
-	SelectUser,
-} from '@repo/database/postgres';
+import { SelectUser } from '@repo/database/postgres/schema';
+import { generateSecureRandomString } from '@repo/database/common';
 
 export abstract class Auth {
 	static async createAuthorizationURL({

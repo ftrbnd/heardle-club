@@ -1,5 +1,5 @@
 import { getSubdomainURL } from '@/lib/domains';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 

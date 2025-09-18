@@ -1,8 +1,8 @@
 import { AddSongs } from '@/client/components/clubs/add-songs';
 import { ManageClub } from '@/client/components/clubs/manage-club';
 import { ClubSongs } from '@/server/components/clubs/club-songs';
-import { getClubSongs } from '@repo/database/api';
-import { SelectClub } from '@repo/database/postgres';
+import { getClubSongs } from '@repo/database/postgres/api';
+import { SelectClub } from '@repo/database/postgres/schema';
 
 interface DashboardProps {
 	club: SelectClub;

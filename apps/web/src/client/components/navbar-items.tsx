@@ -3,7 +3,7 @@
 import { CreateClub } from '@/client/components/clubs/create-club';
 import { FindClub } from '@/client/components/clubs/find-club';
 import { rootURL } from '@/lib/domains';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

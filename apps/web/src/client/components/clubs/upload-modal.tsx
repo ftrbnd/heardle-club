@@ -5,7 +5,7 @@ import { Portal } from '@/client/components/portal';
 import { cn } from '@/lib/cn';
 import { FileAudio } from '@/server/components/icons/file-audio';
 import { SquarePen } from '@/server/components/icons/square-pen';
-import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 import { MouseEvent } from 'react';
 
 interface UploadModalProps {

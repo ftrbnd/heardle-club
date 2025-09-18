@@ -1,5 +1,5 @@
 import { serverURL } from '@/lib/domains';
-import { DownloadStatus } from '@repo/database/api';
+import { DownloadStatus } from '@repo/database/redis/schema';
 import { useEffect, useState } from 'react';
 
 export function useDownloadStatus(clubId: string) {

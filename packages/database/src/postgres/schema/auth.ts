@@ -6,7 +6,7 @@ import {
 	text,
 	customType,
 } from 'drizzle-orm/pg-core';
-import { timestamps } from '../schema.helpers';
+import { timestamps } from './timestamps';
 import { clubs, usersToClubs } from './tables';
 
 export const users = pgTable('users', {

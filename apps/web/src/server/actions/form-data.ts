@@ -1,7 +1,7 @@
 import {
 	insertBaseSongSchema,
 	selectUserSchema,
-} from '@repo/database/postgres';
+} from '@repo/database/postgres/schema';
 import z from 'zod/v4';
 
 export const updateAccountSchema = selectUserSchema

@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
-import { db, InsertUser, InsertOAuthAccount } from '../postgres';
-import { users, oauthAccounts } from '../postgres/schema/auth';
+import { db } from '..';
+import { InsertUser, InsertOAuthAccount } from '../schema/types';
+import { users, oauthAccounts } from '../schema/auth';
 
 export const getUserByEmail = async (email: string) => {
 	const result = await db

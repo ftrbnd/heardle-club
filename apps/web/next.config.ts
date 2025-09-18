@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
 			bodySizeLimit: '5mb',
 		},
 	},
+	allowedDevOrigins: ['giosalad-testing.com', '*.giosalad-testing.com'],
 };
 
 export default nextConfig;

@@ -1,4 +1,4 @@
-import { getClubDailySong } from '@repo/database/api';
+import { getClubDailySong } from '@repo/database/redis/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(

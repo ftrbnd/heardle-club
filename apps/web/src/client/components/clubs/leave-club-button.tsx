@@ -3,7 +3,7 @@
 import { leaveClub } from '@/server/actions/db';
 import { LogOut } from '@/server/components/icons/log-out';
 import { customToast } from '@/client/components/toast';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 
 export function LeaveClubButton({
 	userId,
@@ -14,7 +14,7 @@ export function LeaveClubButton({
 }) {
 	const handleClick = async () => {
 		try {
-			await leaveClub(userId, club.id);
+			await leaveClub({ club, userId: userId ?? '' });
 
 			customToast({
 				type: 'success',

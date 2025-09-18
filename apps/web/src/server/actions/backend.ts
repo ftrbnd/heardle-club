@@ -2,12 +2,9 @@
 
 import { serverURL } from '@/lib/domains';
 import { getSessionToken } from '@/app/api/auth/server.services';
-import {
-	getClubById,
-	getClubSongs,
-	setDownloadStatus,
-} from '@repo/database/api';
+import { getClubById, getClubSongs } from '@repo/database/postgres/api';
 import { revalidatePath } from 'next/cache';
+import { setDownloadStatus } from '@repo/database/redis/api';
 
 type ActionState = {
 	error?: string;

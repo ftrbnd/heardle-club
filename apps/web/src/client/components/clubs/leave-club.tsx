@@ -1,7 +1,7 @@
 'use client';
 
 import { leaveClub } from '@/server/actions/db';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 import { User } from '@/app/api/auth/_user';
 import { ComponentProps } from 'react';
 import { useToastActionState } from '@/client/hooks/use-toast-action-state';
@@ -13,7 +13,7 @@ interface LeaveClubProps extends ComponentProps<'form'> {
 
 export function LeaveClub({ club, user, className, ...props }: LeaveClubProps) {
 	const leaveWithIds = leaveClub.bind(null, {
-		userId: user?.id,
+		userId: user?.id ?? '',
 		club,
 	});
 	const { formAction, actionIsPending } = useToastActionState({

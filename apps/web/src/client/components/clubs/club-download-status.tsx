@@ -1,7 +1,7 @@
 'use client';
 
 import { useDownloadStatus } from '@/client/hooks/use-download-status';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 
 interface ClubDownloadStatusProps {
 	club: SelectClub;

@@ -2,7 +2,7 @@ import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getArtist } from '@/app/api/spotify/server.services';
 import { LeaveClubButton } from '@/client/components/clubs/leave-club-button';
 import { getSubdomainURL } from '@/lib/domains';
-import { SelectClub } from '@repo/database/postgres';
+import { SelectClub } from '@repo/database/postgres/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 

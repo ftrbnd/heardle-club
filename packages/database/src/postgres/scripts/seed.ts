@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 import { reset, seed } from 'drizzle-seed';
-import { db, schema, SelectClub, SelectUserClubsRelation } from '..';
+import { db, schema } from '..';
 import { clubs, usersToClubs } from '../schema/tables';
 import { redis } from '../../redis';
 import { users } from '../schema/auth';
@@ -14,6 +14,7 @@ import {
 } from './data';
 import { emptyBucket } from './util';
 import { eq, not } from 'drizzle-orm';
+import { SelectUserClubsRelation } from '../schema/types';
 
 async function main() {
 	await reset(db, schema);

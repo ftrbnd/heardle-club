@@ -8,7 +8,7 @@ import {
 	text,
 	varchar,
 } from 'drizzle-orm/pg-core';
-import { timestamps } from '../schema.helpers';
+import { timestamps } from './timestamps';
 import { relations, sql } from 'drizzle-orm';
 import { users } from './auth';
 

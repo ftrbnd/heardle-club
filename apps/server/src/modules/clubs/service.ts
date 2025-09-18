@@ -4,22 +4,23 @@ import { generateClient, searchVideo, downloadAudio } from '@/utils/yt';
 import {
 	generateSecureRandomString,
 	sanitizeString,
-	SelectClub,
-} from '@repo/database/postgres';
+} from '@repo/database/common';
 import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
 import {
-	setDownloadStatus,
-	uploadClubSongFile,
 	insertClubSong,
 	getRandomSong,
-	downloadSong,
-	uploadDailySongFile,
-	setClubDailySong,
 	getClubById,
-} from '@repo/database/api';
+} from '@repo/database/postgres/api';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import { promises } from 'fs';
+import {
+	downloadSong,
+	uploadClubSongFile,
+	uploadDailySongFile,
+} from '@repo/database/supabase/api';
+import { setClubDailySong, setDownloadStatus } from '@repo/database/redis/api';
+import { SelectClub } from '@repo/database/postgres/schema';
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 

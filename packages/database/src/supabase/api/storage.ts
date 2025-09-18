@@ -1,10 +1,7 @@
-import {
-	generateSecureRandomString,
-	sanitizeString,
-	SelectBaseSong,
-} from '../postgres';
-import { supabase } from '../supabase';
+import { supabase } from '..';
 import { promises, readFileSync, unlinkSync } from 'fs';
+import { SelectBaseSong } from '../../postgres/schema/types';
+import { generateSecureRandomString, sanitizeString } from '../../common';
 
 const SONGS_BUCKET = 'club.songs' as const;
 const AVATARS_BUCKET = 'user.avatars' as const;

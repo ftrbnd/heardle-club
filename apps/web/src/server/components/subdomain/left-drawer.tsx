@@ -1,5 +1,5 @@
 import { ClubMembers } from '@/server/components/clubs/club-members';
-import { SelectClub, SelectUser } from '@repo/database/postgres';
+import { SelectClub, SelectUser } from '@repo/database/postgres/schema';
 import { ReactNode } from 'react';
 
 interface LeftDrawerProps {

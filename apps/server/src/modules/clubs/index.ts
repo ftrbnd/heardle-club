@@ -3,8 +3,9 @@ import { Elysia, sse, status } from 'elysia';
 
 import { Club } from './service';
 import { ClubModel } from './model';
-import { getClubById, getDownloadStatus } from '@repo/database/api';
+import { getClubById } from '@repo/database/postgres/api';
 import { authService } from '@/modules/auth';
+import { getDownloadStatus } from '@repo/database/redis/api';
 
 export const clubs = new Elysia({ prefix: '/clubs' })
 	.use(authService)

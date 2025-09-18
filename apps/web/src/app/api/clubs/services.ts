@@ -1,4 +1,4 @@
-import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 
 async function clubFetch<T>(endpoint: string) {
 	const res = await fetch(`/api/clubs${endpoint}`);

@@ -1,4 +1,4 @@
-import { getDownloadStatus } from '@repo/database/api';
+import { getDownloadStatus } from '@repo/database/redis/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(

@@ -2,7 +2,7 @@ import { ManageSong } from '@/client/components/clubs/manage-song';
 import { durationFormatted } from '@/lib/util';
 import { EllipsisVertical } from '@/server/components/icons/ellipsis-vertical';
 import { Music } from '@/server/components/icons/music';
-import { SelectBaseSong, SelectClub } from '@repo/database/postgres';
+import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 import Image from 'next/image';
 
 interface ClubSongsProps {
