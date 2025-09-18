@@ -6,17 +6,12 @@ import {
 	sanitizeString,
 } from '@repo/database/common';
 import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
-import {
-	insertClubSong,
-	getRandomSong,
-	getClubById,
-	updateClubDayNumber,
-} from '@repo/database/postgres/api';
+import * as postgres from '@repo/database/postgres/api';
 import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg';
 import ffmpeg from 'fluent-ffmpeg';
 import { promises } from 'fs';
 import * as supabase from '@repo/database/supabase/api';
-import { setClubDailySong, setDownloadStatus } from '@repo/database/redis/api';
+import * as redis from '@repo/database/redis/api';
 import { SelectClub } from '@repo/database/postgres/schema';
 
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -29,7 +24,7 @@ async function downloadMultipleTracks(
 	tracks: TrackWithAlbum[],
 	clubId: string
 ) {
-	await setDownloadStatus(clubId, {
+	await redis.setDownloadStatus(clubId, {
 		current: 0,
 		total: tracks.length,
 		done: false,
@@ -56,7 +51,7 @@ async function downloadMultipleTracks(
 				track.id
 			);
 
-			await insertClubSong({
+			await postgres.insertClubSong({
 				id: generateSecureRandomString(),
 				trackId: track.id,
 				clubId,
@@ -70,7 +65,10 @@ async function downloadMultipleTracks(
 			});
 
 			count++;
-			await setDownloadStatus(clubId, { current: count, total: tracks.length });
+			await redis.setDownloadStatus(clubId, {
+				current: count,
+				total: tracks.length,
+			});
 		} catch (error) {
 			if (error instanceof Error)
 				console.log(`Failed to download ${track.name}:`, error);
@@ -78,7 +76,7 @@ async function downloadMultipleTracks(
 		}
 	}
 
-	await setDownloadStatus(clubId, {
+	await redis.setDownloadStatus(clubId, {
 		current: count,
 		total: tracks.length,
 		done: true,
@@ -157,24 +155,30 @@ export abstract class Club {
 	}
 
 	static async setDailySong(clubId: string) {
-		const song = await getRandomSong(clubId);
+		const song = await postgres.getRandomSong(clubId);
+		console.log({ song });
 		if (!song) throw new Error('Club has no songs');
 
 		const startTime = await getRandomStartTime(song.duration);
+		console.log({ startTime });
 
 		const path = await supabase.downloadSong(clubId, song);
+		console.log({ path });
 
-		const club = await getClubById(clubId);
+		const club = await postgres.getClubById(clubId);
 		if (!club) throw new Error('Club not found');
 		const newDayNum = club.heardleDay + 1;
+		console.log({ club, newDayNum });
 
 		const finalPath = `${clubId}/daily/${clubId}_day_${newDayNum}.mp3` as const;
+		console.log({ finalPath });
 		await trimSong(path, startTime, finalPath);
 
 		const { signedUrl } = await supabase.uploadDailySongFile(finalPath);
+		console.log({ signedUrl });
 
-		await setClubDailySong(clubId, song, signedUrl);
-		await updateClubDayNumber(clubId, newDayNum);
+		await redis.setClubDailySong(clubId, song, signedUrl);
+		await postgres.updateClubDayNumber(clubId, newDayNum);
 
 		return song;
 	}
