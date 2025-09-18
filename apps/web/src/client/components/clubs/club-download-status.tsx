@@ -8,7 +8,7 @@ interface ClubDownloadStatusProps {
 }
 
 export function ClubDownloadStatus({ club }: ClubDownloadStatusProps) {
-	const { status } = useDownloadStatus(club.id);
+	const { status } = useDownloadStatus(club);
 
 	if (status.current === status.total) return <></>;
 
@@ -19,13 +19,13 @@ export function ClubDownloadStatus({ club }: ClubDownloadStatusProps) {
 				className='alert alert-soft alert-info'>
 				<span className='loading loading-spinner loading-xs md:loading-md'></span>
 				<span>
-					Downloading {status.current}/{status.total} tracks...
+					Downloading {status.current + 1}/{status.total} tracks...
 				</span>
 			</div>
 
 			<progress
 				className='progress progress-info w-full'
-				value={status.current}
+				value={status.current + 1}
 				max={status.total}></progress>
 		</div>
 	);

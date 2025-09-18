@@ -32,6 +32,12 @@ async function downloadMultipleTracks(
 	tracks: TrackWithAlbum[],
 	clubId: string
 ) {
+	await setDownloadStatus(clubId, {
+		current: 0,
+		total: tracks.length,
+		done: false,
+	});
+
 	const client = await generateClient();
 
 	let count = 0;
@@ -67,13 +73,19 @@ async function downloadMultipleTracks(
 			});
 
 			count++;
-			await setDownloadStatus(clubId, count, tracks.length);
+			await setDownloadStatus(clubId, { current: count, total: tracks.length });
 		} catch (error) {
 			if (error instanceof Error)
 				console.log(`Failed to download ${track.name}:`, error);
 			continue;
 		}
 	}
+
+	await setDownloadStatus(clubId, {
+		current: count,
+		total: tracks.length,
+		done: true,
+	});
 
 	console.log(`Successfully downloaded ${count}/${tracks.length} tracks`);
 	return count;

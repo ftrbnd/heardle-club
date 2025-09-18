@@ -1,6 +1,5 @@
 'use client';
 
-// import { clientGetClubDownloadStatus } from '@/app/api/clubs/services';
 import { clientGetArtistAlbums } from '@/app/api/spotify/client.services';
 import { ArtistAlbums } from '@/client/components/clubs/artist-albums';
 import { ClubDownloadStatus } from '@/client/components/clubs/club-download-status';
@@ -20,13 +19,6 @@ export function AddSongs({ club }: { club: SelectClub }) {
 		queryKey: ['artist', 'albums', club.artistId],
 		queryFn: () => clientGetArtistAlbums(club.artistId),
 	});
-
-	// TODO: live update, stream/websocket?
-	// const { data: downloadStatus } = useQuery({
-	// 	queryKey: ['download-status', club.id],
-	// 	queryFn: () => clientGetClubDownloadStatus(club.id),
-	// 	staleTime: 0,
-	// });
 
 	const submitWithClubId = submitClubSongs.bind(null, club.id);
 	const { formAction, actionIsPending } = useToastActionState({

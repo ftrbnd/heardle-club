@@ -4,7 +4,6 @@ import { serverURL } from '@/lib/domains';
 import { getSessionToken } from '@/app/api/auth/server.services';
 import { getClubById, getClubSongs } from '@repo/database/postgres/api';
 import { revalidatePath } from 'next/cache';
-import { setDownloadStatus } from '@repo/database/redis/api';
 
 type ActionState = {
 	error?: string;
@@ -47,9 +46,6 @@ export async function submitClubSongs(
 		const pluralCheck = trackIds.length === 1 ? 'this song' : 'these songs';
 		return { error: `Your club already has ${pluralCheck}.` };
 	}
-
-	// TODO: set redis status
-	await setDownloadStatus(clubId, 0, trackIdsWithoutDuplicates.length);
 
 	const res = await fetch(`${serverURL}/clubs/${clubId}/download`, {
 		method: 'POST',
