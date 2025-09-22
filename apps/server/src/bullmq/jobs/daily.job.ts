@@ -1,4 +1,4 @@
-import { setDailySong } from '@/workers/jobs/daily';
+import { setDailySong } from '@/bullmq/processors/daily';
 import { getAllActiveClubs } from '@repo/database/postgres/api';
 import { SandboxedJob } from 'bullmq';
 

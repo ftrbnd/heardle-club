@@ -1,8 +1,8 @@
 import 'dotenv/config';
 
-import { server } from '@/server';
-import { serverPort } from '@/server/utils/domains';
+import { elysia } from '@/elysia';
+import { serverPort } from '@/elysia/utils/domains';
 
-server.listen(serverPort, ({ hostname, port }) => {
+elysia.listen(serverPort, ({ hostname, port }) => {
 	console.log(`🦊 Elysia is running at ${hostname}${port}`);
 });

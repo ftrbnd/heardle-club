@@ -1,5 +1,5 @@
 import type { ClubModel } from './model';
-import { addDownloadJob } from '@/workers/queue';
+import { addDownloadJob } from '@/bullmq/queue';
 
 export abstract class Club {
 	static async addDownloadJobToQueue({

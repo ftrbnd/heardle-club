@@ -1,4 +1,4 @@
-import { oauthProvider } from '@/server/modules/auth/providers.config';
+import { oauthProvider } from '@/elysia/modules/auth/providers.config';
 import { t } from 'elysia';
 
 export namespace AuthModel {

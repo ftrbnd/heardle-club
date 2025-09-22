@@ -5,7 +5,7 @@ import {
 	getProviderEndpoint,
 	getTokens,
 	OAuthProvider,
-} from '@/server/modules/auth/providers.config';
+} from '@/elysia/modules/auth/providers.config';
 import {
 	addOAuthAccount,
 	getUserByEmail,
@@ -14,7 +14,7 @@ import {
 import {
 	createSession,
 	inactivityTimeoutSeconds,
-} from '@/server/modules/auth/session';
+} from '@/elysia/modules/auth/session';
 import { SelectUser } from '@repo/database/postgres/schema';
 import { generateSecureRandomString } from '@repo/database/common';
 

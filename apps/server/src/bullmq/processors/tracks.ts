@@ -1,4 +1,4 @@
-import { generateClient, searchVideo, downloadAudio } from '@/server/utils/yt';
+import { generateClient, searchVideo, downloadAudio } from '@/elysia/utils/yt';
 import {
 	generateSecureRandomString,
 	sanitizeString,
@@ -7,7 +7,7 @@ import { Album, SimplifiedTrack, Track } from '@spotify/web-api-ts-sdk';
 import * as postgres from '@repo/database/postgres/api';
 import * as supabase from '@repo/database/supabase/api';
 import Innertube from 'youtubei.js';
-import { spotify } from '@/server/utils/spotify';
+import { spotify } from '@/elysia/utils/spotify';
 import { JobProgress } from 'bullmq';
 
 type TrackWithAlbum =

@@ -1,8 +1,8 @@
-import { JobDataType } from '@/workers/config';
 import {
 	downloadMultipleTracks,
 	filterTracks,
-} from '@/workers/jobs/track.download';
+} from '@/bullmq/processors/tracks';
+import { JobDataType } from '@/bullmq/types';
 import { SandboxedJob } from 'bullmq';
 
 export default async (job: SandboxedJob<JobDataType>) => {

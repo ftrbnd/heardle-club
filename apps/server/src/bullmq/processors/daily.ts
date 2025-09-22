@@ -1,7 +1,7 @@
 import * as postgres from '@repo/database/postgres/api';
 import * as supabase from '@repo/database/supabase/api';
 import * as redis from '@repo/database/redis/api';
-import * as audio from '@/workers/jobs/audio';
+import * as audio from '@/bullmq/processors/audio';
 
 export async function setDailySong(clubId: string) {
 	const song = await postgres.getRandomSong(clubId);
