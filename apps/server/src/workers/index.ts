@@ -1,16 +1,63 @@
 import 'dotenv/config';
 
-import { Worker } from 'bullmq';
-import { connection, processorFile, QUEUE_NAME } from '@/workers/config';
+import { JobProgress, Worker } from 'bullmq';
+import {
+	connection,
+	JobDataType,
+	DOWNLOAD_QUEUE_NAME,
+	DAILY_QUEUE_NAME,
+	downloadProcessorFile,
+	dailyProcessorFile,
+} from '@/workers/config';
+import { dailyQueue } from '@/workers/queue';
 
-function createWorker() {
-	const worker = new Worker(QUEUE_NAME, processorFile, {
-		connection,
-	});
-
-	worker.on('ready', () => console.log(`"${worker.name}" worker ready`));
+function createDownloadWorker() {
+	const worker = new Worker<JobDataType>(
+		DOWNLOAD_QUEUE_NAME,
+		downloadProcessorFile,
+		{
+			connection,
+		}
+	);
+	attachListeners(worker);
 
 	return worker;
 }
 
-createWorker();
+async function createScheduledWorker() {
+	await dailyQueue.upsertJobScheduler(
+		'daily-song-scheduler',
+		{
+			pattern: '* * * * *', // every minute
+			// pattern: '0 4 * * *' // midnight UTC
+			utc: true,
+		},
+		{
+			name: 'set-daily-songs',
+		}
+	);
+
+	const worker = new Worker(DAILY_QUEUE_NAME, dailyProcessorFile, {
+		connection,
+	});
+	attachListeners(worker);
+
+	return worker;
+}
+
+function attachListeners(worker: Worker) {
+	worker.on('ready', () => console.log(`"${worker.name}" worker ready`));
+	worker.on('progress', (job, progress: JobProgress) => {
+		console.log(`Job ${job.id} progress: ${progress}%...`);
+	});
+	worker.on('failed', (job, error: Error) => {
+		console.error(`Job ${job?.id} failed:`, error);
+	});
+	worker.on('error', (err) => console.error(err));
+	worker.on('completed', (job) => {
+		console.log(`Job ${job.id} complete!`);
+	});
+}
+
+createDownloadWorker();
+createScheduledWorker();

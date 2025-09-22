@@ -26,15 +26,15 @@ export namespace ClubModel {
 	export type InitializeClubSongsBody = typeof initializeClubSongsBody.static;
 
 	export const downloadClubSongsBody = t.Object({
-		club: t.Any(), // TODO: check back above pr
+		clubId: t.String(),
 		artistId: t.String(),
 		trackIds: t.Optional(t.Array(t.String())),
 	});
 	export type DownloadClubSongsBody = typeof downloadClubSongsBody.static;
 
-	export const downloadClubSongsResponse = t.Literal(
-		'Tracks received by server'
-	);
+	export const downloadClubSongsResponse = t.Object({
+		jobId: t.Optional(t.String()),
+	});
 	export type DownloadClubSongsResponse =
 		typeof downloadClubSongsResponse.static;
 

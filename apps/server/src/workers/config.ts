@@ -1,3 +1,4 @@
+import { ClubModel } from '@/server/modules/clubs/model';
 import { ConnectionOptions } from 'bullmq';
 import path from 'path';
 
@@ -10,6 +11,10 @@ export const connection: ConnectionOptions = {
 	tls: {},
 };
 
-export const QUEUE_NAME = 'audio_download' as const;
+export const DOWNLOAD_QUEUE_NAME = 'audio_download' as const;
+export const DAILY_QUEUE_NAME = 'daily_song' as const;
 
-export const processorFile = path.join(__dirname, 'worker.ts');
+export const downloadProcessorFile = path.join(__dirname, 'download.worker.ts');
+export const dailyProcessorFile = path.join(__dirname, 'daily.worker.ts');
+
+export type JobDataType = ClubModel.DownloadClubSongsBody;

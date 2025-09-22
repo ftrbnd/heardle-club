@@ -1,8 +1,20 @@
-import { connection, QUEUE_NAME } from '@/workers/config';
+import {
+	connection,
+	JobDataType,
+	DOWNLOAD_QUEUE_NAME,
+	DAILY_QUEUE_NAME,
+} from '@/workers/config';
 import { JobsOptions, Queue } from 'bullmq';
 
-const myQueue = new Queue(QUEUE_NAME, { connection });
+const downloadQueue = new Queue<JobDataType>(DOWNLOAD_QUEUE_NAME, {
+	connection,
+});
 
-export async function addJobs(name: string, data: any, opts?: JobsOptions) {
-	await myQueue.add(name, data, opts);
+export async function addDownloadJob(data: JobDataType, opts?: JobsOptions) {
+	const job = await downloadQueue.add(`club_${data.clubId}`, data, opts);
+	return job;
 }
+
+export const dailyQueue = new Queue(DAILY_QUEUE_NAME, {
+	connection,
+});

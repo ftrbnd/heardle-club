@@ -1,24 +1,15 @@
-import Elysia from 'elysia';
-import cron from '@elysiajs/cron';
+import { setDailySong } from '@/workers/jobs/daily';
 import { getAllActiveClubs } from '@repo/database/postgres/api';
-import { Club } from '@/server/modules/clubs/service';
+import { SandboxedJob } from 'bullmq';
 
-export const cronPlugin = new Elysia().use(
-	cron({
-		name: 'daily',
-		pattern: '* * * * *',
-		async run() {
-			await resetAllClubs();
-		},
-	})
-);
+export default async (job: SandboxedJob) => {
+	console.log(`Processing job ${job.id}...`, { data: job.data });
 
-export async function resetAllClubs() {
 	const clubs = await getAllActiveClubs();
 
 	for (const club of clubs) {
 		try {
-			await Club.setDailySong(club.id);
+			await setDailySong(club.id);
 		} catch (error) {
 			if (error instanceof Error)
 				if (error.message === 'Club has no songs')
@@ -27,4 +18,4 @@ export async function resetAllClubs() {
 			continue;
 		}
 	}
-}
+};

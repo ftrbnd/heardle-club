@@ -17,13 +17,13 @@ export const clubs = new Elysia({ prefix: '/clubs' })
 
 			if (club.ownerId !== user.id) return status(401, 'Unauthorized');
 
-			Club.downloadClubSongs({
-				club,
+			const jobId = await Club.addDownloadJobToQueue({
+				clubId: club.id,
 				artistId: club.artistId,
 				trackIds,
 			});
 
-			return status(200, 'Tracks received by server');
+			return { jobId };
 		},
 		{
 			validateCurrentSession: true,
