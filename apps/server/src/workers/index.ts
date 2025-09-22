@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import { JobProgress, Worker } from 'bullmq';
+import { Worker } from 'bullmq';
 import {
 	connection,
 	JobDataType,
@@ -19,7 +19,7 @@ function createDownloadWorker() {
 			connection,
 		}
 	);
-	attachListeners(worker);
+	attachListeners(worker, 'download');
 
 	return worker;
 }
@@ -40,14 +40,18 @@ async function createScheduledWorker() {
 	const worker = new Worker(DAILY_QUEUE_NAME, dailyProcessorFile, {
 		connection,
 	});
-	attachListeners(worker);
+	attachListeners(worker, 'daily');
 
 	return worker;
 }
 
-function attachListeners(worker: Worker) {
+function attachListeners<T>(
+	worker: Worker<T>,
+	progressType: 'download' | 'daily'
+) {
 	worker.on('ready', () => console.log(`"${worker.name}" worker ready`));
-	worker.on('progress', (job, progress: JobProgress) => {
+	worker.on('progress', (job, progress) => {
+		// TODO: separate download and daily job progress schemas
 		console.log(`Job ${job.id} progress: ${progress}%...`);
 	});
 	worker.on('failed', (job, error: Error) => {

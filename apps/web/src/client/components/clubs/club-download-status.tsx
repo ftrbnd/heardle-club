@@ -10,7 +10,8 @@ interface ClubDownloadStatusProps {
 export function ClubDownloadStatus({ club }: ClubDownloadStatusProps) {
 	const { status } = useDownloadStatus(club);
 
-	if (status.current === status.total) return <></>;
+	if (!status.currentTrack || status.currentStep === status.totalTracks)
+		return <></>;
 
 	return (
 		<div className='flex flex-col w-full bg-blend-soft-light'>
@@ -18,15 +19,19 @@ export function ClubDownloadStatus({ club }: ClubDownloadStatusProps) {
 				role='alert'
 				className='alert alert-soft alert-info'>
 				<span className='loading loading-spinner loading-xs md:loading-md'></span>
-				<span>
-					Downloading {status.current + 1}/{status.total} tracks...
-				</span>
+				<p className='flex justify-between w-full'>
+					<span>{status.percentage}%</span>
+					<span>Downloading {status.currentTrack}...</span>
+					<span>
+						{status.currentStep}/{status.totalTracks}
+					</span>
+				</p>
 			</div>
 
 			<progress
 				className='progress progress-info w-full'
-				value={status.current + 1}
-				max={status.total}></progress>
+				value={status.currentTrack ?? 0 + 1}
+				max={status.totalTracks}></progress>
 		</div>
 	);
 }

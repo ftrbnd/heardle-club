@@ -19,17 +19,35 @@ export async function downloadMultipleTracks(
 	clubId: string,
 	updateProgress: (value: JobProgress) => Promise<void>
 ) {
-	await updateProgress(0);
+	await updateProgress({
+		currentTrack: null,
+		currentStep: 0,
+		totalTracks: tracks.length,
+		percentage: 0,
+	});
 
 	const client = await generateClient();
 
 	let count = 0;
-	for (const track of tracks) {
+	for (let i = 0; i < tracks.length; i++) {
+		const track = tracks[i];
 		try {
-			await downloadTrack(track, clubId, client);
+			await downloadSingleTrack(
+				track,
+				clubId,
+				client,
+				updateProgress,
+				i,
+				tracks.length
+			);
 			count++;
 
-			await updateProgress(Math.floor(count / tracks.length));
+			await updateProgress({
+				currentTrack: track.name,
+				currentStep: i + 1,
+				totalTracks: tracks.length,
+				percentage: Math.floor(count / tracks.length),
+			});
 		} catch (error) {
 			if (error instanceof Error)
 				console.log(`Failed to download ${track.name}:`, error);
@@ -37,18 +55,39 @@ export async function downloadMultipleTracks(
 		}
 	}
 
-	await updateProgress(100);
+	await updateProgress({
+		currentTrack: null,
+		currentStep: tracks.length,
+		totalTracks: tracks.length,
+		percentage: 100,
+	});
 
 	return count;
 }
 
-export async function downloadTrack(
+export async function downloadSingleTrack(
 	track: TrackWithAlbum,
 	clubId: string,
-	innertube: Innertube
+	innertube: Innertube,
+	updateProgress: (value: JobProgress) => Promise<void>,
+	currentTrackIndex: number,
+	totalTracks: number
 ) {
+	// TODO: fix setting 0 in the middle of downloads
+	async function updateSubProgress(step: number, totalSteps: number = 4) {
+		const trackProgress = (currentTrackIndex + step / totalSteps) / totalTracks;
+		const progressPercent = Math.floor(trackProgress * 100);
+		await updateProgress({
+			currentTrack: track.name,
+			currentStep: currentTrackIndex,
+			totalTracks,
+			percentage: progressPercent,
+		});
+	}
+
 	const searchQuery = `${track.artists.map((artist) => artist.name).join(', ')} ${track.name}`;
 	const ytVideo = await searchVideo(innertube, searchQuery);
+	await updateSubProgress(1);
 
 	const fileName = sanitizeString(track.name);
 	const audioFilePath = await downloadAudio(
@@ -56,11 +95,14 @@ export async function downloadTrack(
 		ytVideo.video_id,
 		fileName
 	);
+	await updateSubProgress(2);
+
 	const { publicUrl } = await supabase.uploadClubSongFile(
 		audioFilePath,
 		clubId,
 		track.id
 	);
+	await updateSubProgress(3);
 
 	await postgres.insertClubSong({
 		id: generateSecureRandomString(),
@@ -74,6 +116,7 @@ export async function downloadTrack(
 		duration: ytVideo.duration.seconds,
 		source: 'youtube_download',
 	});
+	await updateSubProgress(4);
 }
 
 export async function filterTracks(artistId: string, trackIds?: string[]) {

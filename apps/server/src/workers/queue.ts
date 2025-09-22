@@ -3,6 +3,7 @@ import {
 	JobDataType,
 	DOWNLOAD_QUEUE_NAME,
 	DAILY_QUEUE_NAME,
+	DownloadJobProgress,
 } from '@/workers/config';
 import { JobsOptions, Queue } from 'bullmq';
 
@@ -18,3 +19,11 @@ export async function addDownloadJob(data: JobDataType, opts?: JobsOptions) {
 export const dailyQueue = new Queue(DAILY_QUEUE_NAME, {
 	connection,
 });
+
+export async function getDownloadJobProgress(clubId: string) {
+	const jobs = await downloadQueue.getJobs();
+	const job = jobs.find((job) => job.data.clubId === clubId && job.isActive());
+	if (!job) throw new Error('Job not found');
+
+	return job.progress as DownloadJobProgress;
+}

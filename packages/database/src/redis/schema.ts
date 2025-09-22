@@ -23,20 +23,3 @@ export const customSongSchema = z.object({
 	userId: z.string(),
 });
 export type CustomSong = z.infer<typeof customSongSchema>;
-
-export const defaultDownloadStatus = {
-	current: 0,
-	total: 0,
-	done: false,
-} as const;
-
-export const downloadStatusSchema = z
-	.object({
-		current: z.number(),
-		total: z.number(),
-		done: z.boolean().optional(),
-	})
-	.nullable()
-	.default(defaultDownloadStatus);
-
-export type DownloadStatus = z.infer<typeof downloadStatusSchema>;

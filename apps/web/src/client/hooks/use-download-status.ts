@@ -1,12 +1,14 @@
 import { serverURL } from '@/lib/domains';
 import { SelectClub } from '@repo/database/postgres/schema';
-import { DownloadStatus } from '@repo/database/redis/schema';
 import { useEffect, useState } from 'react';
 
 export function useDownloadStatus(club: SelectClub) {
-	const [status, setStatus] = useState<NonNullable<DownloadStatus>>({
-		current: 0,
-		total: 0,
+	// TODO: share types with @server/workers
+	const [status, setStatus] = useState({
+		currentTrack: null,
+		currentStep: 0,
+		totalTracks: 0,
+		percentage: 0,
 	});
 
 	useEffect(() => {
@@ -16,6 +18,7 @@ export function useDownloadStatus(club: SelectClub) {
 
 		evtSource.onmessage = (event) => {
 			const data = JSON.parse(event.data);
+			console.log(data);
 			if (data) setStatus(data);
 		};
 

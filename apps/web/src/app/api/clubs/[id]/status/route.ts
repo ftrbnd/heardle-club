@@ -1,4 +1,3 @@
-import { getDownloadStatus } from '@repo/database/redis/api';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(
@@ -9,6 +8,7 @@ export async function GET(
 	if (!id)
 		return NextResponse.json({ error: 'Club ID is required' }, { status: 400 });
 
-	const status = await getDownloadStatus(id);
+	const status = 0;
+	// TODO: do i even use this route?
 	return NextResponse.json(status);
 }

@@ -13,6 +13,6 @@ export abstract class Club {
 			trackIds,
 		});
 
-		return job.id;
+		return job?.id;
 	}
 }

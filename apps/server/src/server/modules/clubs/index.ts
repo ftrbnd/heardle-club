@@ -5,7 +5,7 @@ import { Club } from './service';
 import { ClubModel } from './model';
 import { getClubById } from '@repo/database/postgres/api';
 import { authService } from '@/server/modules/auth';
-import { getDownloadStatus } from '@repo/database/redis/api';
+import { getDownloadJobProgress } from '@/workers/queue';
 
 export const clubs = new Elysia({ prefix: '/clubs' })
 	.use(authService)
@@ -37,8 +37,8 @@ export const clubs = new Elysia({ prefix: '/clubs' })
 		}
 	)
 	.get('/:clubId/status', async function* ({ params: { clubId } }) {
-		const status = await getDownloadStatus(clubId);
+		const progress = await getDownloadJobProgress(clubId);
 		yield sse({
-			data: status,
+			data: progress,
 		});
 	});

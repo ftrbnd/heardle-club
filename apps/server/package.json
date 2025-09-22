@@ -23,7 +23,8 @@
 		"elysia": "^1.3.5",
 		"fluent-ffmpeg": "^2.1.3",
 		"jsdom": "^26.1.0",
-		"youtubei.js": "^15.0.1"
+		"youtubei.js": "^15.0.1",
+		"zod": "^3.25.57"
 	},
 	"devDependencies": {
 		"@types/jsdom": "^21.1.7",

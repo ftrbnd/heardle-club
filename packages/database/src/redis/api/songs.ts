@@ -4,11 +4,6 @@ import {
 	SelectBaseSong,
 	selectBaseSongSchema,
 } from '../../postgres/schema/types';
-import {
-	defaultDownloadStatus,
-	DownloadStatus,
-	downloadStatusSchema,
-} from '../schema';
 
 export const setClubDailySong = async (
 	clubId: string,
@@ -36,29 +31,4 @@ export const getClubDailySong = async (clubId: string) => {
 		.parse(data);
 
 	return daily;
-};
-
-export const clubDownloadStatusKey = (clubId: string) =>
-	`download_status:${clubId}` as const;
-
-export const setDownloadStatus = async (
-	clubId: string,
-	status: NonNullable<DownloadStatus>
-) => {
-	await redis.json.set(clubDownloadStatusKey(clubId), '$', status);
-};
-
-export const resetDownloadStatus = async (clubId: string) => {
-	await redis.json.set(
-		clubDownloadStatusKey(clubId),
-		'$',
-		defaultDownloadStatus
-	);
-};
-
-export const getDownloadStatus = async (clubId: string) => {
-	const response = await redis.json.get(clubDownloadStatusKey(clubId));
-	const status = downloadStatusSchema.parse(response);
-
-	return status;
 };
