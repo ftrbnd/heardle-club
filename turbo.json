@@ -27,6 +27,9 @@
 			"persistent": true,
 			"interactive": true
 		},
+		"start:worker": {
+			"cache": false
+		},
 		"db:seed": {
 			"dependsOn": ["db:push"],
 			"cache": false

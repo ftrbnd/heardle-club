@@ -1,7 +1,10 @@
-import { AuthModel } from '@/modules/auth/model';
-import { Auth } from '@/modules/auth/service';
-import { deleteSession, validateSessionToken } from '@/modules/auth/session';
-import { rootDomain, rootURL } from '@/utils/domains';
+import { AuthModel } from '@/server/modules/auth/model';
+import { Auth } from '@/server/modules/auth/service';
+import {
+	deleteSession,
+	validateSessionToken,
+} from '@/server/modules/auth/session';
+import { rootDomain, rootURL } from '@/server/utils/domains';
 import { getUserById } from '@repo/database/postgres/api';
 import { Elysia, status } from 'elysia';
 

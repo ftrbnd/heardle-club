@@ -5,7 +5,8 @@
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
 		"build": "tsc src/index.ts --outDir dist",
-		"start": "NODE_ENV=production node dist/index.js"
+		"start": "NODE_ENV=production node dist/index.js",
+		"start:worker": "tsx watch src/workers/index.ts"
 	},
 	"dependencies": {
 		"@elysiajs/cors": "^1.3.3",
@@ -18,6 +19,7 @@
 		"@types/fluent-ffmpeg": "^2.1.27",
 		"arctic": "^3.7.0",
 		"bgutils-js": "^3.2.0",
+		"bullmq": "^5.58.7",
 		"dotenv": "^16.5.0",
 		"elysia": "^1.3.5",
 		"fluent-ffmpeg": "^2.1.3",

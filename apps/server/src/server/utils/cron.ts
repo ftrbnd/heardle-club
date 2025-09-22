@@ -1,7 +1,7 @@
 import Elysia from 'elysia';
 import cron from '@elysiajs/cron';
 import { getAllActiveClubs } from '@repo/database/postgres/api';
-import { Club } from '@/modules/clubs/service';
+import { Club } from '@/server/modules/clubs/service';
 
 export const cronPlugin = new Elysia().use(
 	cron({

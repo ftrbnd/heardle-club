@@ -1,4 +1,4 @@
-import { discordRedirectURI, spotifyRedirectURI } from '@/utils/domains';
+import { discordRedirectURI, spotifyRedirectURI } from '@/server/utils/domains';
 import { Discord, Spotify } from 'arctic';
 import { t } from 'elysia';
 

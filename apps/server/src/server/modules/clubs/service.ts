@@ -1,6 +1,6 @@
 import type { ClubModel } from './model';
-import { spotify } from '@/utils/spotify';
-import { generateClient, searchVideo, downloadAudio } from '@/utils/yt';
+import { spotify } from '@/server/utils/spotify';
+import { generateClient, searchVideo, downloadAudio } from '@/server/utils/yt';
 import {
 	generateSecureRandomString,
 	sanitizeString,
