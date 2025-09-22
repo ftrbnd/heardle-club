@@ -15,10 +15,10 @@
 		"check-types": {
 			"dependsOn": ["^check-types"]
 		},
-		"tunnel:start:mac": {
+		"tunnel:mac": {
 			"cache": false
 		},
-		"tunnel:start:windows": {
+		"tunnel:windows": {
 			"cache": false
 		},
 		"dev": {
@@ -27,7 +27,7 @@
 			"persistent": true,
 			"interactive": true
 		},
-		"start:worker": {
+		"worker:dev": {
 			"cache": false
 		},
 		"db:seed": {
