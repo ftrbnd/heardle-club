@@ -5,12 +5,14 @@ import {
 	selectBaseSongSchema,
 } from '../../postgres/schema/types';
 
+const dailySongKey = (clubId: string) => `daily:${clubId}` as const;
+
 export const setClubDailySong = async (
 	clubId: string,
 	song: SelectBaseSong,
 	url: string
 ) => {
-	await redis.json.set(`daily:${clubId}`, '$', {
+	await redis.json.set(dailySongKey(clubId), '$', {
 		song,
 		url,
 	});
@@ -18,7 +20,7 @@ export const setClubDailySong = async (
 };
 
 export const getClubDailySong = async (clubId: string) => {
-	const data = await redis.json.get(`daily:${clubId}`);
+	const data = await redis.json.get(dailySongKey(clubId));
 	const daily = z
 		.object({
 			song: selectBaseSongSchema.omit({

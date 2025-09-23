@@ -35,8 +35,8 @@
 			"default": "./dist/redis/api/index.js"
 		},
 		"./redis/schema": {
-			"types": "./src/redis/schema.ts",
-			"default": "./dist/redis/schema.js"
+			"types": "./src/redis/schema/index.ts",
+			"default": "./dist/redis/schema/index.js"
 		},
 		"./supabase": {
 			"types": "./src/supabase/index.ts",

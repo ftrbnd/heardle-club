@@ -14,7 +14,7 @@ export async function createScheduledWorker() {
 		await dailyQueue.upsertJobScheduler(
 			`club_${club.id}_scheduler`,
 			{
-				pattern: '* * * * *', // every minute
+				pattern: '*/10 * * * *', // every minute
 				// pattern: '0 4 * * *' // midnight UTC
 				utc: true,
 			},
