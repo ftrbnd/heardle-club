@@ -4,7 +4,8 @@ import { Queue } from 'bullmq';
 
 export const DAILY_QUEUE_NAME = 'daily_song' as const;
 
-export const dailyQueue = new Queue(DAILY_QUEUE_NAME, {
+// clubId is pass to the dailyQueue job scheduler in daily.worker.ts
+export const dailyQueue = new Queue<{ clubId: string }>(DAILY_QUEUE_NAME, {
 	connection,
 });
 

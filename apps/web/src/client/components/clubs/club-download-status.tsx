@@ -21,7 +21,9 @@ export function ClubDownloadStatus({ club }: ClubDownloadStatusProps) {
 				<span className='loading loading-spinner loading-xs md:loading-md'></span>
 				<p className='flex justify-between w-full'>
 					<span>{status.percentage}%</span>
-					<span>Downloading {status.currentTrack}...</span>
+					<span className='font-bold'>
+						Downloading {status.currentTrack}...
+					</span>
 					<span>
 						{status.currentStep}/{status.totalTracks}
 					</span>
@@ -30,7 +32,7 @@ export function ClubDownloadStatus({ club }: ClubDownloadStatusProps) {
 
 			<progress
 				className='progress progress-info w-full'
-				value={status.currentTrack ?? 0 + 1}
+				value={status.currentStep ?? 0 + 1}
 				max={status.totalTracks}></progress>
 		</div>
 	);

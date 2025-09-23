@@ -8,7 +8,7 @@ function attachListeners(worker: Worker, progressType: 'download' | 'daily') {
 	worker.on('ready', () => console.log(`"${worker.name}" worker ready`));
 	worker.on('progress', (job, progress) => {
 		// TODO: separate download and daily job progress schemas
-		console.log(`Job ${job.id} progress: ${progress}%...`);
+		console.log({ job: job.id, progress });
 	});
 	worker.on('failed', (job, error: Error) => {
 		console.error(`Job ${job?.id} failed:`, error);
@@ -19,12 +19,12 @@ function attachListeners(worker: Worker, progressType: 'download' | 'daily') {
 	});
 }
 
-async function main() {
-	const d = createDownloadWorker();
-	attachListeners(d, 'download');
+async function createWorkers() {
+	const downloadWorker = createDownloadWorker();
+	attachListeners(downloadWorker, 'download');
 
-	const s = await createScheduledWorker();
-	attachListeners(s, 'daily');
+	const scheduledWorker = await createScheduledWorker();
+	attachListeners(scheduledWorker, 'daily');
 }
 
-main();
+createWorkers();

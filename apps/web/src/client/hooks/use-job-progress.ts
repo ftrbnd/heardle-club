@@ -40,6 +40,7 @@ export function useJobProgress<T extends 'download' | 'daily'>(
 
 		evtSource.onmessage = (event) => {
 			const data = JSON.parse(event.data === '{}' ? null : event.data);
+			console.log(event.data);
 			const progress = downloadJobProgressSchema
 				.or(dailyJobProgressSchema)
 				.nullable()

@@ -63,6 +63,11 @@ export async function setDailySong(
 	await redis.setClubDailySong(clubId, song, signedUrl);
 	await postgres.updateClubDayNumber(clubId, newDayNum);
 
+	await updateProgress({
+		message: 'Done!',
+		percentage: 100,
+	});
+
 	return song;
 }
 

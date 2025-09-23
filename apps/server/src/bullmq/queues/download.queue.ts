@@ -20,7 +20,6 @@ export async function addDownloadJob(
 export async function getDownloadJobProgress(clubId: string) {
 	const jobs = await downloadQueue.getJobs();
 	const job = jobs.find((job) => job.data.clubId === clubId && job.isActive());
-	if (!job) throw new Error('Job not found');
 
-	return job.progress as DownloadJobProgress;
+	return job ? (job.progress as DownloadJobProgress) : null;
 }

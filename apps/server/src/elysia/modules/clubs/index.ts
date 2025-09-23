@@ -37,13 +37,13 @@ export const clubs = new Elysia({ prefix: '/clubs' })
 			},
 		}
 	)
-	.get('/:clubId/jobs/download', function* ({ params: { clubId } }) {
+	.get('/:clubId/jobs/download', async function* ({ params: { clubId } }) {
 		yield sse({
-			data: getDownloadJobProgress(clubId),
+			data: await getDownloadJobProgress(clubId),
 		});
 	})
-	.get('/:clubId/jobs/daily', function* ({ params: { clubId } }) {
+	.get('/:clubId/jobs/daily', async function* ({ params: { clubId } }) {
 		yield sse({
-			data: getDailyJobProgress(clubId),
+			data: await getDailyJobProgress(clubId),
 		});
 	});
