@@ -6,6 +6,7 @@ import { ClubModel } from './model';
 import { getClubById } from '@repo/database/postgres/api';
 import { authService } from '@/elysia/modules/auth';
 import { getDownloadJobProgress } from '@/bullmq/queues/download.queue';
+import { getDailyJobProgress } from '@/bullmq/queues/daily.queue';
 
 export const clubs = new Elysia({ prefix: '/clubs' })
 	.use(authService)
@@ -36,9 +37,13 @@ export const clubs = new Elysia({ prefix: '/clubs' })
 			},
 		}
 	)
-	.get('/:clubId/status', async function* ({ params: { clubId } }) {
-		const progress = await getDownloadJobProgress(clubId);
+	.get('/:clubId/jobs/download', function* ({ params: { clubId } }) {
 		yield sse({
-			data: progress,
+			data: getDownloadJobProgress(clubId),
+		});
+	})
+	.get('/:clubId/jobs/daily', function* ({ params: { clubId } }) {
+		yield sse({
+			data: getDailyJobProgress(clubId),
 		});
 	});

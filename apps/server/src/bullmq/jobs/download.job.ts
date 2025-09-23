@@ -2,10 +2,10 @@ import {
 	downloadMultipleTracks,
 	filterTracks,
 } from '@/bullmq/processors/tracks';
-import { JobDataType } from '@/bullmq/types';
+import { DownloadJobDataType } from '@/bullmq/types';
 import { SandboxedJob } from 'bullmq';
 
-export default async (job: SandboxedJob<JobDataType>) => {
+export default async (job: SandboxedJob<DownloadJobDataType>) => {
 	console.log(`Processing job ${job.id}...`, { data: job.data });
 	const { clubId, artistId, trackIds } = job.data;
 

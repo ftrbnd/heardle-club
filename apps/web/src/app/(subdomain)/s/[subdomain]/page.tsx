@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@/app/api/auth/server.services';
+import { ClubDailyStatus } from '@/client/components/club-daily-status';
 import { LeftDrawer } from '@/server/components/subdomain/left-drawer';
 import { ClubNotFound } from '@/server/components/subdomain/not-found';
 import { Tabs } from '@/server/components/subdomain/tabs';
@@ -34,6 +35,7 @@ export default async function SubdomainPage({ params }: PageParams) {
 			<LeftDrawer
 				club={club}
 				members={members}>
+				<ClubDailyStatus club={club} />
 				<Tabs
 					isOwner={isOwner}
 					selectedTab='Members'

@@ -1,14 +1,18 @@
 import { connection } from '@/bullmq/config';
-import { DownloadJobProgress, JobDataType } from '@/bullmq/types';
+import { DownloadJobDataType } from '@/bullmq/types';
+import { DownloadJobProgress } from '@repo/database/redis/schema';
 import { JobsOptions, Queue } from 'bullmq';
 
 export const DOWNLOAD_QUEUE_NAME = 'audio_download' as const;
 
-const downloadQueue = new Queue<JobDataType>(DOWNLOAD_QUEUE_NAME, {
+const downloadQueue = new Queue<DownloadJobDataType>(DOWNLOAD_QUEUE_NAME, {
 	connection,
 });
 
-export async function addDownloadJob(data: JobDataType, opts?: JobsOptions) {
+export async function addDownloadJob(
+	data: DownloadJobDataType,
+	opts?: JobsOptions
+) {
 	const job = await downloadQueue.add(`club_${data.clubId}`, data, opts);
 	return job;
 }

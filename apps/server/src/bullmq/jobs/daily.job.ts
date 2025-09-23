@@ -7,9 +7,11 @@ export default async (job: SandboxedJob) => {
 
 	const clubs = await getAllActiveClubs();
 
+	const updateProgress = job.updateProgress.bind(job);
+
 	for (const club of clubs) {
 		try {
-			await setDailySong(club.id);
+			await setDailySong(club.id, updateProgress);
 		} catch (error) {
 			if (error instanceof Error)
 				if (error.message === 'Club has no songs')

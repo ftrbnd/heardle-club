@@ -1,6 +1,6 @@
 'use client';
 
-import { useDownloadStatus } from '@/client/hooks/use-download-status';
+import { useJobProgress } from '@/client/hooks/use-job-progress';
 import { SelectClub } from '@repo/database/postgres/schema';
 
 interface ClubDownloadStatusProps {
@@ -8,7 +8,7 @@ interface ClubDownloadStatusProps {
 }
 
 export function ClubDownloadStatus({ club }: ClubDownloadStatusProps) {
-	const { status } = useDownloadStatus(club);
+	const { status } = useJobProgress(club, 'download');
 
 	if (!status.currentTrack || status.currentStep === status.totalTracks)
 		return <></>;

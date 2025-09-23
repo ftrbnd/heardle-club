@@ -4,6 +4,7 @@ import cors from '@elysiajs/cors';
 import { auth } from '@/elysia/modules/auth';
 import { clubs } from '@/elysia/modules/clubs';
 import { customSongs } from '@/elysia/modules/custom-songs';
+import { rootDomain, rootDomainExists } from '@/elysia/utils/domains';
 
 export const elysia = new Elysia({ adapter: node() })
 	.onError(({ path, error }) => {
@@ -12,7 +13,13 @@ export const elysia = new Elysia({ adapter: node() })
 	.get('/', () => 'Hello Elysia')
 	.use(
 		cors({
-			origin: true,
+			origin: ({ headers }) => {
+				if (rootDomainExists) {
+					const ref = headers.get('Referer');
+					return ref?.includes(rootDomain);
+				}
+				return true;
+			},
 		})
 	)
 	.use(auth)
