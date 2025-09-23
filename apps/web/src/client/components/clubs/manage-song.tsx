@@ -1,7 +1,7 @@
 'use client';
 
 import { UploadModal } from '@/client/components/clubs/upload-modal';
-import { SongAudio } from '@/client/components/song-audio';
+import { SongAudio } from '@/client/components/heardle/song-audio';
 import { useToastActionState } from '@/client/hooks/use-toast-action-state';
 import { cn } from '@/lib/cn';
 import { deleteSong } from '@/server/actions/db';

@@ -1,7 +1,7 @@
 'use client';
 
-import AudioPlayer from '@/client/components/audio-player';
-import { SongSelect } from '@/client/components/song-select';
+import AudioPlayer from '@/client/components/heardle/audio-player';
+import { SongSelect } from '@/client/components/heardle/song-select';
 import { useSubdomain } from '@/client/hooks/use-subdomain';
 
 export default function Page() {
