@@ -70,12 +70,12 @@ export default function AudioPlayer({ url }: AudioProps) {
 	return (
 		<div className='flex flex-col items-center gap-2 w-full'>
 			<progress
-				className='progress progress-primary w-full md:w-3/5 xl:w-2/5'
+				className='progress progress-primary play-page-width'
 				value={second}
 				max='6'></progress>
 			{error && <p className='text-error'>{error}</p>}
 
-			<div className='flex justify-between pt-2 w-full md:w-3/5 xl:w-2/5'>
+			<div className='flex justify-between pt-2 play-page-width'>
 				<kbd className='kbd'>
 					00:{String(Math.floor(second)).padStart(2, '0')}
 				</kbd>

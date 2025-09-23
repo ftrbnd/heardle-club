@@ -9,3 +9,7 @@
 		@apply appearance-none;
 	}
 }
+
+.play-page-width {
+	@apply w-full md:w-3/5 xl:w-2/5;
+}
