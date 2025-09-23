@@ -14,11 +14,17 @@ export const getUserGuesses = async (ids: UserGuessIDs) => {
 };
 
 export const addUserGuess = async (ids: UserGuessIDs, newGuess: Guess) => {
-	const p = redis.multi();
+	const prevGuesses = await redis.json.get(guessesKey(ids));
+	if (prevGuesses) {
+		const p = redis.multi();
 
-	p.json.arrappend(guessesKey(ids), '$', newGuess);
-	p.json.get(guessesKey(ids));
+		p.json.arrappend(guessesKey(ids), '$', newGuess);
+		p.json.get(guessesKey(ids));
 
-	const newGuesses = await p.exec<Guess[]>();
-	return newGuesses;
+		const [_newLength, newGuesses] = await p.exec<[number, Guess[]]>();
+		return newGuesses;
+	} else {
+		await redis.json.set(guessesKey(ids), '$', [newGuess]);
+		return [newGuess];
+	}
 };

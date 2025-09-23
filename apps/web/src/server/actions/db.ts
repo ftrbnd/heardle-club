@@ -29,6 +29,8 @@ import {
 	SelectBaseSong,
 	SelectClub,
 } from '@repo/database/postgres/schema';
+import { addUserGuess } from '@repo/database/redis/api';
+import { Guess } from '@repo/database/redis/schema';
 import {
 	removeUserAvatars,
 	uploadUserAvatar,
@@ -364,6 +366,30 @@ export async function updateSongDuration({
 			await updateClubSongDuration(song.id, duration);
 
 			return { pathToRevalidate: `/s/${data.club.subdomain}` };
+		},
+	});
+}
+
+interface SongGuessParams {
+	clubId: string;
+	guess: Guess;
+}
+export async function submitSongGuess({
+	clubId,
+	guess,
+}: SongGuessParams): Promise<ActionState> {
+	return await createServerAction({
+		requiredParams: { clubId, guess },
+		sessionRequired: true,
+		validationFn: async () => {
+			const club = await getClubById(clubId);
+			return { data: { club } };
+		},
+		actionFn: async (user, _params, data) => {
+			const newGuesses = await addUserGuess({ userId: user.id, clubId }, guess);
+			console.log({ newGuesses });
+
+			return { pathToRevalidate: `/s/${data?.club?.subdomain}/play` };
 		},
 	});
 }

@@ -9,7 +9,10 @@ export default function Page() {
 
 	return (
 		<div className='flex-1 flex flex-col'>
-			<SongSelect songs={songs} />
+			<SongSelect
+				songs={songs}
+				correctSong={daily?.song}
+			/>
 			<AudioPlayer url={daily?.url} />
 		</div>
 	);
