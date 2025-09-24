@@ -1,5 +1,8 @@
 import { getCurrentUser } from '@/app/api/auth/server.services';
-import { SubdomainTab, Tabs } from '@/server/components/subdomain/tabs';
+import {
+	SubdomainTab,
+	Tabs,
+} from '@/app/(subdomain)/s/[subdomain]/_components/tabs';
 import { getClubBySubdomain } from '@repo/database/postgres/api';
 import { ReactNode } from 'react';
 

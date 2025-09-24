@@ -1,5 +1,5 @@
 import { logoutUser } from '@/app/api/auth/server.services';
-import { loginURL } from '@/lib/domains';
+import { loginURL } from '@/util/domains';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 

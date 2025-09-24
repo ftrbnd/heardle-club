@@ -1,5 +1,5 @@
 import { User, userSchema } from '@/app/api/auth/_user';
-import { authURL } from '@/lib/domains';
+import { authURL } from '@/util/domains';
 import { cookies } from 'next/headers';
 
 const SESSION_TOKEN_COOKIE = 'session_token';

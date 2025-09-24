@@ -1,14 +1,14 @@
 import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getArtist } from '@/app/api/spotify/server.services';
-import { NewClubForm } from '@/server/components/clubs/new-club-form';
+import { NewClubForm } from '@/components/clubs/membership/new-club-form';
 import { User } from '@/app/api/auth/_user';
-import { getSubdomainURL, loginURL } from '@/lib/domains';
+import { getSubdomainURL, loginURL } from '@/util/domains';
 import { getClubByArtistId } from '@repo/database/postgres/api';
 import { SelectClub } from '@repo/database/postgres/schema';
 import { Artist } from '@spotify/web-api-ts-sdk';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Alert } from '@/server/components/icons/alert';
+import { Alert } from '@/components/icons/alert';
 
 export default async function Page({
 	searchParams,

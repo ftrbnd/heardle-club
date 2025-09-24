@@ -1,5 +1,5 @@
-import { subdomainTabs } from '@/server/components/subdomain/tabs';
-import { rootDomain, rootURL } from '@/lib/domains';
+import { subdomainTabs } from '@/app/(subdomain)/s/[subdomain]/_components/tabs';
+import { rootDomain, rootURL } from '@/util/domains';
 import { type NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 

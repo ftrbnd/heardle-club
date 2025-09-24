@@ -1,8 +1,8 @@
 'use client';
 
-import AudioPlayer from '@/client/components/heardle/audio-player';
-import { SongSelect } from '@/client/components/heardle/song-select';
-import { useSubdomain } from '@/client/hooks/use-subdomain';
+import AudioPlayer from '@/app/(subdomain)/s/[subdomain]/play/_components/audio-player';
+import { SongSelect } from '@/app/(subdomain)/s/[subdomain]/play/_components/song-select';
+import { useSubdomain } from '@/hooks/use-subdomain';
 
 export default function Page() {
 	const { daily, songs } = useSubdomain();

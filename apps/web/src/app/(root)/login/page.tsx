@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/app/api/auth/server.services';
-import { authURL } from '@/lib/domains';
+import { authURL } from '@/util/domains';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 

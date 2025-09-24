@@ -1,5 +1,5 @@
-import { Navbar } from '@/server/components/layout/navbar';
-import { rootDomain } from '@/lib/domains';
+import { Navbar } from '@/components/layout/navbar';
+import { rootDomain } from '@/util/domains';
 import { getClubBySubdomain } from '@repo/database/postgres/api';
 import { Metadata } from 'next';
 import { ReactNode } from 'react';

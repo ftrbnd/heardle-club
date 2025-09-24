@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@/app/api/auth/server.services';
 import { getJoinedClubs, getTrendingClubs } from '@repo/database/postgres/api';
-import { ClubsCollection } from '@/server/components/clubs/collection';
+import { ClubsCollection } from '@/components/clubs/public/collection';
 
 export default async function HomePage() {
 	const user = await getCurrentUser();

@@ -1,4 +1,4 @@
-import { rootDomain } from '@/lib/domains';
+import { rootDomain } from '@/util/domains';
 import type { NextConfig } from 'next';
 
 const supabaseUrl = process.env.SUPABASE_URL!;
