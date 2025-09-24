@@ -4,12 +4,15 @@ import * as redis from '@repo/database/redis/api';
 import * as audio from '@/bullmq/processors/audio';
 import { JobProgress } from 'bullmq';
 
+const message = (dayNum: number) => `Day ${dayNum}:`;
+
 export async function setDailySong(
 	clubId: string,
+	dayNum: number,
 	updateProgress: (progress: JobProgress) => Promise<void>
 ) {
 	await updateProgress({
-		message: 'Setting new daily song...',
+		message: ` ${message(dayNum)} Setting next song...`,
 		percentage: 15,
 	});
 
@@ -18,7 +21,7 @@ export async function setDailySong(
 	if (!song) throw new Error('Club has no songs');
 
 	await updateProgress({
-		message: 'Setting start time...',
+		message: ` ${message(dayNum)} Setting start time...`,
 		percentage: 20,
 	});
 
@@ -26,7 +29,7 @@ export async function setDailySong(
 	console.log({ startTime });
 
 	await updateProgress({
-		message: 'Download song...',
+		message: ` ${message(dayNum)} Downloading song...`,
 		percentage: 35,
 	});
 
@@ -39,7 +42,7 @@ export async function setDailySong(
 	console.log({ club, newDayNum });
 
 	await updateProgress({
-		message: 'Trimming audio...',
+		message: ` ${message(dayNum)} Trimming audio...`,
 		percentage: 45,
 	});
 
@@ -48,7 +51,7 @@ export async function setDailySong(
 	await audio.trimSong(path, startTime, finalPath);
 
 	await updateProgress({
-		message: 'Uploading...',
+		message: ` ${message(dayNum)} Uploading...`,
 		percentage: 75,
 	});
 
@@ -56,7 +59,7 @@ export async function setDailySong(
 	console.log({ signedUrl });
 
 	await updateProgress({
-		message: 'Uploading...',
+		message: ` ${message(dayNum)} Updating stats...`,
 		percentage: 95,
 	});
 
@@ -64,7 +67,7 @@ export async function setDailySong(
 	await postgres.updateClubDayNumber(clubId, newDayNum);
 
 	await updateProgress({
-		message: 'Done!',
+		message: ` ${message(dayNum)} Done!`,
 		percentage: 100,
 	});
 

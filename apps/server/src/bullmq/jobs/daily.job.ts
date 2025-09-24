@@ -12,7 +12,7 @@ export default async (job: SandboxedJob) => {
 	const updateProgress = job.updateProgress.bind(job);
 
 	try {
-		await setDailySong(clubId, updateProgress);
+		await setDailySong(clubId, club.heardleDay + 1, updateProgress);
 	} catch (error) {
 		if (error instanceof Error)
 			if (error.message === 'Club has no songs')

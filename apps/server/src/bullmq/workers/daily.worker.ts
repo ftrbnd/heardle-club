@@ -14,9 +14,10 @@ export async function createScheduledWorker() {
 		await dailyQueue.upsertJobScheduler(
 			`club_${club.id}_scheduler`,
 			{
-				pattern: '*/10 * * * *', // every minute
+				pattern: '* * * * *', // every minute
 				// pattern: '0 4 * * *' // midnight UTC
 				utc: true,
+				immediately: true,
 			},
 			{
 				name: 'set-daily-songs',
