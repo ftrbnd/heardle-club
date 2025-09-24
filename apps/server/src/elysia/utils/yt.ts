@@ -6,9 +6,10 @@ import { createWriteStream } from 'fs';
 export async function generateClient() {
 	let innertube = await Innertube.create({
 		retrieve_player: false,
+		player_id: process.env.YT_PLAYER_ID,
 	});
 
-	const requestKey = 'O43z0dpjhgX20SCx4KAo';
+	const requestKey = process.env.YT_REQUEST_KEY!;
 	const visitorData = innertube.session.context.client.visitorData;
 
 	if (!visitorData) throw new Error('Could not get visitor data');
