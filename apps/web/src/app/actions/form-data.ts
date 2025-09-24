@@ -20,6 +20,15 @@ export const updateAccountSchema = selectUserSchema
 			.optional(),
 	});
 
+const audioFileSchema = z
+	.file({
+		error: 'Only MP3 files are allowed',
+	})
+	.min(1, 'Audio file required')
+	.max(10_000_000)
+	.mime('audio/mpeg')
+	.optional();
+
 export const uploadSongSchema = insertBaseSongSchema
 	.pick({
 		title: true,
@@ -27,12 +36,8 @@ export const uploadSongSchema = insertBaseSongSchema
 		album: true,
 	})
 	.extend({
-		audioFile: z
-			.file({
-				error: 'Only MP3 files are allowed',
-			})
-			.min(1)
-			.max(10_000_000)
-			.mime('audio/mpeg')
-			.optional(),
+		title: z.string().nullable().optional(),
+		artist: z.string().nullable().array().nullable().optional(),
+		album: z.string().nullable().optional(),
+		audioFile: audioFileSchema,
 	});

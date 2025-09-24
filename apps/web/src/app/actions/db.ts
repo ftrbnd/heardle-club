@@ -225,7 +225,7 @@ export async function uploadSongFile(
 	formData: FormData
 ): Promise<ActionState> {
 	return await createServerAction({
-		requiredParams: { clubId, duration, originalSong },
+		requiredParams: { clubId, duration },
 		sessionRequired: true,
 		validationFn: async (_user, params) => {
 			const club = await getClubById(params.clubId);
@@ -242,11 +242,11 @@ export async function uploadSongFile(
 			};
 
 			const { data: songDetails, error } = uploadSongSchema.safeParse({
-				...formData,
+				...rawFormData,
 				artist: [rawFormData.artist],
 			});
 
-			if (error && !params.originalSong)
+			if (error)
 				return {
 					error: z.prettifyError(error),
 				};
@@ -257,20 +257,23 @@ export async function uploadSongFile(
 			if (!data) throw new Error('Invalid song details');
 
 			const { songDetails, club } = data;
-			if (!songDetails || !songDetails?.audioFile)
-				throw new Error('Invalid song details');
+			if (!songDetails.audioFile) throw new Error('Audio file required');
 
-			if (params.originalSong) {
+			if (originalSong && songDetails.audioFile) {
 				const { publicUrl } = await upsertSongFile(
 					songDetails.audioFile,
-					params.originalSong
+					originalSong
 				);
 				await updateClubSongAudio({
-					id: params.originalSong.id,
+					id: originalSong.id,
 					audio: publicUrl,
 					duration: params.duration,
 				});
-			} else {
+			} else if (songDetails.title && songDetails.artist) {
+				const songArtists = songDetails.artist.filter(
+					(artist) => artist !== null
+				);
+
 				const fileName = `${sanitizeString(songDetails.title)}.mp3`;
 				const { publicUrl } = await uploadCustomClubSongFile(
 					songDetails.audioFile,
@@ -282,12 +285,14 @@ export async function uploadSongFile(
 					id: generateSecureRandomString(),
 					clubId: club.id,
 					title: songDetails.title,
-					artist: songDetails.artist,
+					artist: songArtists,
 					album: songDetails.album,
 					audio: publicUrl,
 					duration: params.duration,
 					source: 'file_upload',
 				});
+			} else {
+				throw new Error('Missing title or artist fields');
 			}
 
 			return { pathToRevalidate: `/s/${club.subdomain}` };

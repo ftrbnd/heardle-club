@@ -74,78 +74,101 @@ export function SongUploadForm({
 			<fieldset className='fieldset flex flex-col bg-base-200 border-base-300 rounded-box w-full border p-4'>
 				<legend className='fieldset-legend'>Song details</legend>
 				{songBeingEdited ? (
-					<form
-						action={durationFormAction}
-						className='flex items-center justify-between gap-2'>
-						<div>
-							<label className='label'>Duration</label>
-							<input
-								type='number'
-								className='appearance-none input w-full'
-								name='duration'
-								value={audioDuration}
-								onChange={(e) => {
-									if (e.target.value)
-										setAudioDuration(parseInt(e.target.value));
-									else setAudioDuration(0);
-								}}
-							/>
-						</div>
-
-						<button
-							disabled={uploadActionIsPending || durationActionIsPending}
-							className='btn btn-secondary self-end'>
-							Save
-						</button>
-					</form>
-				) : (
 					<>
-						<label className='label'>Title</label>
-						<input
-							type='text'
-							className='input w-full'
-							name='title'
-						/>
+						<form
+							action={durationFormAction}
+							className='flex flex-col gap-2'>
+							<div className='flex items-center justify-between gap-2'>
+								<label className='label'>Duration</label>
+								<input
+									type='number'
+									className='appearance-none input w-full'
+									name='duration'
+									value={audioDuration}
+									onChange={(e) => {
+										if (e.target.value)
+											setAudioDuration(parseInt(e.target.value));
+										else setAudioDuration(0);
+									}}
+								/>
 
-						<label className='label'>Artist</label>
-						<input
-							type='text'
-							className='input w-full'
-							name='artist'
-						/>
-
-						<label className='label'>Album</label>
-						<input
-							type='text'
-							className='input w-full'
-							name='album'
-						/>
+								<button
+									disabled={uploadActionIsPending || durationActionIsPending}
+									className='btn btn-secondary self-end'>
+									Save
+								</button>
+							</div>
+						</form>
+						<form action={uploadFormAction}>
+							<UploadInput
+								onChange={handleAudioChange}
+								disabled={uploadActionIsPending || durationActionIsPending}
+							/>
+						</form>
 					</>
+				) : (
+					<form
+						action={uploadFormAction}
+						className='flex flex-col gap-2'>
+						<>
+							<label className='label'>Title</label>
+							<input
+								type='text'
+								className='input w-full'
+								name='title'
+							/>
+
+							<label className='label'>Artist</label>
+							<input
+								type='text'
+								className='input w-full'
+								name='artist'
+							/>
+
+							<label className='label'>Album</label>
+							<input
+								type='text'
+								className='input w-full'
+								name='album'
+							/>
+						</>
+
+						<UploadInput
+							onChange={handleAudioChange}
+							disabled={uploadActionIsPending || durationActionIsPending}
+						/>
+					</form>
 				)}
 			</fieldset>
-
-			<form action={uploadFormAction}>
-				<fieldset className='fieldset flex items-center'>
-					<div>
-						<legend className='fieldset-legend'>Pick a file</legend>
-						<input
-							type='file'
-							className='file-input'
-							name='audio_file'
-							accept='audio/mp3'
-							onChange={handleAudioChange}
-						/>
-						<label className='label'>Max size 5MB</label>
-					</div>
-
-					<button
-						disabled={uploadActionIsPending || durationActionIsPending}
-						className='btn btn-primary self-end'
-						type='submit'>
-						Upload
-					</button>
-				</fieldset>
-			</form>
 		</div>
+	);
+}
+
+interface UploadInputProps {
+	onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+	disabled?: boolean;
+}
+function UploadInput({ onChange, disabled }: UploadInputProps) {
+	return (
+		<fieldset className='fieldset flex items-center'>
+			<div>
+				<legend className='fieldset-legend'>Pick a file</legend>
+				<input
+					type='file'
+					className='file-input'
+					name='audio_file'
+					accept='audio/mp3'
+					onChange={onChange}
+				/>
+				<label className='label'>Max size 5MB</label>
+			</div>
+
+			<button
+				disabled={disabled}
+				className='btn btn-primary self-end'
+				type='submit'>
+				Upload
+			</button>
+		</fieldset>
 	);
 }
