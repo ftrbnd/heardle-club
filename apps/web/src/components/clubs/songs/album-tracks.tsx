@@ -1,6 +1,6 @@
 'use client';
 
-import { clientGetAlbumTracks } from '@/app/api/spotify/client.services';
+import { clientGetAlbumTracks } from '@/app/api/spotify.service';
 import { TrackSkeleton } from '@/components/skeletons/track-skeleton';
 import { useSubdomain } from '@/hooks/use-subdomain';
 import { cn, durationFormatted } from '@/util';

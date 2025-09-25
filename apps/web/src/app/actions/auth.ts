@@ -1,4 +1,6 @@
-import { User, userSchema } from '@/app/api/auth/_user';
+// DO NOT MARK AS 'use server'
+
+import { User, userSchema } from '@/app/actions/_user';
 import { authURL } from '@/util/domains';
 import { cookies } from 'next/headers';
 

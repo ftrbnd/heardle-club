@@ -1,4 +1,4 @@
-import { User } from '@/app/api/auth/_user';
+import { User } from '@/app/actions/_user';
 
 export type ActionState<UData> = {
 	error?: string;

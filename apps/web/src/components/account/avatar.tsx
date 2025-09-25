@@ -1,4 +1,4 @@
-import { User } from '@/app/api/auth/_user';
+import { User } from '@/app/actions/_user';
 import { cn } from '@/util';
 import { User as UserIcon } from '@/components/icons/user';
 import Image, { ImageProps } from 'next/image';

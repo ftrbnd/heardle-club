@@ -1,5 +1,5 @@
-import { getCurrentUser } from '@/app/api/auth/server.services';
-import { getArtist } from '@/app/api/spotify/server.services';
+import { getCurrentUser } from '@/app/actions/auth';
+import { getArtist } from '@/app/actions/spotify';
 import { NavbarItems } from '@/components/layout/navbar-items';
 import { cn } from '@/util';
 import { accountURL, loginURL } from '@/util/domains';

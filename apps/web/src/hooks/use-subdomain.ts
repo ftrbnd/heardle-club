@@ -4,7 +4,7 @@ import {
 	clientGetClubBySubdomain,
 	clientGetClubDailySong,
 	clientGetClubSongs,
-} from '@/app/api/clubs/services';
+} from '@/app/api/clubs.service';
 import { protocol, rootDomain, rootURL } from '@/util/domains';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getCurrentUser } from '@/app/api/auth/server.services';
+import { getCurrentUser } from '@/app/actions/auth';
 import { ActionState, ServerActionParams } from '@/app/actions/action-params';
 import { revalidatePath } from 'next/cache';
 

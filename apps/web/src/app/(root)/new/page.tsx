@@ -1,7 +1,7 @@
-import { getCurrentUser } from '@/app/api/auth/server.services';
-import { getArtist } from '@/app/api/spotify/server.services';
+import { getCurrentUser } from '@/app/actions/auth';
+import { getArtist } from '@/app/actions/spotify';
 import { NewClubForm } from '@/components/clubs/membership/new-club-form';
-import { User } from '@/app/api/auth/_user';
+import { User } from '@/app/actions/_user';
 import { getSubdomainURL, loginURL } from '@/util/domains';
 import { getClubByArtistId } from '@repo/database/postgres/api';
 import { SelectClub } from '@repo/database/postgres/schema';

@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/app/api/auth/server.services';
+import { getCurrentUser } from '@/app/actions/auth';
 import { JoinClub } from '@/components/clubs/membership/join-club';
 import { LeaveClub } from '@/components/clubs/membership/leave-club';
 import { UserAvatar } from '@/components/account/avatar';

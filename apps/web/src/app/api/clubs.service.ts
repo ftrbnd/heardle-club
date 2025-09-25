@@ -19,11 +19,6 @@ export async function clientGetClubSongs(clubId?: string) {
 	return songs;
 }
 
-export async function clientGetClubDownloadStatus(clubId: string) {
-	const status = await clubFetch<string>(`/${clubId}/status`);
-	return status;
-}
-
 export async function clientGetClubBySubdomain(subdomain: string) {
 	const club = await clubFetch<SelectClub>(`?subdomain=${subdomain}`);
 	return club;

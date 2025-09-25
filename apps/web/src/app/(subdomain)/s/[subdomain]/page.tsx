@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/app/api/auth/server.services';
+import { getCurrentUser } from '@/app/actions/auth';
 import { ClubDailyStatus } from '@/components/clubs/info/club-daily-status';
 import { LeftDrawer } from '@/app/(subdomain)/s/[subdomain]/_components/left-drawer';
 import { ClubNotFound } from '@/app/(subdomain)/s/[subdomain]/_components/not-found';

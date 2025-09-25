@@ -1,4 +1,4 @@
-import { getCurrentUser } from '@/app/api/auth/server.services';
+import { getCurrentUser } from '@/app/actions/auth';
 import { Dashboard } from '@/app/(subdomain)/s/[subdomain]/(tab)/t/[tab]/_dashboard';
 import { SubdomainTab } from '@/app/(subdomain)/s/[subdomain]/_components/tabs';
 import { getClubBySubdomain } from '@repo/database/postgres/api';

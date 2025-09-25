@@ -1,4 +1,4 @@
-import { getArtist } from '@/app/api/spotify/server.services';
+import { getArtist } from '@/app/actions/spotify';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(

@@ -2,7 +2,7 @@
 
 import { leaveClub } from '@/app/actions/db';
 import { SelectClub } from '@repo/database/postgres/schema';
-import { User } from '@/app/api/auth/_user';
+import { User } from '@/app/actions/_user';
 import { ComponentProps } from 'react';
 import { useToastActionState } from '@/hooks/use-toast-action-state';
 

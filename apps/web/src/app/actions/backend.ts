@@ -1,7 +1,7 @@
 'use server';
 
 import { serverURL } from '@/util/domains';
-import { getSessionToken } from '@/app/api/auth/server.services';
+import { getSessionToken } from '@/app/actions/auth';
 import { getClubById, getClubSongs } from '@repo/database/postgres/api';
 import { revalidatePath } from 'next/cache';
 

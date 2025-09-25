@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@/app/api/auth/_user';
+import { User } from '@/app/actions/_user';
 import { useToastActionState } from '@/hooks/use-toast-action-state';
 import { deleteUserAvatar, updateAccountDetails } from '@/app/actions/db';
 import { UserAvatar } from '@/components/account/avatar';
