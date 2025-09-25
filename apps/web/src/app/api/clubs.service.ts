@@ -7,24 +7,26 @@ async function clubFetch<T>(endpoint: string) {
 	return data;
 }
 
-export async function clientSearchClubs(query: string) {
+export async function searchClubs(query: string) {
 	const results = await clubFetch<SelectClub[]>(`?search=${query}`);
 	return results;
 }
 
-export async function clientGetClubSongs(clubId?: string) {
-	if (!clubId) return [];
+export async function getClubSongs(clubId?: string) {
+	if (!clubId) throw new Error('Club ID required');
 
 	const songs = await clubFetch<SelectBaseSong[]>(`/${clubId}/songs`);
 	return songs;
 }
 
-export async function clientGetClubBySubdomain(subdomain: string) {
+export async function getClubBySubdomain(subdomain: string | null) {
+	if (!subdomain) throw new Error('Subdomain required');
+
 	const club = await clubFetch<SelectClub>(`?subdomain=${subdomain}`);
 	return club;
 }
 
-export async function clientGetClubDailySong(clubId?: string) {
+export async function getClubDailySong(clubId?: string) {
 	if (!clubId) return null;
 
 	const daily = await clubFetch<{ song: SelectBaseSong; url: string }>(

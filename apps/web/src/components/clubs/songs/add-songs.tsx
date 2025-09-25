@@ -1,6 +1,6 @@
 'use client';
 
-import { clientGetArtistAlbums } from '@/app/api/spotify.service';
+import { getArtistAlbums } from '@/app/api/spotify.service';
 import { ArtistAlbums } from '@/components/clubs/info/artist-albums';
 import { ClubDownloadStatus } from '@/components/clubs/info/club-download-status';
 import { SongUploadModal } from '@/components/clubs/songs/song-upload-modal';
@@ -16,8 +16,8 @@ export function AddSongs({ club }: { club: SelectClub }) {
 	const [selectedAmt, setSelectedAmt] = useState(0);
 
 	const { data: albums, isPending } = useQuery({
-		queryKey: ['artist', 'albums', club.artistId],
-		queryFn: () => clientGetArtistAlbums(club.artistId),
+		queryKey: ['artists', club.artistId, 'albums'],
+		queryFn: () => getArtistAlbums(club.artistId),
 	});
 
 	const submitWithClubId = submitClubSongs.bind(null, club.id);
@@ -61,6 +61,7 @@ export function AddSongs({ club }: { club: SelectClub }) {
 					Add songs
 				</button>
 				<ArtistAlbums
+					artistId={club.artistId}
 					albums={albums}
 					isPending={isPending}
 					setSelectedAmt={setSelectedAmt}

@@ -1,8 +1,8 @@
 'use client';
 
-import { clientGetAlbumTracks } from '@/app/api/spotify.service';
+import { getAlbumTracks } from '@/app/api/spotify.service';
 import { TrackSkeleton } from '@/components/skeletons/track-skeleton';
-import { useSubdomain } from '@/hooks/use-subdomain';
+import { useClub } from '@/hooks/use-club';
 import { cn, durationFormatted } from '@/util';
 import { SimplifiedAlbum, SimplifiedTrack } from '@spotify/web-api-ts-sdk';
 import { useQuery } from '@tanstack/react-query';
@@ -10,16 +10,21 @@ import { Dispatch, SetStateAction } from 'react';
 
 interface AlbumTracksProps {
 	album: SimplifiedAlbum;
+	artistId: string;
 	setSelectedAmt: Dispatch<SetStateAction<number>>;
 }
 
-export function AlbumTracks({ album, setSelectedAmt }: AlbumTracksProps) {
+export function AlbumTracks({
+	album,
+	artistId,
+	setSelectedAmt,
+}: AlbumTracksProps) {
 	const { data: tracks, isPending } = useQuery({
-		queryKey: ['albums', 'tracks', album.id],
-		queryFn: () => clientGetAlbumTracks(album.id),
+		queryKey: ['artists', artistId, 'albums', album.id, 'tracks'],
+		queryFn: () => getAlbumTracks(album.id),
 	});
 
-	const { songs } = useSubdomain();
+	const { songs } = useClub();
 
 	const clubAlreadyHasSong = (track: SimplifiedTrack) =>
 		songs?.some((song) => song.trackId === track.id) ?? false;

@@ -5,12 +5,14 @@ import Image from 'next/image';
 import { Dispatch, SetStateAction } from 'react';
 
 interface ArtistAlbumsProps {
+	artistId: string;
 	albums?: SimplifiedAlbum[];
 	isPending: boolean;
 	setSelectedAmt: Dispatch<SetStateAction<number>>;
 }
 
 export function ArtistAlbums({
+	artistId,
 	albums,
 	isPending,
 	setSelectedAmt,
@@ -50,6 +52,7 @@ export function ArtistAlbums({
 						<div className='collapse-content text-sm'>
 							<AlbumTracks
 								album={album}
+								artistId={artistId}
 								setSelectedAmt={setSelectedAmt}
 							/>
 						</div>

@@ -11,24 +11,24 @@ async function spotifyFetch<T>(endpoint: string) {
 	return data;
 }
 
-export async function clientSearchArtist(query: string) {
+export async function searchArtist(query: string) {
 	const artists = await spotifyFetch<Artist[]>(`/artists?query=${query}}`);
 	return artists;
 }
 
-export async function clientGetArtist(artistId: string) {
+export async function getArtist(artistId: string) {
 	const artist = await spotifyFetch<Artist>(`/artists/${artistId}}`);
 	return artist;
 }
 
-export async function clientGetArtistAlbums(artistId: string) {
+export async function getArtistAlbums(artistId: string) {
 	const albums = await spotifyFetch<SimplifiedAlbum[]>(
 		`/artists/${artistId}/albums`
 	);
 	return albums;
 }
 
-export async function clientGetAlbumTracks(albumId: string) {
+export async function getAlbumTracks(albumId: string) {
 	const tracks = await spotifyFetch<SimplifiedTrack[]>(
 		`/albums/${albumId}/tracks`
 	);

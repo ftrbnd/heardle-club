@@ -2,10 +2,10 @@
 
 import AudioPlayer from '@/app/(subdomain)/s/[subdomain]/play/_components/audio-player';
 import { SongSelect } from '@/app/(subdomain)/s/[subdomain]/play/_components/song-select';
-import { useSubdomain } from '@/hooks/use-subdomain';
+import { useClub } from '@/hooks/use-club';
 
 export default function Page() {
-	const { daily, songs } = useSubdomain();
+	const { daily, songs } = useClub();
 	if (!songs || songs.length === 0) return <></>;
 
 	return (

@@ -1,39 +1,41 @@
 'use client';
 
 import {
-	clientGetClubBySubdomain,
-	clientGetClubDailySong,
-	clientGetClubSongs,
+	getClubBySubdomain,
+	getClubDailySong,
+	getClubSongs,
 } from '@/app/api/clubs.service';
 import { protocol, rootDomain, rootURL } from '@/util/domains';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
-export function useSubdomain() {
-	const [subdomain, setSubdomain] = useState<string>('');
+export function useClub() {
+	const [subdomain, setSubdomain] = useState<string | null>(null);
 
 	const { data: club } = useQuery({
-		queryKey: ['subdomain', 'club', subdomain],
-		queryFn: () => clientGetClubBySubdomain(subdomain),
-		enabled: subdomain !== '',
+		queryKey: ['clubs', subdomain],
+		queryFn: () => getClubBySubdomain(subdomain),
+		enabled: subdomain !== null,
 	});
 
 	const { data: songs } = useQuery({
-		queryKey: ['subdomain', 'club', 'songs', subdomain],
-		queryFn: () => clientGetClubSongs(club?.id),
+		queryKey: ['clubs', subdomain, 'songs'],
+		queryFn: () => getClubSongs(club?.id),
+		enabled: club?.id !== undefined,
 		staleTime: 0,
 	});
 
 	const { data: daily } = useQuery({
-		queryKey: ['subdomain', 'club', 'daily', subdomain],
-		queryFn: () => clientGetClubDailySong(club?.id),
+		queryKey: ['clubs', subdomain, 'daily'],
+		queryFn: () => getClubDailySong(club?.id),
+		enabled: club?.id !== undefined,
 		staleTime: 0,
 	});
 
 	useEffect(() => {
 		const href = window.location.href;
 
-		if (href === rootURL) setSubdomain('');
+		if (href === rootURL) setSubdomain(null);
 		else {
 			const subdomain = href
 				.split(rootDomain)[0]
@@ -44,5 +46,10 @@ export function useSubdomain() {
 		}
 	}, []);
 
-	return { subdomain, club, songs, daily };
+	return {
+		subdomain,
+		club,
+		songs,
+		daily,
+	};
 }
