@@ -1,6 +1,5 @@
 'use client';
 
-import { getArtistAlbums } from '@/app/api/spotify.service';
 import { ArtistAlbums } from '@/components/clubs/info/artist-albums';
 import { ClubDownloadStatus } from '@/components/clubs/info/club-download-status';
 import { SongUploadModal } from '@/components/clubs/songs/song-upload-modal';
@@ -9,15 +8,14 @@ import { submitClubSongs } from '@/app/actions/backend';
 import { Search } from '@/components/icons/search';
 import { Upload } from '@/components/icons/upload';
 import { SelectClub } from '@repo/database/postgres/schema';
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useSpotify } from '@/hooks/use-spotify';
 
 export function AddSongs({ club }: { club: SelectClub }) {
 	const [selectedAmt, setSelectedAmt] = useState(0);
 
-	const { data: albums, isPending } = useQuery({
-		queryKey: ['artists', club.artistId, 'albums'],
-		queryFn: () => getArtistAlbums(club.artistId),
+	const { artistAlbums, artistAlbumsPending } = useSpotify({
+		artistId: club.artistId,
 	});
 
 	const submitWithClubId = submitClubSongs.bind(null, club.id);
@@ -62,8 +60,8 @@ export function AddSongs({ club }: { club: SelectClub }) {
 				</button>
 				<ArtistAlbums
 					artistId={club.artistId}
-					albums={albums}
-					isPending={isPending}
+					albums={artistAlbums}
+					isPending={artistAlbumsPending}
 					setSelectedAmt={setSelectedAmt}
 				/>
 			</form>

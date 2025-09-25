@@ -1,11 +1,10 @@
 'use client';
 
-import { getAlbumTracks } from '@/app/api/spotify.service';
 import { TrackSkeleton } from '@/components/skeletons/track-skeleton';
 import { useClub } from '@/hooks/use-club';
+import { useSpotify } from '@/hooks/use-spotify';
 import { cn, durationFormatted } from '@/util';
 import { SimplifiedAlbum, SimplifiedTrack } from '@spotify/web-api-ts-sdk';
-import { useQuery } from '@tanstack/react-query';
 import { Dispatch, SetStateAction } from 'react';
 
 interface AlbumTracksProps {
@@ -19,9 +18,9 @@ export function AlbumTracks({
 	artistId,
 	setSelectedAmt,
 }: AlbumTracksProps) {
-	const { data: tracks, isPending } = useQuery({
-		queryKey: ['artists', artistId, 'albums', album.id, 'tracks'],
-		queryFn: () => getAlbumTracks(album.id),
+	const { albumTracks, albumTracksPending } = useSpotify({
+		artistId,
+		albumId: album.id,
 	});
 
 	const { songs } = useClub();
@@ -31,7 +30,7 @@ export function AlbumTracks({
 
 	return (
 		<div className='flex flex-col gap-2'>
-			{!tracks || isPending ? (
+			{!albumTracks || albumTracksPending ? (
 				<>
 					<TrackSkeleton />
 					<TrackSkeleton />
@@ -41,7 +40,7 @@ export function AlbumTracks({
 					<TrackSkeleton />
 				</>
 			) : (
-				tracks.map((track) => (
+				albumTracks.map((track) => (
 					<div
 						key={track.id}
 						className={cn(

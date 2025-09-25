@@ -21,14 +21,18 @@ export async function getArtist(artistId: string) {
 	return artist;
 }
 
-export async function getArtistAlbums(artistId: string) {
+export async function getArtistAlbums(artistId?: string) {
+	if (!artistId) throw new Error('Artist ID required');
+
 	const albums = await spotifyFetch<SimplifiedAlbum[]>(
 		`/artists/${artistId}/albums`
 	);
 	return albums;
 }
 
-export async function getAlbumTracks(albumId: string) {
+export async function getAlbumTracks(albumId?: string) {
+	if (!albumId) throw new Error('Album ID required');
+
 	const tracks = await spotifyFetch<SimplifiedTrack[]>(
 		`/albums/${albumId}/tracks`
 	);
