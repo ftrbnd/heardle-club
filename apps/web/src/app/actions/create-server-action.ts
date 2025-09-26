@@ -68,13 +68,9 @@ export async function createServerAction<
 	if (validationError) return { error: validationError };
 
 	try {
-		const { pathToRevalidate } = await actionFn(
-			user as any,
-			requiredParams as any,
-			data
-		);
+		const res = await actionFn(user as any, requiredParams as any, data);
 
-		if (pathToRevalidate) revalidatePath(pathToRevalidate);
+		if (res?.pathToRevalidate) revalidatePath(res.pathToRevalidate);
 
 		return {
 			success: true,

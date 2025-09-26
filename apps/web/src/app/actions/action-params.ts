@@ -22,5 +22,5 @@ export interface ServerActionParams<
 		user: TSessionRequired extends true ? User : User | null,
 		params: TParamsRequired extends true ? TParams : undefined,
 		data?: UData | null
-	) => Promise<{ pathToRevalidate?: string }>;
+	) => Promise<{ pathToRevalidate?: string } | void>;
 }

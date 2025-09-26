@@ -8,9 +8,9 @@ import {
 
 export const getUserGuesses = async (ids: UserGuessIDs) => {
 	const data = await redis.json.get(guessesKey(ids));
-	const res = guessesSchema.parse(data);
+	const prevGuesses = guessesSchema.nullable().default([]).parse(data);
 
-	return res;
+	return prevGuesses ?? [];
 };
 
 export const addUserGuess = async (ids: UserGuessIDs, newGuess: Guess) => {

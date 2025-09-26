@@ -1,6 +1,6 @@
 'use client';
 
-import { submitSongGuess } from '@/app/actions/db';
+import { useUser } from '@/hooks/use-user';
 import { SelectBaseSong } from '@repo/database/postgres/schema';
 import { ChangeEvent } from 'react';
 
@@ -10,6 +10,8 @@ interface SongSelectProps {
 }
 
 export function SongSelect({ songs, correctSong }: SongSelectProps) {
+	const { submitGuess } = useUser();
+
 	const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
 		if (
 			event.target.className === 'default_selection' ||
@@ -20,15 +22,16 @@ export function SongSelect({ songs, correctSong }: SongSelectProps) {
 		const selectedSong = songs.find((song) => song.id === event.target.value);
 		if (!selectedSong) return;
 
-		const isCorrect = selectedSong.id === correctSong.id;
-		console.log({ isCorrect });
+		const status =
+			selectedSong.id === correctSong.id
+				? 'correct'
+				: selectedSong.album === correctSong.album
+					? 'album'
+					: 'wrong';
 
-		await submitSongGuess({
-			clubId: correctSong.clubId,
-			guess: {
-				songId: selectedSong.id,
-				status: isCorrect ? 'correct' : 'wrong',
-			},
+		await submitGuess({
+			songId: selectedSong.id,
+			status,
 		});
 	};
 	return (
