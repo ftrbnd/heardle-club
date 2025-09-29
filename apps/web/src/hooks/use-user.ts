@@ -16,12 +16,13 @@ export function useUser() {
 	const { data: user } = useQuery({
 		queryKey: ['me'],
 		queryFn: getUser,
+		retry: 3,
 	});
 
 	const { data: guesses } = useQuery({
 		queryKey: ['me', 'guesses', club?.id],
 		queryFn: () => getUserGuesses(club?.id),
-		enabled: club?.id !== undefined,
+		enabled: club?.id !== undefined && user !== undefined,
 	});
 
 	const { mutateAsync } = useMutation({

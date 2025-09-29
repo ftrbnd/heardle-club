@@ -104,8 +104,12 @@ async function main() {
 	console.log('✔️  Seeded REDIS database with clubs');
 
 	const bullMqEntries = await redis.keys('bull:*');
-	const count = await redis.del(...bullMqEntries);
+	let count = await redis.del(...bullMqEntries);
 	console.log(`✔️  Deleted ${count} BULLMQ entries`);
+
+	const guessEntries = await redis.keys('guesses:*');
+	count = await redis.del(...guessEntries);
+	console.log(`✔️  Deleted ${count} guess entries`);
 
 	await emptyBucket(SONGS_BUCKET);
 	await emptyBucket(AVATARS_BUCKET);

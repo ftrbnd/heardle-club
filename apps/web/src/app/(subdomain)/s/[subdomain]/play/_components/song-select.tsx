@@ -34,12 +34,18 @@ export function SongSelect({ songs, correctSong }: SongSelectProps) {
 			status,
 		});
 	};
+
+	const songsUnavailable = !songs || songs.length === 0;
+
 	return (
 		<select
+			disabled={songsUnavailable}
 			className='select select-primary play-page-width place-self-center'
 			defaultValue={'Choose a song!'}
 			onChange={handleChange}>
-			<option className='default_selection'>Choose a song!</option>
+			<option className='default_selection'>
+				{songsUnavailable ? 'No songs found.' : 'Choose a song!'}
+			</option>
 			{songs?.map((song) => (
 				<option
 					key={song.id}

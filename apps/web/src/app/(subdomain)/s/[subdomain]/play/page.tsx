@@ -9,17 +9,18 @@ import { useUser } from '@/hooks/use-user';
 export default function Page() {
 	const { daily, songs } = useClub();
 	const { guesses } = useUser();
-	if (!songs || songs.length === 0) return <></>;
 
 	return (
 		<div className='flex-1 flex flex-col'>
-			{guesses?.map((guess, index) => (
-				<Guess
-					key={index}
-					guess={guess}
-					song={songs[0]}
-				/>
-			))}
+			{guesses &&
+				songs &&
+				guesses.map((guess, index) => (
+					<Guess
+						key={index}
+						guess={guess}
+						song={songs[0]}
+					/>
+				))}
 
 			<SongSelect
 				songs={songs}

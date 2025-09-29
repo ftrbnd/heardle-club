@@ -11,7 +11,9 @@ interface AudioProps {
 export default function AudioPlayer({ url }: AudioProps) {
 	const [second, setSecond] = useState(0);
 	const [icon, setIcon] = useState<'play' | 'pause'>('play');
-	const [error, setError] = useState('');
+	const [error, setError] = useState<string | null>(() =>
+		url ? '' : 'Audio source unavailable.'
+	);
 	const audioRef = useRef<HTMLAudioElement>(null);
 
 	useEffect(() => {
