@@ -25,7 +25,7 @@ export function useClub() {
 		staleTime: 0,
 	});
 
-	const { data: daily } = useQuery({
+	const { data: daily, isLoading: dailyLoading } = useQuery({
 		queryKey: ['clubs', subdomain, 'daily'],
 		queryFn: () => getClubDailySong(club?.id),
 		enabled: club?.id !== undefined,
@@ -51,5 +51,6 @@ export function useClub() {
 		club,
 		songs,
 		daily,
+		dailyLoading,
 	};
 }

@@ -2,17 +2,29 @@
 
 import { Check } from '@/components/icons/check';
 import { Wrong } from '@/components/icons/wrong';
+import { cn } from '@/util';
 import { SelectBaseSong } from '@repo/database/postgres/schema';
 import { Guess as GuessType } from '@repo/database/redis/schema';
 import Image from 'next/image';
+import { ComponentProps } from 'react';
 
-interface GuessComponentProps {
+interface GuessComponentProps extends ComponentProps<'div'> {
 	guess: GuessType;
 	song: SelectBaseSong;
 }
-export function Guess({ guess, song }: GuessComponentProps) {
+export function Guess({
+	guess,
+	song,
+	className,
+	...props
+}: GuessComponentProps) {
 	return (
-		<div className='card card-side bg-base-200 shadow-xl max-h-[54px] play-page-width self-center'>
+		<div
+			{...props}
+			className={cn(
+				'card card-side bg-base-200 shadow-xl max-h-[54px] self-center',
+				className
+			)}>
 			<figure>
 				<Image
 					src={song.image ?? '/artist_placeholder.jpg'}

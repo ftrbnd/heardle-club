@@ -2,19 +2,28 @@
 
 import { Pause } from '@/components/icons/pause';
 import { Play } from '@/components/icons/play';
-import { useEffect, useRef, useState } from 'react';
+import { useUser } from '@/hooks/use-user';
+import { cn } from '@/util';
+import { completedHeardle, GUESS_LIMIT } from '@/util/game';
+import { ComponentProps, useEffect, useRef, useState } from 'react';
 
-interface AudioProps {
+interface AudioProps extends ComponentProps<'div'> {
 	url?: string;
+	loading: boolean;
 }
 
-export default function AudioPlayer({ url }: AudioProps) {
+export default function AudioPlayer({
+	url,
+	loading,
+	className,
+	...props
+}: AudioProps) {
 	const [second, setSecond] = useState(0);
 	const [icon, setIcon] = useState<'play' | 'pause'>('play');
-	const [error, setError] = useState<string | null>(() =>
-		url ? '' : 'Audio source unavailable.'
-	);
+	const [error, setError] = useState<string | null>(null);
 	const audioRef = useRef<HTMLAudioElement>(null);
+
+	const { guesses } = useUser();
 
 	useEffect(() => {
 		const handleTimeUpdate = () => {
@@ -22,11 +31,19 @@ export default function AudioPlayer({ url }: AudioProps) {
 			if (audioRef.current) {
 				currentSecond = audioRef.current.currentTime;
 
-				if (currentSecond >= 6) {
+				if (currentSecond >= GUESS_LIMIT) {
 					pauseSong();
 				}
 
 				setSecond(audioRef.current.currentTime);
+			}
+
+			if (
+				guesses &&
+				currentSecond >= guesses.length + 1 &&
+				!completedHeardle(guesses)
+			) {
+				pauseSong();
 			}
 		};
 
@@ -70,24 +87,36 @@ export default function AudioPlayer({ url }: AudioProps) {
 	};
 
 	return (
-		<div className='flex flex-col items-center gap-2 w-full'>
+		<div
+			{...props}
+			className={cn(
+				'flex flex-col items-center gap-2 play-page-width',
+				className
+			)}>
 			<progress
-				className='progress progress-primary play-page-width'
+				className='progress progress-primary'
 				value={second}
-				max='6'></progress>
+				max={GUESS_LIMIT}></progress>
 			{error && <p className='text-error'>{error}</p>}
 
-			<div className='flex justify-between pt-2 play-page-width'>
+			<div className='flex justify-between pt-2 w-full'>
 				<kbd className='kbd'>
 					00:{String(Math.floor(second)).padStart(2, '0')}
 				</kbd>
 
 				<button
+					disabled={!url || loading}
 					className='btn btn-ghost'
 					onClick={togglePlayer}>
-					{icon === 'play' ? <Play /> : <Pause />}
+					{!url || loading ? (
+						<span className='loading loading-spinner loading-xs md:loading-md'></span>
+					) : icon === 'play' ? (
+						<Play />
+					) : (
+						<Pause />
+					)}
 				</button>
-				<kbd className='kbd'>00:06</kbd>
+				<kbd className='kbd'>00:0{GUESS_LIMIT}</kbd>
 			</div>
 
 			<audio

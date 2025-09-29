@@ -1,15 +1,21 @@
 'use client';
 
 import { useUser } from '@/hooks/use-user';
+import { cn } from '@/util';
 import { SelectBaseSong } from '@repo/database/postgres/schema';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, ComponentProps } from 'react';
 
-interface SongSelectProps {
+interface SongSelectProps extends ComponentProps<'select'> {
 	songs?: SelectBaseSong[];
 	correctSong?: SelectBaseSong;
 }
 
-export function SongSelect({ songs, correctSong }: SongSelectProps) {
+export function SongSelect({
+	songs,
+	correctSong,
+	className,
+	...props
+}: SongSelectProps) {
 	const { submitGuess } = useUser();
 
 	const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
@@ -39,8 +45,12 @@ export function SongSelect({ songs, correctSong }: SongSelectProps) {
 
 	return (
 		<select
+			{...props}
 			disabled={songsUnavailable}
-			className='select select-primary play-page-width place-self-center'
+			className={cn(
+				'select select-primary play-page-width place-self-center',
+				className
+			)}
 			defaultValue={'Choose a song!'}
 			onChange={handleChange}>
 			<option className='default_selection'>

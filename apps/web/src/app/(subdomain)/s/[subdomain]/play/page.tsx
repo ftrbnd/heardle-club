@@ -7,26 +7,34 @@ import { useClub } from '@/hooks/use-club';
 import { useUser } from '@/hooks/use-user';
 
 export default function Page() {
-	const { daily, songs } = useClub();
+	const { daily, dailyLoading, songs } = useClub();
 	const { guesses } = useUser();
 
 	return (
-		<div className='flex-1 flex flex-col'>
-			{guesses &&
-				songs &&
-				guesses.map((guess, index) => (
-					<Guess
-						key={index}
-						guess={guess}
-						song={songs[0]}
-					/>
-				))}
+		<div className='flex-1 flex flex-col items-center'>
+			<div className='flex-1 flex flex-col p-2 gap-2 play-page-width'>
+				{guesses &&
+					songs &&
+					guesses.map((guess, index) => (
+						<Guess
+							key={index}
+							guess={guess}
+							song={songs[0]}
+							className='w-full'
+						/>
+					))}
+			</div>
 
 			<SongSelect
 				songs={songs}
 				correctSong={daily?.song}
+				className='justify-self-end'
 			/>
-			<AudioPlayer url={daily?.url} />
+			<AudioPlayer
+				loading={dailyLoading}
+				url={daily?.url}
+				className='justify-self-end'
+			/>
 		</div>
 	);
 }
