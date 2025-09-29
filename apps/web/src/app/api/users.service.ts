@@ -1,4 +1,5 @@
 import { User } from '@/app/actions/_user';
+import { SelectStatistics } from '@repo/database/postgres/schema';
 import { Guess } from '@repo/database/redis/schema';
 
 async function userFetch<T>(endpoint: string, init?: RequestInit) {
@@ -10,15 +11,21 @@ async function userFetch<T>(endpoint: string, init?: RequestInit) {
 	return data as T;
 }
 
+function checkIDs(userId?: string, clubId?: string) {
+	if (!userId || !clubId) throw new Error('User and Club IDs are required');
+
+	return { user: userId, club: clubId };
+}
+
 export async function getUser() {
 	const res = await userFetch<User | null>(`/me`);
 	return res;
 }
 
 export async function getUserGuesses(userId?: string, clubId?: string) {
-	if (!userId || !clubId) throw new Error('User and Club IDs are required');
+	const { user, club } = checkIDs(userId, clubId);
 
-	const res = await userFetch<Guess[]>(`/${userId}/guesses/${clubId}`);
+	const res = await userFetch<Guess[]>(`/${user}/guesses/${club}`);
 	return res;
 }
 
@@ -27,9 +34,9 @@ export async function submitUserGuess(
 	userId?: string,
 	clubId?: string
 ) {
-	if (!userId || !clubId) throw new Error('User and Club IDs are required');
+	const { user, club } = checkIDs(userId, clubId);
 
-	const res = await userFetch<Guess[]>(`/${userId}/guesses/${clubId}`, {
+	const res = await userFetch<Guess[]>(`/${user}/guesses/${club}`, {
 		method: 'PATCH',
 		body: JSON.stringify(guess),
 		headers: {
@@ -37,5 +44,12 @@ export async function submitUserGuess(
 		},
 	});
 
+	return res;
+}
+
+export async function getUserStatistics(userId?: string, clubId?: string) {
+	const { user, club } = checkIDs(userId, clubId);
+
+	const res = await userFetch<SelectStatistics>(`/${user}/statistics/${club}`);
 	return res;
 }

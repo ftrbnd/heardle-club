@@ -7,7 +7,7 @@ import {
 	customType,
 } from 'drizzle-orm/pg-core';
 import { timestamps } from './timestamps';
-import { clubs, usersToClubs } from './tables';
+import { clubs, statistics, usersToClubs } from './tables';
 
 export const users = pgTable('users', {
 	id: text().primaryKey(),
@@ -21,6 +21,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
 	oauthAccounts: many(oauthAccounts),
 	usersToClubs: many(usersToClubs),
 	club: one(clubs),
+	statistics: many(statistics),
 }));
 
 export const oauthAccounts = pgTable('oauth_accounts', {

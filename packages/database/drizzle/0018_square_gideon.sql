@@ -1,0 +1,1 @@
+ALTER TABLE "statistics" ADD COLUMN "user_id" text NOT NULL;

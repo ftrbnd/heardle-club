@@ -1,6 +1,7 @@
 import {
 	getUser,
 	getUserGuesses,
+	getUserStatistics,
 	submitUserGuess,
 } from '@/app/api/users.service';
 import { customToast } from '@/components/layout/toast';
@@ -22,13 +23,19 @@ export function useUser() {
 	const { data: guesses } = useQuery({
 		queryKey: ['users', 'me', 'guesses', club?.id],
 		queryFn: () => getUserGuesses(user?.id, club?.id),
-		enabled: club?.id !== undefined && user !== undefined,
+		enabled: club?.id !== undefined && user !== undefined && user !== null,
+	});
+
+	const { data: statistics } = useQuery({
+		queryKey: ['users', 'me', 'statistics', club?.id],
+		queryFn: () => getUserStatistics(user?.id, club?.id),
+		enabled: club?.id !== undefined && user !== undefined && user !== null,
 	});
 
 	const { mutateAsync } = useMutation({
 		// concurrent optimistic updates: https://tkdodo.eu/blog/concurrent-optimistic-updates-in-react-query
 		mutationKey: ['guesses'],
-		mutationFn: (guess: Guess) => submitUserGuess(guess, club?.id),
+		mutationFn: (guess: Guess) => submitUserGuess(guess, user?.id, club?.id),
 		onMutate: async (guess) => {
 			await queryClient.cancelQueries({
 				queryKey: ['users', 'me', 'guesses', club?.id],
@@ -90,5 +97,6 @@ export function useUser() {
 		user,
 		guesses,
 		submitGuess: mutateAsync,
+		statistics,
 	};
 }

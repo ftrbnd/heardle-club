@@ -16,7 +16,7 @@ export function SongSelect({
 	className,
 	...props
 }: SongSelectProps) {
-	const { submitGuess } = useUser();
+	const { guesses, submitGuess } = useUser();
 
 	const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
 		if (
@@ -58,6 +58,7 @@ export function SongSelect({
 			</option>
 			{songs?.map((song) => (
 				<option
+					disabled={guesses?.some((g) => g.songId === song.id)}
 					key={song.id}
 					value={song.id}>
 					{song.title}

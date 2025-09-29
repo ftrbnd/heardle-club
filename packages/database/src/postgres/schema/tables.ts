@@ -96,16 +96,21 @@ export const baseSongsRelations = relations(baseSongs, ({ one }) => ({
 
 export const statistics = pgTable('statistics', {
 	id: text().primaryKey(),
+	userId: text().notNull(),
+	clubId: text().notNull(),
 	gamesPlayed: integer().notNull().default(0),
 	gamesWon: integer().notNull().default(0),
 	currentStreak: integer().notNull().default(0),
 	maxStreak: integer().notNull().default(0),
 	accuracy: integer().notNull().default(0),
-	clubId: text().notNull(),
 	...timestamps,
 });
 
 export const statisticsRelations = relations(statistics, ({ one }) => ({
+	user: one(users, {
+		fields: [statistics.userId],
+		references: [users.id],
+	}),
 	club: one(clubs, {
 		fields: [statistics.clubId],
 		references: [clubs.id],
