@@ -15,17 +15,21 @@ export async function getUser() {
 	return res;
 }
 
-export async function getUserGuesses(clubId?: string) {
-	if (!clubId) throw new Error('Club ID required');
+export async function getUserGuesses(userId?: string, clubId?: string) {
+	if (!userId || !clubId) throw new Error('User and Club IDs are required');
 
-	const res = await userFetch<Guess[]>(`/me/guesses?clubId=${clubId}`);
+	const res = await userFetch<Guess[]>(`/${userId}/guesses/${clubId}`);
 	return res;
 }
 
-export async function submitUserGuess(guess: Guess, clubId?: string) {
-	if (!clubId) throw new Error('Club ID required');
+export async function submitUserGuess(
+	guess: Guess,
+	userId?: string,
+	clubId?: string
+) {
+	if (!userId || !clubId) throw new Error('User and Club IDs are required');
 
-	const res = await userFetch<Guess[]>(`/me/guesses?clubId=${clubId}`, {
+	const res = await userFetch<Guess[]>(`/${userId}/guesses/${clubId}`, {
 		method: 'PATCH',
 		body: JSON.stringify(guess),
 		headers: {

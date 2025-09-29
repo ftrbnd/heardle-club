@@ -14,14 +14,14 @@ export function useUser() {
 	const queryClient = useQueryClient();
 
 	const { data: user } = useQuery({
-		queryKey: ['me'],
+		queryKey: ['users', 'me'],
 		queryFn: getUser,
 		retry: 3,
 	});
 
 	const { data: guesses } = useQuery({
-		queryKey: ['me', 'guesses', club?.id],
-		queryFn: () => getUserGuesses(club?.id),
+		queryKey: ['users', 'me', 'guesses', club?.id],
+		queryFn: () => getUserGuesses(user?.id, club?.id),
 		enabled: club?.id !== undefined && user !== undefined,
 	});
 
@@ -31,10 +31,11 @@ export function useUser() {
 		mutationFn: (guess: Guess) => submitUserGuess(guess, club?.id),
 		onMutate: async (guess) => {
 			await queryClient.cancelQueries({
-				queryKey: ['me', 'guesses', club?.id],
+				queryKey: ['users', 'me', 'guesses', club?.id],
 			});
 
 			const prevGuesses = queryClient.getQueryData<Guess[]>([
+				'users',
 				'me',
 				'guesses',
 				club?.id,
@@ -45,12 +46,12 @@ export function useUser() {
 
 				if (guessLimitReached) {
 					queryClient.setQueryData<Guess[]>(
-						['me', 'guesses', club?.id],
+						['users', 'me', 'guesses', club?.id],
 						(oldGuesses) => oldGuesses
 					);
 				} else {
 					queryClient.setQueryData<Guess[]>(
-						['me', 'guesses', club?.id],
+						['users', 'me', 'guesses', club?.id],
 						(oldGuesses) => (oldGuesses ? [...oldGuesses, guess] : oldGuesses)
 					);
 				}
@@ -65,7 +66,7 @@ export function useUser() {
 			});
 
 			queryClient.setQueryData(
-				['me', 'guesses', club?.id],
+				['users', 'me', 'guesses', club?.id],
 				onMutateResult?.prevGuesses
 			);
 		},
@@ -79,7 +80,7 @@ export function useUser() {
 		onSettled: () => {
 			if (queryClient.isMutating({ mutationKey: ['guesses'] }) === 1) {
 				queryClient.invalidateQueries({
-					queryKey: ['me', 'guesses', club?.id],
+					queryKey: ['users', 'me', 'guesses', club?.id],
 				});
 			}
 		},
