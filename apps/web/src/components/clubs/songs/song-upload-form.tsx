@@ -4,11 +4,18 @@ import { useToastActionState } from '@/hooks/use-toast-action-state';
 import { updateSongDuration, uploadSongFile } from '@/app/actions/db';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { SingleSongFields } from '@/components/clubs/songs/single-song-fields';
+import { cn } from '@/util';
 
 interface UploadFormProps {
 	club: SelectClub;
 	songBeingEdited?: SelectBaseSong;
 	onSuccess: () => void;
+}
+
+interface FileAndIndex {
+	file: File | null;
+	index: number;
 }
 
 export function SongUploadForm({
@@ -19,6 +26,8 @@ export function SongUploadForm({
 	const [audioDuration, setAudioDuration] = useState(
 		songBeingEdited?.duration ?? 0
 	);
+	const [files, setFiles] = useState<FileList | null>(null);
+	const [selectedFile, setSelectedFile] = useState<FileAndIndex | null>(null);
 
 	const uploadWithClubId = uploadSongFile.bind(null, {
 		clubId: club.id,
@@ -50,15 +59,12 @@ export function SongUploadForm({
 	});
 
 	const handleAudioChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files ? e.target.files[0] : null;
-		if (file) {
-			const audio = new Audio();
-			audio.src = URL.createObjectURL(file);
-
-			audio.addEventListener('loadedmetadata', () => {
-				setAudioDuration(audio.duration);
-
-				URL.revokeObjectURL(audio.src);
+		const files = e.target.files;
+		if (files) {
+			setFiles(files);
+			setSelectedFile({
+				file: files.item(0),
+				index: 0,
 			});
 		}
 	};
@@ -70,105 +76,68 @@ export function SongUploadForm({
 	}, [uploadState.success, durationState.success, onSuccess]);
 
 	return (
-		<div className='flex flex-col items-center gap-2'>
+		<form className='flex flex-col items-center gap-2'>
 			<fieldset className='fieldset flex flex-col bg-base-200 border-base-300 rounded-box w-full border p-4'>
 				<legend className='fieldset-legend'>Song details</legend>
-				{songBeingEdited ? (
-					<>
-						<form
-							action={durationFormAction}
-							className='flex flex-col gap-2'>
-							<div className='flex items-center justify-between gap-2'>
-								<label className='label'>Duration</label>
-								<input
-									type='number'
-									className='appearance-none input w-full'
-									name='duration'
-									value={audioDuration}
-									onChange={(e) => {
-										if (e.target.value)
-											setAudioDuration(parseInt(e.target.value));
-										else setAudioDuration(0);
-									}}
-								/>
 
+				{files && selectedFile?.file ? (
+					<div className='flex flex-col gap-2 w-full'>
+						<SingleSongFields file={selectedFile.file} />
+						<div className='join self-center'>
+							{new Array(files.length).fill(0).map((value, i) => (
 								<button
-									disabled={uploadActionIsPending || durationActionIsPending}
-									className='btn btn-secondary self-end'>
-									Save
+									type='button'
+									onClick={() =>
+										setSelectedFile({
+											file: files.item(i),
+											index: i,
+										})
+									}
+									key={i}
+									className={cn(
+										'join-item btn',
+										selectedFile.index === i && 'btn-active'
+									)}>
+									{i + 1}
 								</button>
-							</div>
-						</form>
-						<form action={uploadFormAction}>
-							<UploadInput
-								onChange={handleAudioChange}
-								disabled={uploadActionIsPending || durationActionIsPending}
-							/>
-						</form>
-					</>
+							))}
+						</div>
+					</div>
 				) : (
-					<form
-						action={uploadFormAction}
-						className='flex flex-col gap-2'>
-						<>
-							<label className='label'>Title</label>
-							<input
-								type='text'
-								className='input w-full'
-								name='title'
-							/>
-
-							<label className='label'>Artist</label>
-							<input
-								type='text'
-								className='input w-full'
-								name='artist'
-							/>
-
-							<label className='label'>Album</label>
-							<input
-								type='text'
-								className='input w-full'
-								name='album'
-							/>
-						</>
-
-						<UploadInput
-							onChange={handleAudioChange}
-							disabled={uploadActionIsPending || durationActionIsPending}
-						/>
-					</form>
+					<UploadInput onChange={handleAudioChange} />
 				)}
+
+				<button
+					disabled={
+						!files ||
+						files.length === 0 ||
+						uploadActionIsPending ||
+						durationActionIsPending
+					}
+					className='btn btn-neutral mt-4'>
+					Upload {files?.length} file{files && files.length > 1 ? 's' : ''}
+				</button>
 			</fieldset>
-		</div>
+		</form>
 	);
 }
 
 interface UploadInputProps {
 	onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-	disabled?: boolean;
 }
-function UploadInput({ onChange, disabled }: UploadInputProps) {
+function UploadInput({ onChange }: UploadInputProps) {
 	return (
 		<fieldset className='fieldset flex items-center'>
-			<div>
-				<legend className='fieldset-legend'>Pick a file</legend>
-				<input
-					type='file'
-					className='file-input'
-					name='audio_file'
-					accept='audio/mp3'
-					onChange={onChange}
-				/>
-				<label className='label'>Max size 5MB</label>
-			</div>
-
-			<button
-				disabled={disabled}
-				className='btn btn-primary self-end'
-				type='submit'>
-				Upload
-			</button>
+			<legend className='fieldset-legend'>Pick a file</legend>
+			<input
+				type='file'
+				className='file-input'
+				name='audio_file'
+				accept='audio/mp3'
+				multiple
+				onChange={onChange}
+			/>
+			<label className='label'>Max size 5MB</label>
 		</fieldset>
 	);
 }
