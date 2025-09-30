@@ -4,9 +4,13 @@ import { DAILY_QUEUE_NAME } from '@/bullmq/queues/daily.queue';
 import { getAllActiveClubs } from '@repo/database/postgres/api';
 import { Worker } from 'bullmq';
 import path from 'path';
+import { pathToFileURL } from 'url';
 
 export async function createScheduledWorker() {
-	const dailyProcessorFile = path.join(__dirname, '../jobs/daily.job.ts');
+	const dailyProcessorFile =
+		process.env.DEV_OS === 'windows'
+			? pathToFileURL(__dirname + '/../jobs/daily.job.ts')
+			: path.join(__dirname, '../jobs/daily.job.ts');
 
 	const clubs = await getAllActiveClubs();
 

@@ -108,8 +108,10 @@ async function main() {
 	console.log(`✔️  Deleted ${count} BULLMQ entries`);
 
 	const guessEntries = await redis.keys('guesses:*');
-	count = await redis.del(...guessEntries);
-	console.log(`✔️  Deleted ${count} guess entries`);
+	if (guessEntries.length > 0) {
+		count = await redis.del(...guessEntries);
+		console.log(`✔️  Deleted ${count} guess entries`);
+	}
 
 	await emptyBucket(SONGS_BUCKET);
 	await emptyBucket(AVATARS_BUCKET);
