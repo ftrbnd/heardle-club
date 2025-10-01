@@ -34,10 +34,13 @@ export const uploadSongSchema = insertBaseSongSchema
 		title: true,
 		artist: true,
 		album: true,
+		duration: true,
 	})
 	.extend({
 		title: z.string().nullable().optional(),
 		artist: z.string().nullable().array().nullable().optional(),
 		album: z.string().nullable().optional(),
+		duration: z.number().nullable().optional(),
 		audioFile: audioFileSchema,
 	});
+export type UploadSongBody = z.infer<typeof uploadSongSchema>;

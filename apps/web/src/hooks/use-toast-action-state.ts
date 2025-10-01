@@ -9,7 +9,10 @@ type ActionState = {
 };
 
 interface UseToastActionStateProps {
-	action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
+	action: (
+		prevState?: ActionState,
+		formData?: FormData
+	) => Promise<ActionState>;
 	pendingMessage?: string;
 	successMessage?: string;
 }

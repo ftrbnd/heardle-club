@@ -25,7 +25,6 @@ export function SongUploadModal({
 	btnLabel,
 	btnClassName,
 	formTitle,
-	editOptions,
 }: SongUploadModalProps) {
 	const openModal = (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
@@ -59,7 +58,6 @@ export function SongUploadModal({
 						<h3 className='font-bold text-lg'>{formTitle}</h3>
 						<SongUploadForm
 							club={club}
-							songBeingEdited={editOptions?.song}
 							onSuccess={closeModal}
 						/>
 					</div>

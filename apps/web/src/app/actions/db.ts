@@ -2,7 +2,11 @@
 
 import { getSubdomainURL } from '@/util/domains';
 import { createServerAction } from '@/app/actions/create-server-action';
-import { updateAccountSchema, uploadSongSchema } from '@/app/actions/form-data';
+import {
+	updateAccountSchema,
+	UploadSongBody,
+	uploadSongSchema,
+} from '@/app/actions/form-data';
 import {
 	generateSecureRandomString,
 	sanitizeString,
@@ -16,7 +20,6 @@ import {
 	insertClubSong,
 	removeUserFromClub,
 	updateClubActiveStatus,
-	updateClubSongAudio,
 	updateClubSongDuration,
 	updateUser,
 } from '@repo/database/postgres/api';
@@ -29,12 +32,12 @@ import {
 import {
 	removeUserAvatars,
 	uploadUserAvatar,
-	upsertSongFile,
 	uploadCustomClubSongFile,
 	removeClubSongFile,
 } from '@repo/database/supabase/api';
 import { redirect } from 'next/navigation';
 import { z } from 'zod/v4';
+import { SongMetadata } from '@/components/clubs/songs/song-upload-form';
 
 type ActionState = {
 	error?: string;
@@ -214,16 +217,16 @@ export async function deleteUserAvatar(): Promise<ActionState> {
 
 interface UploadSongFileBody {
 	clubId: string;
-	duration: number;
-	originalSong?: SelectBaseSong; // a song's audio source is being updated
+	files: File[];
+	metadataFiles: (SongMetadata | null)[];
 }
-export async function uploadSongFile(
-	{ clubId, duration, originalSong }: UploadSongFileBody,
-	_prevState: ActionState,
-	formData: FormData
-): Promise<ActionState> {
+export async function uploadSongFiles({
+	clubId,
+	files,
+	metadataFiles,
+}: UploadSongFileBody): Promise<ActionState> {
 	return await createServerAction({
-		requiredParams: { clubId, duration },
+		requiredParams: { clubId, files, metadataFiles },
 		sessionRequired: true,
 		validationFn: async (_user, params) => {
 			const club = await getClubById(params.clubId);
@@ -232,65 +235,62 @@ export async function uploadSongFile(
 					error: 'Your current club was not found',
 				};
 
-			const rawFormData = {
-				title: formData.get('title'),
-				artist: formData.get('artist'),
-				album: formData.get('album'),
-				audioFile: formData.get('audio_file'),
-			};
+			const allSongDetails: UploadSongBody[] = [];
 
-			const { data: songDetails, error } = uploadSongSchema.safeParse({
-				...rawFormData,
-				artist: [rawFormData.artist],
-			});
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				const metadata = metadataFiles[i];
 
-			if (error)
-				return {
-					error: z.prettifyError(error),
-				};
+				const { data: songDetails, error } = uploadSongSchema.safeParse({
+					...metadata,
+					audioFile: file,
+					artist: [metadata?.artist],
+					// TODO: upload image
+				});
 
-			return { data: { songDetails, club } };
+				if (error)
+					return {
+						error: z.prettifyError(error),
+					};
+
+				allSongDetails.push(songDetails);
+			}
+
+			return { data: { allSongDetails, club } };
 		},
-		actionFn: async (_user, params, data) => {
+		actionFn: async (_user, _params, data) => {
 			if (!data) throw new Error('Invalid song details');
 
-			const { songDetails, club } = data;
-			if (!songDetails.audioFile) throw new Error('Audio file required');
+			const { allSongDetails, club } = data;
 
-			if (originalSong && songDetails.audioFile) {
-				const { publicUrl } = await upsertSongFile(
-					songDetails.audioFile,
-					originalSong
-				);
-				await updateClubSongAudio({
-					id: originalSong.id,
-					audio: publicUrl,
-					duration: params.duration,
-				});
-			} else if (songDetails.title && songDetails.artist) {
-				const songArtists = songDetails.artist.filter(
-					(artist) => artist !== null
-				);
+			for (const songDetails of allSongDetails) {
+				if (!songDetails.audioFile) throw new Error('Audio file required');
 
-				const fileName = `${sanitizeString(songDetails.title)}.mp3`;
-				const { publicUrl } = await uploadCustomClubSongFile(
-					songDetails.audioFile,
-					club.id,
-					fileName
-				);
+				if (songDetails.title && songDetails.artist && songDetails.duration) {
+					const songArtists = songDetails.artist.filter(
+						(artist) => artist !== null
+					);
 
-				await insertClubSong({
-					id: generateSecureRandomString(),
-					clubId: club.id,
-					title: songDetails.title,
-					artist: songArtists,
-					album: songDetails.album,
-					audio: publicUrl,
-					duration: params.duration,
-					source: 'file_upload',
-				});
-			} else {
-				throw new Error('Missing title or artist fields');
+					const fileName = `${sanitizeString(songDetails.title)}.mp3`;
+					const { publicUrl } = await uploadCustomClubSongFile(
+						songDetails.audioFile,
+						club.id,
+						fileName
+					);
+
+					await insertClubSong({
+						id: generateSecureRandomString(),
+						clubId: club.id,
+						title: songDetails.title,
+						artist: songArtists,
+						album: songDetails.album,
+						audio: publicUrl,
+						duration: songDetails.duration,
+						source: 'file_upload',
+					});
+				} else {
+					throw new Error('Missing title, artist, or duration metadata');
+				}
 			}
 
 			return { pathToRevalidate: `/s/${club.subdomain}` };

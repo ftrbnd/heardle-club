@@ -1,122 +1,169 @@
 'use client';
 
 import { useToastActionState } from '@/hooks/use-toast-action-state';
-import { updateSongDuration, uploadSongFile } from '@/app/actions/db';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { SingleSongFields } from '@/components/clubs/songs/single-song-fields';
 import { cn } from '@/util';
+import { uploadSongFiles } from '@/app/actions/db';
+import { customToast } from '@/components/layout/toast';
 
 interface UploadFormProps {
 	club: SelectClub;
-	songBeingEdited?: SelectBaseSong;
 	onSuccess: () => void;
 }
 
-interface FileAndIndex {
-	file: File | null;
-	index: number;
-}
+export type SongMetadata = Partial<
+	Pick<SelectBaseSong, 'title' | 'artist' | 'album' | 'duration'>
+> & {
+	picture: string | null;
+	/**
+	 * used to cross-match a File and SongMetadata object when uploading
+	 */
+	fileName: string;
+};
 
-export function SongUploadForm({
-	club,
-	songBeingEdited,
-	onSuccess,
-}: UploadFormProps) {
-	const [audioDuration, setAudioDuration] = useState(
-		songBeingEdited?.duration ?? 0
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB in bytes
+
+const isPlural = (amount: number) => amount > 1 || amount === 0;
+
+export function SongUploadForm({ club, onSuccess }: UploadFormProps) {
+	const [files, setFiles] = useState<File[]>([]);
+	const [selectedFileIndex, setSelectedFileIndex] = useState<number>(0);
+
+	const [metadataFiles, setMetadataFiles] = useState<(SongMetadata | null)[]>(
+		[]
 	);
-	const [files, setFiles] = useState<FileList | null>(null);
-	const [selectedFile, setSelectedFile] = useState<FileAndIndex | null>(null);
+	const selectedFile = files.at(selectedFileIndex);
+	const filePlural = (amount: number) => (isPlural(amount) ? 'files' : 'file');
 
-	const uploadWithClubId = uploadSongFile.bind(null, {
-		clubId: club.id,
-		duration: Math.floor(audioDuration),
-		originalSong: songBeingEdited,
-	});
+	const handleAudioChange = async (e: ChangeEvent<HTMLInputElement>) => {
+		const submittedFiles = e.target.files;
+		if (submittedFiles) {
+			const filesUnderSizeLimit = [...submittedFiles].filter(
+				(file) => file.size < MAX_FILE_SIZE_BYTES
+			);
+			setFiles(filesUnderSizeLimit);
+			setMetadataFiles(new Array(filesUnderSizeLimit.length).fill(null));
+
+			const filesOverSizeLimit =
+				submittedFiles.length - filesUnderSizeLimit.length;
+			if (filesOverSizeLimit > 0) {
+				const wereWas = isPlural(filesOverSizeLimit) ? 'were' : 'was';
+
+				customToast({
+					message: `${filesOverSizeLimit} ${filePlural(filesOverSizeLimit)} out of ${submittedFiles.length}  ${wereWas} over the limit of 10MB.`,
+					type: 'warning',
+				});
+			}
+		}
+	};
+
+	const handleSubmit = async () => {
+		// TODO: catch silent error; files aren't being uploaded
+		// is the total file size being counted as one for this server action?
+		// alternative: send files to elysia server
+		// TODO: add resumable uploads with tus-js-client
+		try {
+			await uploadSongFiles({
+				clubId: club.id,
+				files,
+				metadataFiles,
+			});
+
+			return { success: true };
+		} catch (error) {
+			console.error(error);
+			return {
+				error:
+					error instanceof Error
+						? error.message
+						: `${files.length} ${filePlural(files.length)} failed to upload`,
+			};
+		}
+	};
+
+	const updateMetadata = (metadata: SongMetadata) => {
+		setMetadataFiles((prev) => {
+			const copy = [...prev];
+			copy[selectedFileIndex] = metadata;
+			return copy;
+		});
+	};
+
+	const handleReset = () => {
+		setFiles([]);
+		setMetadataFiles([]);
+	};
+
 	const {
 		formAction: uploadFormAction,
 		actionIsPending: uploadActionIsPending,
 		state: uploadState,
 	} = useToastActionState({
-		action: uploadWithClubId,
-		pendingMessage: 'Uploading file...',
-		successMessage: 'File uploaded successfully!',
+		action: handleSubmit,
+		pendingMessage: `Uploading ${files.length} ${filePlural(files.length)}...`,
+		successMessage: `${files.length} ${filePlural(files.length)} uploaded successfully!`,
 	});
-
-	const updateWithSong = updateSongDuration.bind(null, {
-		song: songBeingEdited,
-		duration: audioDuration,
-	});
-	const {
-		formAction: durationFormAction,
-		actionIsPending: durationActionIsPending,
-		state: durationState,
-	} = useToastActionState({
-		action: updateWithSong,
-		pendingMessage: 'Saving...',
-		successMessage: 'Duration updated',
-	});
-
-	const handleAudioChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const files = e.target.files;
-		if (files) {
-			setFiles(files);
-			setSelectedFile({
-				file: files.item(0),
-				index: 0,
-			});
-		}
-	};
 
 	useEffect(() => {
-		if (uploadState.success || durationState.success) {
+		if (uploadState.success) {
 			onSuccess();
 		}
-	}, [uploadState.success, durationState.success, onSuccess]);
+	}, [uploadState.success, onSuccess]);
 
 	return (
-		<form className='flex flex-col items-center gap-2'>
+		<form
+			action={uploadFormAction}
+			className='flex flex-col items-center gap-2'>
 			<fieldset className='fieldset flex flex-col bg-base-200 border-base-300 rounded-box w-full border p-4'>
 				<legend className='fieldset-legend'>Song details</legend>
 
-				{files && selectedFile?.file ? (
+				{files.length > 0 ? (
 					<div className='flex flex-col gap-2 w-full'>
-						<SingleSongFields file={selectedFile.file} />
-						<div className='join self-center'>
-							{new Array(files.length).fill(0).map((value, i) => (
-								<button
-									type='button'
-									onClick={() =>
-										setSelectedFile({
-											file: files.item(i),
-											index: i,
-										})
-									}
-									key={i}
-									className={cn(
-										'join-item btn',
-										selectedFile.index === i && 'btn-active'
-									)}>
-									{i + 1}
-								</button>
-							))}
-						</div>
+						{selectedFile && (
+							<SingleSongFields
+								file={selectedFile}
+								setMetadata={updateMetadata}
+							/>
+						)}
+
+						{files.length > 1 && (
+							<div className='join self-center'>
+								{new Array(files.length).fill(0).map((_value, i) => (
+									<button
+										type='button'
+										onClick={() => setSelectedFileIndex(i)}
+										key={i}
+										className={cn(
+											'join-item btn',
+											selectedFileIndex === i && 'btn-active'
+										)}>
+										{i + 1}
+									</button>
+								))}
+							</div>
+						)}
 					</div>
 				) : (
 					<UploadInput onChange={handleAudioChange} />
 				)}
 
-				<button
-					disabled={
-						!files ||
-						files.length === 0 ||
-						uploadActionIsPending ||
-						durationActionIsPending
-					}
-					className='btn btn-neutral mt-4'>
-					Upload {files?.length} file{files && files.length > 1 ? 's' : ''}
-				</button>
+				<div className='self-center w-full flex gap-2'>
+					<button
+						onClick={handleReset}
+						type='button'
+						disabled={!files || files.length === 0 || uploadActionIsPending}
+						className='btn btn-soft btn-error mt-4 flex-1'>
+						Reset
+					</button>
+					<button
+						type='submit'
+						disabled={!files || files.length === 0 || uploadActionIsPending}
+						className='btn btn-soft btn-primary mt-4 flex-1'>
+						Upload {files?.length} {filePlural(files.length)}
+					</button>
+				</div>
 			</fieldset>
 		</form>
 	);
@@ -137,7 +184,7 @@ function UploadInput({ onChange }: UploadInputProps) {
 				multiple
 				onChange={onChange}
 			/>
-			<label className='label'>Max size 5MB</label>
+			<label className='label'>Max size 10MB</label>
 		</fieldset>
 	);
 }

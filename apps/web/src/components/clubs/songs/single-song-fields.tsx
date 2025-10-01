@@ -2,19 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { parseBlob, selectCover } from 'music-metadata';
-import { SelectBaseSong } from '@repo/database/postgres/schema';
 import Image from 'next/image';
 import { cn, durationFormatted } from '@/util';
+import { SongMetadata } from '@/components/clubs/songs/song-upload-form';
 
 interface SingleSongFields {
 	file: File;
+	setMetadata: (metadata: SongMetadata) => void;
 }
-
-type SongMetadata = Partial<
-	Pick<SelectBaseSong, 'title' | 'artist' | 'album' | 'duration'>
-> & {
-	picture: string | null;
-};
 
 export function SingleSongFields({ file }: SingleSongFields) {
 	const [metadata, setMetadata] = useState<SongMetadata | null>(null);
@@ -42,6 +37,7 @@ export function SingleSongFields({ file }: SingleSongFields) {
 				album: metadata.common.album,
 				duration: metadata.format.duration,
 				picture,
+				fileName: file.name,
 			});
 		}
 
@@ -50,19 +46,17 @@ export function SingleSongFields({ file }: SingleSongFields) {
 
 	return (
 		<>
-			{metadata?.picture && (
-				<Image
-					className={cn(
-						'rounded-md self-end w-full h-24 object-cover hover:cursor-pointer',
-						expandImage && 'h-full'
-					)}
-					onClick={() => setExpandImage((prev) => !prev)}
-					src={metadata.picture}
-					alt={metadata?.title ?? 'Album cover'}
-					height={100}
-					width={100}
-				/>
-			)}
+			<Image
+				className={cn(
+					'rounded-md self-end w-full h-24 object-cover hover:cursor-pointer',
+					expandImage && 'h-full'
+				)}
+				onClick={() => setExpandImage((prev) => !prev)}
+				src={metadata?.picture ?? '/artist_placeholder.jpg'}
+				alt={metadata?.title ?? 'Album cover'}
+				height={100}
+				width={100}
+			/>
 			{metadata?.duration && (
 				<p className='font-mono'>
 					{durationFormatted(metadata.duration * 1000)}
