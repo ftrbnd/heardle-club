@@ -20,10 +20,7 @@ export default async function SubdomainPage({ params }: PageParams) {
 
 	if (!club) return <ClubNotFound />;
 
-	const result = await getUsersFromClub(club.id);
-	const members = result
-		.map((res) => res.users)
-		.filter((member) => member !== null);
+	const members = await getUsersFromClub(club.id);
 
 	const user = await getCurrentUser();
 	const isOwner = club.ownerId === user?.id;

@@ -3,6 +3,7 @@ import * as supabase from '@repo/database/supabase/api';
 import * as redis from '@repo/database/redis/api';
 import * as audio from '@/bullmq/processors/audio';
 import { JobProgress } from 'bullmq';
+import { updateClubStatistics } from '@/bullmq/processors/statistics';
 
 const message = (dayNum: number) => `Day ${dayNum}:`;
 
@@ -65,6 +66,7 @@ export async function setDailySong(
 
 	await redis.setClubDailySong(clubId, song, signedUrl);
 	await postgres.updateClubDayNumber(clubId, newDayNum);
+	await updateClubStatistics(clubId);
 
 	await updateProgress({
 		message: ` ${message(dayNum)} Done!`,

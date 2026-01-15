@@ -28,3 +28,11 @@ export const addUserGuess = async (ids: UserGuessIDs, newGuess: Guess) => {
 		return [newGuess];
 	}
 };
+
+export const resetClubGuesses = async (clubId: string) => {
+	const clubGuesses = await redis.keys(`guesses:*:${clubId}`);
+
+	if (clubGuesses.length > 0) {
+		await redis.del(...clubGuesses);
+	}
+};

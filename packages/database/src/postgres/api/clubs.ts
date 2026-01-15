@@ -25,13 +25,17 @@ export const searchClubs = async (query: string) => {
 };
 
 export const getUsersFromClub = async (clubId: string) => {
-	const clubUsers = await db
+	const result = await db
 		.select()
 		.from(usersToClubs)
 		.leftJoin(users, eq(usersToClubs.userId, users.id))
 		.where(eq(usersToClubs.clubId, clubId));
 
-	return clubUsers;
+	const members = result
+		.map((res) => res.users)
+		.filter((member) => member !== null);
+
+	return members;
 };
 
 export const getTrendingClubs = async () => {

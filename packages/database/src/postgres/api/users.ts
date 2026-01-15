@@ -60,9 +60,11 @@ export const getUserStatistics = async (userId: string, clubId: string) => {
 	return result.length > 0 ? result[0] : null;
 };
 
-type UpdateStatisticsValues = Pick<
-	SelectStatistics,
-	'accuracy' | 'currentStreak' | 'gamesPlayed' | 'gamesWon' | 'maxStreak'
+type UpdateStatisticsValues = Partial<
+	Pick<
+		SelectStatistics,
+		'accuracy' | 'currentStreak' | 'gamesPlayed' | 'gamesWon' | 'maxStreak'
+	>
 >;
 export const updateUserStatistics = async (
 	userId: string,

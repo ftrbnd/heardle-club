@@ -19,7 +19,7 @@ export async function createScheduledWorker() {
 			`club_${club.id}_scheduler`,
 			{
 				pattern: '*/5 * * * *', // every minute
-				// pattern: '0 4 * * *' // midnight UTC
+				// pattern: '0 4 * * *', // midnight UTC
 				utc: true,
 				immediately: true,
 			},
