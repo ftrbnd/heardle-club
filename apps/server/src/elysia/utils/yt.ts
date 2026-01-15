@@ -1,12 +1,35 @@
 import { Innertube, UniversalCache, Utils, YTNodes } from 'youtubei.js';
+import { Platform, Types } from 'youtubei.js/web';
+
 import { JSDOM } from 'jsdom';
 import BG, { BgConfig } from 'bgutils-js';
 import { createWriteStream } from 'fs';
 
+// https://ytjs.dev/guide/getting-started.html#providing-a-custom-javascript-interpreter
+Platform.shim.eval = async (
+	// TODO: check back on Types.BuildScriptResult,
+	data: any,
+	env: Record<string, Types.VMPrimative>
+) => {
+	const properties = [];
+
+	if (env.n) {
+		properties.push(`n: exportedVars.nFunction("${env.n}")`);
+	}
+
+	if (env.sig) {
+		properties.push(`sig: exportedVars.sigFunction("${env.sig}")`);
+	}
+
+	const code = `${data.output}\nreturn { ${properties.join(', ')} }`;
+
+	return new Function(code)();
+};
+
 export async function generateClient() {
 	let innertube = await Innertube.create({
 		retrieve_player: false,
-		player_id: process.env.YT_PLAYER_ID,
+		// player_id: process.env.YT_PLAYER_ID,
 	});
 
 	const requestKey = process.env.YT_REQUEST_KEY!;
@@ -76,7 +99,8 @@ export async function downloadAudio(
 	const stream = await client.download(videoId, {
 		client: 'YTMUSIC',
 		codec: 'mp4a',
-		type: 'audio',
+		// 'audio' type results in 403 forbidden
+		type: 'video+audio',
 		quality: 'best',
 	});
 
