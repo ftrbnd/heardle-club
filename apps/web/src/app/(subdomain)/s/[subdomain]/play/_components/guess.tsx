@@ -10,7 +10,7 @@ import { ComponentProps } from 'react';
 
 interface GuessComponentProps extends ComponentProps<'div'> {
 	guess: GuessType;
-	song: SelectBaseSong;
+	song?: SelectBaseSong;
 }
 export function Guess({
 	guess,
@@ -27,8 +27,8 @@ export function Guess({
 			)}>
 			<figure>
 				<Image
-					src={song.image ?? '/artist_placeholder.jpg'}
-					alt={song.title}
+					src={song?.image ?? '/artist_placeholder.jpg'}
+					alt={song ? song.title : 'Song not found'}
 					height={50}
 					width={50}
 				/>
@@ -36,8 +36,10 @@ export function Guess({
 			<div className='flex items-center w-full justify-between px-4'>
 				<div
 					className='tooltip'
-					data-tip={`From: ${song.album}`}>
-					<h2 className='card-title text-left'>{song.title}</h2>
+					data-tip={`From: ${song ? song.album : 'Unknown album'}`}>
+					<h2 className='card-title text-left'>
+						{song ? song.title : 'Unknown song'}
+					</h2>
 				</div>
 				<div
 					className='tooltip tooltip-left'

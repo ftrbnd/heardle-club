@@ -14,12 +14,11 @@ export default function Page() {
 		<div className='flex-1 flex flex-col items-center'>
 			<div className='flex-1 flex flex-col p-2 gap-2 play-page-width'>
 				{guesses &&
-					songs &&
 					guesses.map((guess, index) => (
 						<Guess
 							key={index}
 							guess={guess}
-							song={songs[0]}
+							song={songs?.find((song) => song.id === guess.songId)}
 							className='w-full'
 						/>
 					))}
