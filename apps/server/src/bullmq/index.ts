@@ -4,7 +4,7 @@ import { Worker } from 'bullmq';
 import { createDownloadWorker } from '@/bullmq/workers/download.worker';
 import { createScheduledWorker } from '@/bullmq/workers/daily.worker';
 
-function attachListeners(worker: Worker, progressType: 'download' | 'daily') {
+function attachListeners(worker: Worker) {
 	worker.on('ready', () => console.log(`"${worker.name}" worker ready`));
 	worker.on('progress', (job, progress) => {
 		// TODO: separate download and daily job progress schemas
@@ -21,10 +21,10 @@ function attachListeners(worker: Worker, progressType: 'download' | 'daily') {
 
 async function createWorkers() {
 	const downloadWorker = createDownloadWorker();
-	attachListeners(downloadWorker, 'download');
+	attachListeners(downloadWorker);
 
 	const scheduledWorker = await createScheduledWorker();
-	attachListeners(scheduledWorker, 'daily');
+	attachListeners(scheduledWorker);
 }
 
 createWorkers();

@@ -9,6 +9,11 @@ export default async (job: SandboxedJob) => {
 	const club = await getClubById(clubId);
 	if (!club) throw new Error(`Club ${clubId} not found`);
 
+	if (!club.isActive) {
+		throw new Error('Club is inactive.');
+		// TODO: figure out how to cancel jobs in sandboxed processes
+	}
+
 	const updateProgress = job.updateProgress.bind(job);
 
 	try {
