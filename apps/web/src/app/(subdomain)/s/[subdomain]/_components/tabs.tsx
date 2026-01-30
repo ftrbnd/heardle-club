@@ -35,6 +35,16 @@ export function Tabs({ isOwner, selectedTab }: SubdomainTabsProps) {
 						<Link href='/'>Members</Link>
 					)}
 				</label>
+				<label
+					htmlFor={LEFT_DRAWER_ID}
+					role='tab'
+					className={cn(
+						'tab hidden lg:inline-flex',
+						selectedTab === 'Members' && 'tab-active'
+					)}>
+					{selectedTab === 'Members' ? 'Home' : <Link href='/'>Home</Link>}
+				</label>
+
 				{isOwner && (
 					<Tab
 						name='Dashboard'

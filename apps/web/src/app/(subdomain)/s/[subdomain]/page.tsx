@@ -41,7 +41,7 @@ export default async function SubdomainPage({ params }: PageParams) {
 
 				<h2 className='text-2xl font-bold pt-2 px-6'>Your Statistics</h2>
 				<StatsGrid />
-				<div className='h-full flex flex-col gap-2 items-center justify-center'>
+				<div className='mt-4 flex flex-col gap-2 items-center justify-center'>
 					<div
 						className={`badge badge-soft ${club.isActive ? 'badge-primary' : 'badge-secondary'}`}>
 						{club.isActive ? 'Active' : 'Inactive'}
