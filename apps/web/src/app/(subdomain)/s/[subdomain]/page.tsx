@@ -9,6 +9,7 @@ import {
 	getUsersFromClub,
 } from '@repo/database/postgres/api';
 import Link from 'next/link';
+import { StatsGrid } from '@/components/account/stats-grid';
 
 interface PageParams {
 	params: Promise<{ subdomain: string }>;
@@ -37,6 +38,9 @@ export default async function SubdomainPage({ params }: PageParams) {
 					isOwner={isOwner}
 					selectedTab='Members'
 				/>
+
+				<h2 className='text-2xl font-bold pt-2 px-6'>Your Statistics</h2>
+				<StatsGrid />
 				<div className='h-full flex flex-col gap-2 items-center justify-center'>
 					<div
 						className={`badge badge-soft ${club.isActive ? 'badge-primary' : 'badge-secondary'}`}>

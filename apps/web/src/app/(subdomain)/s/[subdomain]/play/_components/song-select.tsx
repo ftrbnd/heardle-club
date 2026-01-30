@@ -58,7 +58,9 @@ export function SongSelect({
 			</option>
 			{songs?.map((song) => (
 				<option
-					disabled={guesses?.some((g) => g.songId === song.id)}
+					disabled={guesses?.some(
+						(g) => g.songId === song.id || g.status === 'correct'
+					)}
 					key={song.id}
 					value={song.id}>
 					{song.title}

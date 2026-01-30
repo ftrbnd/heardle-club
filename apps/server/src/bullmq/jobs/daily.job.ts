@@ -19,13 +19,16 @@ export default async (job: SandboxedJob) => {
 	try {
 		await setDailySong(clubId, club.heardleDay + 1, updateProgress);
 	} catch (error) {
+		let emptyClub = false;
+
 		if (error instanceof Error)
-			if (error.message === 'Club has no songs')
+			if (error.message === 'Club has no songs') {
 				console.log(`${club?.displayName} has no songs yet`);
-			else console.log('Failed to set daily song:', error);
+				emptyClub = true;
+			} else console.log('Failed to set daily song:', error);
 
 		job.updateProgress({
-			message: 'Failed to set daily song',
+			message: `Failed to set daily song${' (club has no songs yet)'}`,
 			percentage: 0,
 		});
 	}

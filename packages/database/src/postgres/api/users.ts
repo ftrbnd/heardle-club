@@ -7,6 +7,7 @@ import {
 } from '../schema/types';
 import { users, oauthAccounts } from '../schema/auth';
 import { statistics } from '../schema';
+import { generateSecureRandomString } from '../../common';
 
 export const getUserByEmail = async (email: string) => {
 	const result = await db
@@ -60,19 +61,38 @@ export const getUserStatistics = async (userId: string, clubId: string) => {
 	return result.length > 0 ? result[0] : null;
 };
 
-type UpdateStatisticsValues = Partial<
-	Pick<
-		SelectStatistics,
-		'accuracy' | 'currentStreak' | 'gamesPlayed' | 'gamesWon' | 'maxStreak'
-	>
+export const insertUserStatistics = async (userId: string, clubId: string) => {
+	const [result] = await db
+		.insert(statistics)
+		.values({
+			id: generateSecureRandomString(),
+			userId,
+			clubId,
+			accuracy: 0,
+			gamesPlayed: 0,
+			gamesWon: 0,
+			currentStreak: 0,
+			maxStreak: 0,
+		})
+		.returning();
+
+	return result;
+};
+
+export type BareStatistics = Pick<
+	SelectStatistics,
+	'accuracy' | 'currentStreak' | 'gamesPlayed' | 'gamesWon' | 'maxStreak'
 >;
 export const updateUserStatistics = async (
 	userId: string,
 	clubId: string,
-	values: UpdateStatisticsValues
+	values: Partial<BareStatistics>
 ) => {
-	await db
+	const [newStatistics] = await db
 		.update(statistics)
 		.set(values)
-		.where(and(eq(statistics.userId, userId), eq(statistics.clubId, clubId)));
+		.where(and(eq(statistics.userId, userId), eq(statistics.clubId, clubId)))
+		.returning();
+
+	return newStatistics;
 };

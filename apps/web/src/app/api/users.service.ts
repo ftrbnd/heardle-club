@@ -53,3 +53,21 @@ export async function getUserStatistics(userId?: string, clubId?: string) {
 	const res = await userFetch<SelectStatistics>(`/${user}/statistics/${club}`);
 	return res;
 }
+
+export async function setUserStatistics(
+	userId?: string,
+	clubId?: string,
+	guesses?: Guess[]
+) {
+	const { user, club } = checkIDs(userId, clubId);
+
+	const res = await userFetch<SelectStatistics>(`/${user}/statistics/${club}`, {
+		method: 'PATCH',
+		body: JSON.stringify({ guesses }),
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+
+	return res;
+}
