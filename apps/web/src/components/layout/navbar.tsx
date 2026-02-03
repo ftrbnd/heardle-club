@@ -8,6 +8,9 @@ import { SelectClub } from '@repo/database/postgres/schema';
 import Link from 'next/link';
 import { CSSProperties } from 'react';
 import { Menu } from '@/components/icons/menu';
+import { Users } from '@/components/icons/users';
+import { MEMBERS_DRAWER_ID } from '@/app/(subdomain)/s/[subdomain]/_components/left-drawer';
+import { JOINED_CLUBS_DRAWER_ID } from '@/components/clubs/membership/club-menu-item';
 
 export async function Navbar({ club }: { club?: SelectClub | null }) {
 	const title = club ? club.displayName : 'Heardle Club';
@@ -29,10 +32,10 @@ export async function Navbar({ club }: { club?: SelectClub | null }) {
 			)}>
 			<div className='navbar shadow-sm sticky top-0 z-52 backdrop-blur-md bg-base-100/60'>
 				<label
-					htmlFor='joined-clubs-drawer'
+					htmlFor={artist ? MEMBERS_DRAWER_ID : JOINED_CLUBS_DRAWER_ID}
 					aria-label='open sidebar'
 					className='btn btn-square btn-ghost lg:hidden'>
-					<Menu />
+					{artist ? <Users /> : <Menu />}
 				</label>
 
 				<Link

@@ -1,9 +1,9 @@
-import { LEFT_DRAWER_ID } from '@/app/(subdomain)/s/[subdomain]/_components/left-drawer';
+import { MEMBERS_DRAWER_ID } from '@/app/(subdomain)/s/[subdomain]/_components/left-drawer';
 import { cn } from '@/util';
 import Link from 'next/link';
 
 export const subdomainTabs = [
-	'Members',
+	'Home',
 	'Dashboard',
 	'Leaderboard',
 	'Custom',
@@ -23,26 +23,10 @@ export function Tabs({ isOwner, selectedTab }: SubdomainTabsProps) {
 				role='tablist'
 				className='tabs tabs-box min-w-max px-2'>
 				<label
-					htmlFor={LEFT_DRAWER_ID}
+					htmlFor={MEMBERS_DRAWER_ID}
 					role='tab'
-					className={cn(
-						'tab lg:hidden',
-						selectedTab === 'Members' && 'tab-active'
-					)}>
-					{selectedTab === 'Members' ? (
-						'Members'
-					) : (
-						<Link href='/'>Members</Link>
-					)}
-				</label>
-				<label
-					htmlFor={LEFT_DRAWER_ID}
-					role='tab'
-					className={cn(
-						'tab hidden lg:inline-flex',
-						selectedTab === 'Members' && 'tab-active'
-					)}>
-					{selectedTab === 'Members' ? 'Home' : <Link href='/'>Home</Link>}
+					className={cn('tab', selectedTab === 'Home' && 'tab-active')}>
+					{selectedTab === 'Home' ? 'Home' : <Link href='/'>Home</Link>}
 				</label>
 
 				{isOwner && (
@@ -77,7 +61,7 @@ function Tab({ name, isActive }: TabProps) {
 	return (
 		<Link
 			role='tab'
-			href={`/${name.toLowerCase()}`}
+			href={name === 'Home' ? '/' : `/${name.toLowerCase()}`}
 			className={cn('tab', isActive && 'tab-active')}>
 			{name}
 		</Link>

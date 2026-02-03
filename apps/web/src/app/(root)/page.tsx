@@ -1,7 +1,10 @@
 import { getCurrentUser } from '@/app/actions/auth';
 import { getJoinedClubs, getTrendingClubs } from '@repo/database/postgres/api';
 import { ClubsCollection } from '@/components/clubs/public/collection';
-import { ClubMenuItem } from '@/components/clubs/membership/club-menu-item';
+import {
+	ClubMenuItem,
+	JOINED_CLUBS_DRAWER_ID,
+} from '@/components/clubs/membership/club-menu-item';
 
 export default async function HomePage() {
 	const user = await getCurrentUser();
@@ -12,7 +15,7 @@ export default async function HomePage() {
 	return (
 		<div className='drawer lg:drawer-open'>
 			<input
-				id='joined-clubs-drawer'
+				id={JOINED_CLUBS_DRAWER_ID}
 				type='checkbox'
 				className='drawer-toggle'
 			/>
@@ -25,7 +28,7 @@ export default async function HomePage() {
 			</div>
 			<div className='drawer-side z-53'>
 				<label
-					htmlFor='joined-clubs-drawer'
+					htmlFor={JOINED_CLUBS_DRAWER_ID}
 					aria-label='close sidebar'
 					className='drawer-overlay'></label>
 				<ul className='menu bg-base-200 min-h-full w-80 p-4 gap-2'>

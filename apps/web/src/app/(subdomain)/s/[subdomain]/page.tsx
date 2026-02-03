@@ -36,7 +36,7 @@ export default async function SubdomainPage({ params }: PageParams) {
 				<ClubDailyStatus club={club} />
 				<Tabs
 					isOwner={isOwner}
-					selectedTab='Members'
+					selectedTab='Home'
 				/>
 
 				<h2 className='text-2xl font-bold pt-2 px-6'>Your Statistics</h2>

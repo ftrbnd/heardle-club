@@ -20,7 +20,7 @@ export async function ClubsCollection({
 
 	return (
 		<section className='flex flex-col gap-2 items-center'>
-			<h3 className='text-3xl font-bold'>{title}</h3>
+			<h3 className='text-3xl font-bold self-start'>{title}</h3>
 			{title === 'Your Clubs' && !user ? (
 				<div className='card bg-base-100 w-96 shadow-sm self-center'>
 					<div className='card-body'>

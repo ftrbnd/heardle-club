@@ -9,6 +9,8 @@ interface ClubMenuItemProps {
 	club: SelectClub;
 }
 
+export const JOINED_CLUBS_DRAWER_ID = 'joined_clubs_drawer' as const;
+
 export async function ClubMenuItem({ club }: ClubMenuItemProps) {
 	const artist = club?.artistId ? await getArtist(club.artistId) : null;
 	const artistImageUrl = artist?.images.find((image) => image.url)?.url;
