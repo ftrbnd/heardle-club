@@ -20,7 +20,7 @@ export async function ClubsCollection({
 
 	return (
 		<section className='flex flex-col gap-2 items-center'>
-			<h3 className='text-3xl'>{title}</h3>
+			<h3 className='text-3xl font-bold'>{title}</h3>
 			{title === 'Your Clubs' && !user ? (
 				<div className='card bg-base-100 w-96 shadow-sm self-center'>
 					<div className='card-body'>
@@ -47,7 +47,7 @@ export async function ClubsCollection({
 				</div>
 			) : (
 				<ul
-					className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${display === 'list' ? 'w-full md:px-16' : ''}`}>
+					className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 ${display === 'list' ? 'w-full md:px-16' : ''}`}>
 					{clubs.map((club) => (
 						<li key={club.id}>
 							<ClubPreview

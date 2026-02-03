@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/app/actions/auth';
 import { getJoinedClubs, getTrendingClubs } from '@repo/database/postgres/api';
 import { ClubsCollection } from '@/components/clubs/public/collection';
+import { ClubMenuItem } from '@/components/clubs/membership/club-menu-item';
 
 export default async function HomePage() {
 	const user = await getCurrentUser();
@@ -9,17 +10,47 @@ export default async function HomePage() {
 	const joinedClubs = joined.map((j) => j.clubs).filter((c) => c !== null);
 
 	return (
-		<div className='py-8 px-4 flex flex-col gap-8'>
-			<div className='py-8 px-4 flex flex-col gap-8'>
+		<div className='drawer lg:drawer-open'>
+			<input
+				id='my-drawer-3'
+				type='checkbox'
+				className='drawer-toggle'
+			/>
+			<div className='drawer-content flex flex-col items-center justify-center'>
+				{/* Page content here */}
+				<label
+					htmlFor='my-drawer-3'
+					className='btn drawer-button lg:hidden'>
+					Open drawer
+				</label>
 				<ClubsCollection
 					clubs={trending}
 					title='Trending'
 				/>
-
-				<ClubsCollection
-					clubs={joinedClubs}
-					title='Your Clubs'
-				/>
+			</div>
+			<div className='drawer-side'>
+				<label
+					htmlFor='my-drawer-3'
+					aria-label='close sidebar'
+					className='drawer-overlay'></label>
+				<ul className='menu bg-base-200 min-h-full w-80 p-4 gap-2'>
+					<div className='flex justify-between'>
+						<h4 className='text-2xl font-bold'>Your clubs</h4>
+						<span className='text-xl'>{joinedClubs.length}</span>
+					</div>
+					{joinedClubs.length === 0 ? (
+						<li className='badge badge-soft badge-info self-center'>
+							Join a club to get started!
+						</li>
+					) : (
+						joinedClubs.map((club) => (
+							<ClubMenuItem
+								key={club.id}
+								club={club}
+							/>
+						))
+					)}
+				</ul>
 			</div>
 		</div>
 	);
