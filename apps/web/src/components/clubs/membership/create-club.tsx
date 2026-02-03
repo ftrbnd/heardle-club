@@ -28,6 +28,7 @@ export function CreateClub() {
 			setQuery={setQuery}
 			buttonLabel='Create your own'
 			buttonClassName='btn-primary'
+			buttonIcon='plus'
 			modalLabel='Create a club'
 			placeholder='Enter an artist or band'
 			openModal={openModal}

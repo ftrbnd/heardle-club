@@ -7,6 +7,7 @@ import { UserAvatar } from '@/components/account/avatar';
 import { SelectClub } from '@repo/database/postgres/schema';
 import Link from 'next/link';
 import { CSSProperties } from 'react';
+import { Menu } from '@/components/icons/menu';
 
 export async function Navbar({ club }: { club?: SelectClub | null }) {
 	const title = club ? club.displayName : 'Heardle Club';
@@ -27,6 +28,13 @@ export async function Navbar({ club }: { club?: SelectClub | null }) {
 					: 'bg-base-100'
 			)}>
 			<div className='navbar shadow-sm sticky top-0 z-52 backdrop-blur-md bg-base-100/60'>
+				<label
+					htmlFor='joined-clubs-drawer'
+					aria-label='open sidebar'
+					className='btn btn-square btn-ghost lg:hidden'>
+					<Menu />
+				</label>
+
 				<Link
 					href='/'
 					className='flex-1'>

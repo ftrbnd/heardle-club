@@ -12,25 +12,20 @@ export default async function HomePage() {
 	return (
 		<div className='drawer lg:drawer-open'>
 			<input
-				id='my-drawer-3'
+				id='joined-clubs-drawer'
 				type='checkbox'
 				className='drawer-toggle'
 			/>
 			<div className='drawer-content flex flex-col items-center justify-center'>
 				{/* Page content here */}
-				<label
-					htmlFor='my-drawer-3'
-					className='btn drawer-button lg:hidden'>
-					Open drawer
-				</label>
 				<ClubsCollection
 					clubs={trending}
 					title='Trending'
 				/>
 			</div>
-			<div className='drawer-side'>
+			<div className='drawer-side z-53'>
 				<label
-					htmlFor='my-drawer-3'
+					htmlFor='joined-clubs-drawer'
 					aria-label='close sidebar'
 					className='drawer-overlay'></label>
 				<ul className='menu bg-base-200 min-h-full w-80 p-4 gap-2'>

@@ -28,6 +28,7 @@ export function FindClub() {
 			setQuery={setQuery}
 			buttonLabel='Find a club'
 			buttonClassName='btn-secondary'
+			buttonIcon='search'
 			modalLabel='Search for a club'
 			placeholder='Enter an artist or band'
 			openModal={openModal}

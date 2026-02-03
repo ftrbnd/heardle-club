@@ -1,5 +1,6 @@
 'use client';
 
+import { Plus } from '@/components/icons/plus';
 import { Search } from '@/components/icons/search';
 import { cn } from '@/util';
 import { ClassValue } from 'clsx';
@@ -9,6 +10,7 @@ interface SearchModalProps {
 	modalId: string;
 	query: string;
 	buttonLabel: string;
+	buttonIcon?: 'search' | 'plus';
 	modalLabel: string;
 	placeholder: string;
 	setQuery: Dispatch<SetStateAction<string>>;
@@ -22,9 +24,15 @@ export function SearchModal(props: SearchModalProps) {
 	return (
 		<div>
 			<button
-				className={cn('btn', props.buttonClassName)}
+				className={cn('btn hidden md:inline-flex', props.buttonClassName)}
 				onClick={props.openModal}>
 				{props.buttonLabel}
+			</button>
+			<button
+				className={cn('btn inline-flex md:hidden', props.buttonClassName)}
+				onClick={props.openModal}>
+				{props.buttonIcon === 'search' && <Search />}
+				{props.buttonIcon === 'plus' && <Plus />}
 			</button>
 			<dialog
 				id={props.modalId}

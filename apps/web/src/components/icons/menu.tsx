@@ -1,4 +1,4 @@
-export function Search() {
+export function Menu() {
 	return (
 		<svg
 			xmlns='http://www.w3.org/2000/svg'
@@ -10,13 +10,10 @@ export function Search() {
 			strokeWidth='2'
 			strokeLinecap='round'
 			strokeLinejoin='round'
-			className='lucide lucide-search-icon lucide-search'>
-			<path d='m21 21-4.34-4.34' />
-			<circle
-				cx='11'
-				cy='11'
-				r='8'
-			/>
+			className='lucide lucide-menu-icon lucide-menu'>
+			<path d='M4 5h16' />
+			<path d='M4 12h16' />
+			<path d='M4 19h16' />
 		</svg>
 	);
 }
