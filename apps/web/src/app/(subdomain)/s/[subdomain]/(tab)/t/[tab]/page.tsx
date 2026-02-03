@@ -3,6 +3,7 @@ import { Dashboard } from '@/app/(subdomain)/s/[subdomain]/(tab)/t/[tab]/_dashbo
 import { SubdomainTab } from '@/app/(subdomain)/s/[subdomain]/_components/tabs';
 import { getClubBySubdomain } from '@repo/database/postgres/api';
 import { redirect } from 'next/navigation';
+import { Leaderboard } from '@/app/(subdomain)/s/[subdomain]/(tab)/t/[tab]/_leaderboard';
 
 interface PageParams {
 	params: Promise<{ subdomain: string; tab: string }>;
@@ -19,6 +20,7 @@ export default async function Page({ params }: PageParams) {
 	const tabPage = (tab[0].toUpperCase() + tab.substring(1)) as SubdomainTab;
 
 	if (tabPage === 'Dashboard') return <Dashboard club={club} />;
+	if (tabPage === 'Leaderboard') return <Leaderboard club={club} />;
 
 	return <>TODO: {tabPage}</>;
 }

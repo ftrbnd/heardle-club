@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import { reset, seed } from 'drizzle-seed';
 import { db, schema } from '..';
-import { clubs, usersToClubs } from '../schema/tables';
+import { clubs, statistics, usersToClubs } from '../schema/tables';
 import { redis } from '../../redis';
 import { users } from '../schema/auth';
 import {
@@ -88,6 +88,40 @@ async function main() {
 
 		await db.insert(usersToClubs).values(newRelations);
 	}
+
+	await seed(db, { statistics }, { count: 10 }).refine((f) => ({
+		statistics: {
+			columns: {
+				userId: f.valuesFromArray({
+					values: seededUsers.map((u) => u.id),
+					isUnique: true,
+				}),
+				clubId: f.valuesFromArray({
+					values: [defaultClub.id],
+				}),
+				currentStreak: f.int({
+					minValue: 0,
+					maxValue: 100,
+				}),
+				maxStreak: f.int({
+					minValue: 0,
+					maxValue: 400,
+				}),
+				gamesPlayed: f.int({
+					minValue: 0,
+					maxValue: 300,
+				}),
+				gamesWon: f.int({
+					minValue: 0,
+					maxValue: 300,
+				}),
+				accuracy: f.int({
+					minValue: 0,
+					maxValue: 6 * 300,
+				}),
+			},
+		},
+	}));
 
 	console.log(`✔️  Seeded POSTGRES database`);
 
