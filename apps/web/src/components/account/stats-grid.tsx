@@ -3,25 +3,22 @@
 import { useUser } from '@/hooks/use-user';
 import {
 	computeAccuracyPercentage,
+	computeMissedGuesses,
+	computeStreakStartDate,
+	computeWinPercentage,
 	DEFAULT_STATISTICS,
-	GUESS_LIMIT,
 } from '@/util/game';
 
 export function StatsGrid() {
 	const { statistics } = useUser();
-
 	const stats = statistics ?? DEFAULT_STATISTICS;
 
-	const winPct =
-		stats.gamesPlayed === 0
-			? 0
-			: Math.floor((stats.gamesWon / stats.gamesPlayed) * 100);
-
-	const streakStart = new Date();
-	streakStart.setDate(streakStart.getDate() - stats.currentStreak);
-
+	const winPct = computeWinPercentage(stats.gamesPlayed, stats.gamesWon);
 	const streakDiff = stats.maxStreak - stats.currentStreak;
-	const incorrectGuesses = stats.gamesPlayed * GUESS_LIMIT - stats.accuracy;
+	const incorrectGuesses = computeMissedGuesses(
+		stats.gamesPlayed,
+		stats.accuracy
+	);
 
 	return (
 		<div className='stats grid-cols-2 grid-flow-row w-full lg:stats-horizontal xl:w-auto shadow'>
@@ -48,16 +45,7 @@ export function StatsGrid() {
 				<div className='stat-title'>Current Streak</div>
 				<div className='stat-value'>{stats.currentStreak}</div>
 				<div className='stat-desc'>
-					Since{' '}
-					{streakStart.toLocaleDateString(undefined, {
-						month: 'long',
-						day: 'numeric',
-						// Only show year if it's a past year
-						year:
-							new Date().getFullYear() !== streakStart.getFullYear()
-								? 'numeric'
-								: undefined,
-					})}
+					Since {computeStreakStartDate(stats.currentStreak)}
 				</div>
 			</div>
 

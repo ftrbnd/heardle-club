@@ -4,7 +4,7 @@ import { User as UserIcon } from '@/components/icons/user';
 import Image, { ImageProps } from 'next/image';
 
 interface UserAvatarProps extends Omit<ImageProps, 'src' | 'alt'> {
-	user?: User | null;
+	user?: Partial<User> | null;
 	imageSize?: number;
 }
 export function UserAvatar({

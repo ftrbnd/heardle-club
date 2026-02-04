@@ -60,3 +60,26 @@ export function computeAccuracyPercentage(
 		(accuracyPoints / ((gamesPlayed || 1) * GUESS_LIMIT)) * 100
 	);
 }
+
+export function computeMissedGuesses(gamesPlayed: number, accuracy: number) {
+	return gamesPlayed * GUESS_LIMIT - accuracy;
+}
+
+export function computeWinPercentage(gamesPlayed: number, gamesWon: number) {
+	return gamesPlayed === 0 ? 0 : Math.floor((gamesWon / gamesPlayed) * 100);
+}
+
+export function computeStreakStartDate(currentStreak: number) {
+	const streakStart = new Date();
+	streakStart.setDate(streakStart.getDate() - currentStreak);
+
+	return streakStart.toLocaleDateString(undefined, {
+		month: 'long',
+		day: 'numeric',
+		// Only show year if it's a past year
+		year:
+			new Date().getFullYear() !== streakStart.getFullYear()
+				? 'numeric'
+				: undefined,
+	});
+}

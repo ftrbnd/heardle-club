@@ -1,8 +1,8 @@
-import { and, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { db } from '..';
 import { InsertClub } from '../schema/types';
 import { users } from '../schema/auth';
-import { clubs, usersToClubs } from '../schema/tables';
+import { clubs, statistics, usersToClubs } from '../schema/tables';
 
 export const insertClub = async (newClub: InsertClub) => {
 	const [club] = await db.insert(clubs).values(newClub).returning();
@@ -15,7 +15,7 @@ export const insertClub = async (newClub: InsertClub) => {
 };
 
 export const searchClubs = async (query: string) => {
-	const result = await db.select().from(clubs).where(sql`(
+	const result = await db.select().from(clubs).where(sql`(;
 			setweight(to_tsvector('english', ${clubs.displayName}), 'A') ||
 			setweight(to_tsvector('english', ${clubs.subdomain}), 'B'))
 			@@ phraseto_tsquery('english', ${query}
@@ -159,4 +159,27 @@ export const updateClubDayNumber = async (
 			heardleDay: newDayNum,
 		})
 		.where(eq(clubs.id, clubId));
+};
+
+export const getClubStatistics = async (clubId: string) => {
+	const result = await db
+		.select({
+			id: statistics.id,
+			userId: statistics.userId,
+			accuracy: statistics.accuracy,
+			gamesPlayed: statistics.gamesPlayed,
+			gamesWon: statistics.gamesWon,
+			currentStreak: statistics.currentStreak,
+			maxStreak: statistics.maxStreak,
+			user: {
+				displayName: users.displayName,
+				imageURL: users.imageURL,
+			},
+		})
+		.from(statistics)
+		.innerJoin(users, eq(statistics.userId, users.id))
+		.where(eq(statistics.clubId, clubId))
+		.orderBy(desc(statistics.currentStreak));
+
+	return result;
 };

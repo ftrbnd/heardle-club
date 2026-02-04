@@ -12,7 +12,7 @@ export const MEMBERS_DRAWER_ID = 'members_drawer' as const;
 
 export function LeftDrawer({ club, members, children }: LeftDrawerProps) {
 	return (
-		<div className='h-full drawer lg:drawer-open z-53'>
+		<div className='h-full drawer lg:drawer-open'>
 			<input
 				id={MEMBERS_DRAWER_ID}
 				type='checkbox'
@@ -22,7 +22,7 @@ export function LeftDrawer({ club, members, children }: LeftDrawerProps) {
 				{/* Page content here */}
 				{children}
 			</div>
-			<div className='drawer-side h-full'>
+			<div className='drawer-side z-53 h-full'>
 				<label
 					htmlFor={MEMBERS_DRAWER_ID}
 					aria-label='close sidebar'
