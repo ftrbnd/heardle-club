@@ -4,11 +4,27 @@ import { Guess } from '@repo/database/redis/schema';
 
 export const GUESS_LIMIT = 6 as const;
 
-const correctlyGuessedHeardle = (guesses: Guess[]) =>
+export const correctlyGuessedHeardle = (guesses: Guess[]) =>
 	guesses.some((guess) => guess.status === 'correct');
 
 export const completedHeardle = (guesses: Guess[]) =>
 	guesses.length >= GUESS_LIMIT || correctlyGuessedHeardle(guesses);
+
+export function getShareableSquares(guesses: Guess[]) {
+	const correspondingSquare = (status: Guess['status']) => {
+		switch (status) {
+			case 'correct':
+				return '🟩';
+			case 'album':
+				return '🟧';
+			case 'wrong':
+				return '🟥';
+		}
+	};
+
+	const squares = guesses.map((g) => correspondingSquare(g.status));
+	return squares.join('');
+}
 
 export const DEFAULT_STATISTICS: BareStatistics = {
 	accuracy: 0,
@@ -20,12 +36,12 @@ export const DEFAULT_STATISTICS: BareStatistics = {
 
 export function computeNewStatistics(
 	prevStats: SelectStatistics,
-	guesses?: Guess[]
+	guesses?: Guess[],
 ) {
 	let gameAccuracy = 0;
 	// find index of first green square
 	const greenSquareIndex = guesses?.findIndex(
-		(guess) => guess.status === 'correct'
+		(guess) => guess.status === 'correct',
 	);
 	// calculate accuracy for this game based on range of 0 to GUESS_LIMIT
 	gameAccuracy =
@@ -54,10 +70,10 @@ export function computeNewStatistics(
 
 export function computeAccuracyPercentage(
 	accuracyPoints: number,
-	gamesPlayed: number
+	gamesPlayed: number,
 ) {
 	return Math.round(
-		(accuracyPoints / ((gamesPlayed || 1) * GUESS_LIMIT)) * 100
+		(accuracyPoints / ((gamesPlayed || 1) * GUESS_LIMIT)) * 100,
 	);
 }
 
