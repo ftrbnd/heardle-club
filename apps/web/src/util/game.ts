@@ -10,6 +10,10 @@ export const correctlyGuessedHeardle = (guesses: Guess[]) =>
 export const completedHeardle = (guesses: Guess[]) =>
 	guesses.length >= GUESS_LIMIT || correctlyGuessedHeardle(guesses);
 
+/**
+ * @returns the guesses mapped to their respective squares
+ * @example '🟧🟧🟩', '🟩', '🟥🟥🟥🟥🟥🟥'
+ */
 export function getShareableSquares(guesses: Guess[]) {
 	const correspondingSquare = (status: Guess['status']) => {
 		switch (status) {

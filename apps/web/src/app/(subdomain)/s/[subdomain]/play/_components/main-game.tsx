@@ -10,6 +10,8 @@ import { cn } from '@/util';
 import { completedHeardle, correctlyGuessedHeardle } from '@/util/game';
 import { ComponentProps } from 'react';
 
+export const PLAY_PAGE_DRAWER_ID = 'play_page_drawer' as const;
+
 export function MainGame({ className, ...props }: ComponentProps<'div'>) {
 	const { daily, dailyLoading, songs, club } = useClub();
 	const { guesses } = useUser();

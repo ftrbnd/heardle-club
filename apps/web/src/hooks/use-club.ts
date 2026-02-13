@@ -3,6 +3,7 @@
 import {
 	getClubBySubdomain,
 	getClubDailySong,
+	getClubGuesses,
 	getClubSongs,
 } from '@/app/api/clubs.service';
 import { protocol, rootDomain, rootURL } from '@/util/domains';
@@ -21,14 +22,21 @@ export function useClub() {
 	const { data: songs } = useQuery({
 		queryKey: ['clubs', subdomain, 'songs'],
 		queryFn: () => getClubSongs(club?.id),
-		enabled: club?.id !== undefined,
+		enabled: club !== undefined,
+		staleTime: 0,
+	});
+
+	const { data: guesses } = useQuery({
+		queryKey: ['clubs', subdomain, 'guesses'],
+		queryFn: () => getClubGuesses(club?.id),
+		enabled: club !== undefined,
 		staleTime: 0,
 	});
 
 	const { data: daily, isLoading: dailyLoading } = useQuery({
 		queryKey: ['clubs', subdomain, 'daily'],
 		queryFn: () => getClubDailySong(club?.id),
-		enabled: club?.id !== undefined,
+		enabled: club !== undefined,
 		staleTime: 0,
 	});
 
@@ -50,6 +58,7 @@ export function useClub() {
 		subdomain,
 		club,
 		songs,
+		guesses,
 		daily,
 		dailyLoading,
 	};

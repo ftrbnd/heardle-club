@@ -1,3 +1,4 @@
+import { PLAY_PAGE_DRAWER_ID } from '@/app/(subdomain)/s/[subdomain]/play/_components/main-game';
 import { ChartLine } from '@/components/icons/chart-line';
 import { Check } from '@/components/icons/check';
 import { Clipboard } from '@/components/icons/clipboard';
@@ -86,7 +87,7 @@ export function ResultCard({
 						</button>
 					</div>
 					<label
-						htmlFor={'play_page_drawer'}
+						htmlFor={PLAY_PAGE_DRAWER_ID}
 						className='btn drawer-button btn-accent lg:hidden'>
 						{"Today's leaderboard"}
 						<Trophy />

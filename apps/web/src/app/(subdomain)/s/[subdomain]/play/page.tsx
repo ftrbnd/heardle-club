@@ -1,6 +1,8 @@
-import { MainGame } from '@/app/(subdomain)/s/[subdomain]/play/_components/main-game';
-
-const PLAY_PAGE_DRAWER_ID = 'play_page_drawer' as const;
+import {
+	MainGame,
+	PLAY_PAGE_DRAWER_ID,
+} from '@/app/(subdomain)/s/[subdomain]/play/_components/main-game';
+import { TodayLeaderboard } from '@/app/(subdomain)/s/[subdomain]/play/_components/today-leaderboard';
 
 export default function Page() {
 	return (
@@ -21,15 +23,7 @@ export default function Page() {
 						htmlFor={PLAY_PAGE_DRAWER_ID}
 						aria-label='close sidebar'
 						className='drawer-overlay'></label>
-					<ul className='menu bg-base-200 min-h-full w-80 p-4'>
-						{/* Sidebar content here */}
-						<li>
-							<a>Sidebar Item 1</a>
-						</li>
-						<li>
-							<a>Sidebar Item 2</a>
-						</li>
-					</ul>
+					<TodayLeaderboard />
 				</div>
 			</div>
 		</div>

@@ -5,7 +5,10 @@ export interface UserGuessIDs {
 	clubId: string;
 }
 
-export const guessesKey = (ids: UserGuessIDs) =>
+export const clubGuessesKey = (clubId: string) =>
+	`guesses:*:${clubId}` as const;
+
+export const clubUserGuessesKey = (ids: UserGuessIDs) =>
 	`guesses:${ids.userId}:${ids.clubId}` as const;
 
 export const guessSchema = z.object({

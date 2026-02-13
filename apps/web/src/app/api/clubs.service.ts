@@ -1,3 +1,4 @@
+import { ClubGuessesResult } from '@/app/api/clubs/[id]/guesses/route';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 
 async function clubFetch<T>(endpoint: string) {
@@ -19,6 +20,13 @@ export async function getClubSongs(clubId?: string) {
 	return songs;
 }
 
+export async function getClubGuesses(clubId?: string) {
+	if (!clubId) throw new Error('Club ID required');
+
+	const guesses = await clubFetch<ClubGuessesResult>(`/${clubId}/guesses`);
+	return guesses;
+}
+
 export async function getClubBySubdomain(subdomain: string | null) {
 	if (!subdomain) throw new Error('Subdomain required');
 
@@ -30,7 +38,7 @@ export async function getClubDailySong(clubId?: string) {
 	if (!clubId) return null;
 
 	const daily = await clubFetch<{ song: SelectBaseSong; url: string }>(
-		`/${clubId}/songs/daily`
+		`/${clubId}/songs/daily`,
 	);
 	return daily;
 }
