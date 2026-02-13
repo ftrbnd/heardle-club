@@ -22,7 +22,8 @@
 			"cache": false
 		},
 		"dev": {
-			"dependsOn": ["db:seed"],
+			// "dependsOn": ["db:seed"],
+			"dependsOn": ["db:push"],
 			"cache": false,
 			"persistent": true,
 			"interactive": true

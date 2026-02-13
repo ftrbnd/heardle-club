@@ -89,10 +89,7 @@ export default function AudioPlayer({
 	return (
 		<div
 			{...props}
-			className={cn(
-				'flex flex-col items-center gap-2 play-page-width',
-				className
-			)}>
+			className={cn('flex flex-col items-center gap-2', className)}>
 			<progress
 				className='progress progress-primary'
 				value={second}

@@ -1,50 +1,37 @@
-'use client';
+import { MainGame } from '@/app/(subdomain)/s/[subdomain]/play/_components/main-game';
 
-import AudioPlayer from '@/app/(subdomain)/s/[subdomain]/play/_components/audio-player';
-import { Guess } from '@/app/(subdomain)/s/[subdomain]/play/_components/guess';
-import { ResultCard } from '@/app/(subdomain)/s/[subdomain]/play/_components/result-card';
-import { SongSelect } from '@/app/(subdomain)/s/[subdomain]/play/_components/song-select';
-import { useClub } from '@/hooks/use-club';
-import { useUser } from '@/hooks/use-user';
-import { completedHeardle, correctlyGuessedHeardle } from '@/util/game';
+const PLAY_PAGE_DRAWER_ID = 'play_page_drawer' as const;
 
 export default function Page() {
-	const { daily, dailyLoading, songs, club } = useClub();
-	const { guesses } = useUser();
-
 	return (
 		<div className='flex-1 flex flex-col items-center'>
-			<div className='flex-1 flex flex-col p-2 gap-2 play-page-width'>
-				{guesses &&
-					guesses.map((guess, index) => (
-						<Guess
-							key={index}
-							guess={guess}
-							song={songs?.find((song) => song.id === guess.songId)}
-							className='w-full'
-						/>
-					))}
-			</div>
-
-			{/* TODO: don't rely on conditional - use useSuspenseQuery? */}
-			{guesses && club && daily && completedHeardle(guesses) && (
-				<ResultCard
-					club={club}
-					song={daily.song}
-					guessedSong={correctlyGuessedHeardle(guesses)}
+			<div className='h-full drawer lg:drawer-open'>
+				<input
+					id={PLAY_PAGE_DRAWER_ID}
+					type='checkbox'
+					className='drawer-toggle'
 				/>
-			)}
+				<div className='drawer-content'>
+					{/* Page content here */}
 
-			<SongSelect
-				songs={songs}
-				correctSong={daily?.song}
-				className='justify-self-end'
-			/>
-			<AudioPlayer
-				loading={dailyLoading}
-				url={daily?.url}
-				className='justify-self-end'
-			/>
+					<MainGame className='h-full' />
+				</div>
+				<div className='drawer-side z-53 h-full'>
+					<label
+						htmlFor={PLAY_PAGE_DRAWER_ID}
+						aria-label='close sidebar'
+						className='drawer-overlay'></label>
+					<ul className='menu bg-base-200 min-h-full w-80 p-4'>
+						{/* Sidebar content here */}
+						<li>
+							<a>Sidebar Item 1</a>
+						</li>
+						<li>
+							<a>Sidebar Item 2</a>
+						</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	);
 }

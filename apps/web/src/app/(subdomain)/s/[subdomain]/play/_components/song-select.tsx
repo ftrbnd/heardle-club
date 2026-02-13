@@ -47,10 +47,7 @@ export function SongSelect({
 		<select
 			{...props}
 			disabled={songsUnavailable}
-			className={cn(
-				'select select-primary play-page-width place-self-center',
-				className
-			)}
+			className={cn('select select-primary place-self-center', className)}
 			defaultValue={'Choose a song!'}
 			onChange={handleChange}>
 			<option className='default_selection'>
@@ -59,7 +56,7 @@ export function SongSelect({
 			{songs?.map((song) => (
 				<option
 					disabled={guesses?.some(
-						(g) => g.songId === song.id || g.status === 'correct'
+						(g) => g.songId === song.id || g.status === 'correct',
 					)}
 					key={song.id}
 					value={song.id}>

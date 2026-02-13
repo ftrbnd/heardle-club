@@ -1,20 +1,33 @@
 import { ChartLine } from '@/components/icons/chart-line';
 import { Check } from '@/components/icons/check';
 import { Clipboard } from '@/components/icons/clipboard';
+import { Trophy } from '@/components/icons/trophy';
 import { useUser } from '@/hooks/use-user';
+import { cn } from '@/util';
 import { getShareableSquares } from '@/util/game';
 import { SelectBaseSong, SelectClub } from '@repo/database/postgres/schema';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { CSSProperties, useState, useEffect, MouseEvent } from 'react';
+import {
+	CSSProperties,
+	useState,
+	useEffect,
+	MouseEvent,
+	ComponentProps,
+} from 'react';
 
-interface ResultCardProps {
+interface ResultCardProps extends ComponentProps<'div'> {
 	club: SelectClub;
 	song: SelectBaseSong;
 	guessedSong: boolean;
 }
 
-export function ResultCard({ club, song, guessedSong }: ResultCardProps) {
+export function ResultCard({
+	club,
+	song,
+	guessedSong,
+	className,
+}: ResultCardProps) {
 	const [copied, setCopied] = useState(false);
 	const { guesses } = useUser();
 
@@ -33,7 +46,11 @@ export function ResultCard({ club, song, guessedSong }: ResultCardProps) {
 	};
 
 	return (
-		<div className='card bg-base-100 shadow-xl image-full overflow-hidden mb-4 mt-4'>
+		<div
+			className={cn(
+				'card bg-base-100 shadow-xl image-full overflow-hidden mb-4 mt-4',
+				className,
+			)}>
 			<figure>
 				<Image
 					src={song.image ?? '/artist_placeholder.jpg'}
@@ -68,6 +85,12 @@ export function ResultCard({ club, song, guessedSong }: ResultCardProps) {
 							{copied ? <Check /> : <Clipboard />}
 						</button>
 					</div>
+					<label
+						htmlFor={'play_page_drawer'}
+						className='btn drawer-button btn-accent lg:hidden'>
+						{"Today's leaderboard"}
+						<Trophy />
+					</label>
 				</div>
 			</div>
 		</div>

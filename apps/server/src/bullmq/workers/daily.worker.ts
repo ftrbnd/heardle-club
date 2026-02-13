@@ -28,7 +28,7 @@ export async function createScheduledWorker() {
 				data: {
 					clubId: club.id,
 				},
-			}
+			},
 		);
 	}
 
